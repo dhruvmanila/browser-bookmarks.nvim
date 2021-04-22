@@ -4,17 +4,24 @@ if not has_telescope then
   error("This plugin requires telescope.nvim (https://github.com/nvim-telescope/telescope.nvim)")
 end
 
-local finders = require('telescope.finders')
-local pickers = require('telescope.pickers')
-local config = require('telescope.config').values
-local actions = require('telescope.actions')
-local action_state = require('telescope.actions.state')
-local entry_display = require('telescope.pickers.entry_display')
+local finders = require("telescope.finders")
+local pickers = require("telescope.pickers")
+local config = require("telescope.config").values
+local actions = require("telescope.actions")
+local action_state = require("telescope.actions.state")
+local entry_display = require("telescope.pickers.entry_display")
 
 local state = {}
 local os_name = vim.loop.os_uname().sysname
 local os_home = vim.loop.os_homedir()
 
+---Aliases to be displayed in the prompt title.
+local aliases = {
+  brave = "Brave",
+  google_chrome = "Google Chrome",
+}
+
+---Path to the bookmarks file for the respective OS and browser.
 local path = {
   Darwin = {
     brave = "/Library/Application Support/BraveSoftware/Brave-Browser/Default/Bookmarks",
@@ -31,7 +38,7 @@ local path = {
 }
 
 ---Default categories of bookmarks to look for.
-local categories = {'bookmark_bar', 'synced', 'other'}
+local categories = {"bookmark_bar", "synced", "other"}
 
 ---Set the configuration state.
 ---@param opt_name string
@@ -50,10 +57,15 @@ end
 local function collect_bookmarks()
   local items = {}
   local filename = os_home .. path[os_name][state.selected_browser]
+
+  if not filename then
+    error("Unsupported browser: " .. state.selected_browser)
+  end
+
   local file = io.open(filename, "r")
 
   if not file then
-    error("Unable to find the bookmarks file at: ", filename)
+    error("Unable to find the bookmarks file at: " .. filename)
   end
 
   local content = file:read("*a")
@@ -62,9 +74,9 @@ local function collect_bookmarks()
 
   local function insert_items(parent, bookmark)
     local name = parent
-      and (parent ~= '' and parent .. '/' .. bookmark.name or bookmark.name)
-      or ''
-    if bookmark.type == 'folder' then
+      and (parent ~= "" and parent .. "/" .. bookmark.name or bookmark.name)
+      or ""
+    if bookmark.type == "folder" then
       for _, child in ipairs(bookmark.children) do
         insert_items(name, child)
       end
@@ -79,44 +91,39 @@ local function collect_bookmarks()
   return items
 end
 
----@type function
-local displayer = entry_display.create {
-  separator = ' ',
-  items = {
-    {width = 65},
-    {remaining = true},
-  },
-}
-
----@param entry table
-local function make_display(entry)
-  return displayer {
-    entry.name,
-    {entry.value, 'Comment'},
-  }
-end
-
----Entry maker for the telescope finder.
----@param entry table
----@return table
-local function entry_maker(entry)
-  return {
-    display = make_display,
-    name = entry.name,
-    value = entry.url,
-    ordinal = entry.name .. ' ' .. entry.url,
-  }
-end
-
+---Main entrypoint for Telescope.
+---@param opts table
 local function bookmarks(opts)
   opts = opts or {}
   local results = collect_bookmarks()
 
+  local displayer = entry_display.create {
+    separator = " ",
+    items = {
+      {width = config.width * vim.o.columns / 2},
+      {remaining = true},
+    },
+  }
+
+  local function make_display(entry)
+    return displayer {
+      entry.name,
+      {entry.value, "Comment"},
+    }
+  end
+
   pickers.new(opts, {
-    prompt_title = 'Search Bookmarks',
+    prompt_title = "Search " .. aliases[state.selected_browser] .. " Bookmarks",
     finder = finders.new_table {
       results = results,
-      entry_maker = entry_maker,
+      entry_maker = function(entry)
+        return {
+          display = make_display,
+          name = entry.name,
+          value = entry.url,
+          ordinal = entry.name .. " " .. entry.url,
+        }
+      end,
     },
     previewer = false,
     sorter = config.file_sorter(opts),
