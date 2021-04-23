@@ -1,7 +1,23 @@
 # telescope-bookmarks.nvim
 A Neovim Telescope extension to open your browser bookmarks right from the editor!
 
-![telescope-bookmarks.nvim](https://user-images.githubusercontent.com/67177269/115818782-2367a780-a41b-11eb-9342-da1c06baa237.png)
+![telescope-bookmarks.nvim](https://user-images.githubusercontent.com/67177269/115862442-c89d7280-a451-11eb-94c5-501095f88ed7.png)
+
+<details>
+<summary><em>Screenshot configuration</em></summary>
+
+```lua
+require('telescope').extensions.bookmarks.bookmarks(
+  require('telescope.themes').get_dropdown {
+    width = 0.8,
+    results_height = 0.8,
+    previewer = false,
+  }
+)
+```
+
+</details>
+  
 
 The following browsers are currently supported:
 * Brave
