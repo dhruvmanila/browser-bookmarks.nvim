@@ -59,4 +59,4 @@ When you press `<CR>` on a selected bookmark, it will open the URL using the `ur
 
 ## References
 
-* [Chrome bookmarks in JSON format](https://junegunn.kr/2015/04/browsing-chrome-bookmarks-with-fzf/)
+* [Browsing Chrome bookmarks with fzf](https://junegunn.kr/2015/04/browsing-chrome-bookmarks-with-fzf/)
