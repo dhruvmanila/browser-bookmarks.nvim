@@ -10,6 +10,7 @@ local config = require("telescope.config").values
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 local entry_display = require("telescope.pickers.entry_display")
+local pathlib = require("telescope.path")
 
 local state = {}
 local os_name = vim.loop.os_uname().sysname
@@ -21,19 +22,19 @@ local aliases = {
   google_chrome = "Google Chrome",
 }
 
----Path to the bookmarks file for the respective OS and browser.
-local path = {
+---Path components to the bookmarks file for the respective OS and browser.
+local bookmarks_filepath = {
   Darwin = {
-    brave = "/Library/Application Support/BraveSoftware/Brave-Browser/Default/Bookmarks",
-    google_chrome = "/Library/Application Support/Google/Chrome/Default/Bookmarks",
+    brave = {"Library", "Application Support", "BraveSoftware", "Brave-Browser", "Default", "Bookmarks"},
+    google_chrome = {"Library", "Application Support", "Google", "Chrome", "Default", "Bookmarks"},
   },
   Linux = {
-    brave = "/.config/BraveSoftware/Brave-Browser/Default/Bookmarks",
-    google_chrome = "/.config/google-chrome/Default/Bookmarks",
+    brave = {".config", "BraveSoftware", "Brave-Browser", "Default", "Bookmarks"},
+    google_chrome = {".config", "google-chrome", "Default", "Bookmarks"},
   },
   Windows = {
-    brave = "/AppData/Local/BraveSoftware/Brave-Browser/User Data/Default/Bookmarks",
-    google_chrome = "/AppData/Local/Google/Chrome/User Data/Default/Bookmarks",
+    brave = {"AppData", "Local", "BraveSoftware", "Brave-Browser", "User Data", "Default", "Bookmarks"},
+    google_chrome = {"AppData", "Local", "Google", "Chrome", "User Data", "Default", "Bookmarks"},
   },
 }
 
@@ -56,16 +57,18 @@ end
 ---@return table
 local function collect_bookmarks()
   local items = {}
-  local filename = os_home .. path[os_name][state.selected_browser]
+  local components = bookmarks_filepath[os_name][state.selected_browser]
 
-  if not filename then
+  if not components then
     error("Unsupported browser: " .. state.selected_browser)
   end
 
-  local file = io.open(filename, "r")
+  local filepath = vim.fn.join(components, pathlib.separator)
+  filepath = os_home .. pathlib.separator .. filepath
+  local file = io.open(filepath, "r")
 
   if not file then
-    error("Unable to find the bookmarks file at: " .. filename)
+    error("Unable to find the bookmarks file at: " .. filepath)
   end
 
   local content = file:read("*a")
