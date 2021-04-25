@@ -12,34 +12,18 @@ local action_state = require("telescope.actions.state")
 local entry_display = require("telescope.pickers.entry_display")
 local pathlib = require("telescope.path")
 
-local state = {}
-local os_name = vim.loop.os_uname().sysname
-local os_home = vim.loop.os_homedir()
+local state = {
+  os_name = vim.loop.os_uname().sysname,
+  os_home = vim.loop.os_homedir(),
+  path_sep = pathlib.separator,
+}
 
 ---Aliases to be displayed in the prompt title.
 local aliases = {
   brave = "Brave",
   google_chrome = "Google Chrome",
+  safari = "Safari",
 }
-
----Path components to the bookmarks file for the respective OS and browser.
-local bookmarks_filepath = {
-  Darwin = {
-    brave = {"Library", "Application Support", "BraveSoftware", "Brave-Browser", "Default", "Bookmarks"},
-    google_chrome = {"Library", "Application Support", "Google", "Chrome", "Default", "Bookmarks"},
-  },
-  Linux = {
-    brave = {".config", "BraveSoftware", "Brave-Browser", "Default", "Bookmarks"},
-    google_chrome = {".config", "google-chrome", "Default", "Bookmarks"},
-  },
-  Windows = {
-    brave = {"AppData", "Local", "BraveSoftware", "Brave-Browser", "User Data", "Default", "Bookmarks"},
-    google_chrome = {"AppData", "Local", "Google", "Chrome", "User Data", "Default", "Bookmarks"},
-  },
-}
-
----Default categories of bookmarks to look for.
-local categories = {"bookmark_bar", "synced", "other"}
 
 ---Set the configuration state.
 ---@param opt_name string
@@ -49,56 +33,18 @@ local function set_config_state(opt_name, value, default)
   state[opt_name] = value == nil and default or value
 end
 
----Collect all the bookmarks in a table in the following form:
----{
----  {name = bookmark.name, url = bookmark.url},
----  ...,
----}
----@return table
-local function collect_bookmarks()
-  local items = {}
-  local components = bookmarks_filepath[os_name][state.selected_browser]
-
-  if not components then
-    error("Unsupported browser: " .. state.selected_browser)
-  end
-
-  local filepath = vim.fn.join(components, pathlib.separator)
-  filepath = os_home .. pathlib.separator .. filepath
-  local file = io.open(filepath, "r")
-
-  if not file then
-    error("Unable to find the bookmarks file at: " .. filepath)
-  end
-
-  local content = file:read("*a")
-  file:close()
-  local json_content = vim.fn.json_decode(content)
-
-  local function insert_items(parent, bookmark)
-    local name = parent
-      and (parent ~= "" and parent .. "/" .. bookmark.name or bookmark.name)
-      or ""
-    if bookmark.type == "folder" then
-      for _, child in ipairs(bookmark.children) do
-        insert_items(name, child)
-      end
-    else
-      table.insert(items, {name = name, url = bookmark.url})
-    end
-  end
-
-  for _, category in ipairs(categories) do
-    insert_items(nil, json_content.roots[category])
-  end
-  return items
-end
-
 ---Main entrypoint for Telescope.
 ---@param opts table
 local function bookmarks(opts)
   opts = opts or {}
-  local results = collect_bookmarks()
+  local module_path = 'telescope._extensions.bookmarks.' .. state.selected_browser
+  local ok, browser = pcall(require, module_path)
+
+  if not ok then
+    error("Unsupported browser: " .. state.selected_browser)
+  end
+
+  local results = browser.collect_bookmarks(state)
 
   local displayer = entry_display.create {
     separator = " ",
