@@ -19,9 +19,51 @@ require('telescope').extensions.bookmarks.bookmarks(
 </details>
   
 
-The following browsers are currently supported:
-* Brave
-* Google Chrome
+Supported browsers on the respective OS:
+
+<table>
+  <thead>
+    <tr>
+       <th rowspan=2>Browser</th>
+       <th colspan=3>Operating System</th>
+    </tr>
+    <tr>
+      <td align=center>MacOS</td>
+      <td align=center>Linux</td>
+      <td align=center>Windows</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Google Chrome</td>
+      <td align=center>☑️</td>
+      <td align=center>☑️</td>
+      <td align=center>☑️</td>
+    </tr>
+    <tr>
+      <td>Brave</td>
+      <td align=center>☑️</td>
+      <td align=center>☑️</td>
+      <td align=center>☑️</td>
+    </tr>
+    <tr>
+      <td>Safari <a href="#safari-caveat" id="note1"><sup>[1]</sup></a></td>
+      <td align=center>☑️</td>
+      <td align=center>-</td>
+      <td align=center>-</td>
+    </tr>
+  </tbody>
+</table>
+
+<a id="safari-caveat" href="#note1"><sup>[1]</sup></a> For Safari, the application which is used to run neovim should be allowed full disk access as the bookmarks file (`~/Library/Safari/Bookmarks.plist`) is in a restricted directory. This can be done in <i><b>System Preferences > Security & Privacy > Full Disk Access</b></i> and then click on the checkbox next to your preferred application. Please take a look at the below image for more details:
+
+<details>
+  <summary><i>Allow full disk access to the application running neovim</i></summary>
+
+<img width="668" alt="Full disk access settings" src="https://user-images.githubusercontent.com/67177269/115988185-16db7e80-a5d6-11eb-9667-f37bb288bfa8.png">
+
+</details>
+  
 
 ## Requirements
 
@@ -55,7 +97,8 @@ Extension options:
 require('telescope').setup {
   extensions = 
     bookmarks = {
-      selected_browser = 'brave',  -- Available: 'brave', 'google_chrome'
+      -- Available: 'brave', 'google_chrome', 'safari'
+      selected_browser = 'brave',
       url_open_command = 'open',
     },
   }
@@ -65,7 +108,7 @@ require('telescope').setup {
 ## Available Commands
 
 ```vim
-:Telescope bookmarks
+Telescope bookmarks
 
 " Using lua function
 lua require('telescope').extensions.bookmarks.bookmarks(opts)
@@ -76,3 +119,4 @@ When you press `<CR>` on a selected bookmark, it will open the URL using the `ur
 ## References
 
 * [Browsing Chrome bookmarks with fzf](https://junegunn.kr/2015/04/browsing-chrome-bookmarks-with-fzf/)
+* [Code: plist parser](https://codea.io/talk/discussion/1269/code-plist-parser)
