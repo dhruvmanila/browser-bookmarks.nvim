@@ -12,7 +12,7 @@ local bookmarks_filepath = {
     brave = {".config", "BraveSoftware", "Brave-Browser", "Default", "Bookmarks"},
     google_chrome = {".config", "google-chrome", "Default", "Bookmarks"},
   },
-  Windows = {
+  Windows_NT = {
     brave = {"AppData", "Local", "BraveSoftware", "Brave-Browser", "User Data", "Default", "Bookmarks"},
     google_chrome = {"AppData", "Local", "Google", "Chrome", "User Data", "Default", "Bookmarks"},
   },
