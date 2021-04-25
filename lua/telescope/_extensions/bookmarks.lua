@@ -75,7 +75,7 @@ local function bookmarks(opts)
       end,
     },
     previewer = false,
-    sorter = config.file_sorter(opts),
+    sorter = config.generic_sorter(opts),
     attach_mappings = function(prompt_bufnr)
       actions.select_default:replace(function()
         local selection = action_state.get_selected_entry()
