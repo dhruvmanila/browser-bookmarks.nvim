@@ -23,6 +23,8 @@ local aliases = {
   brave = "Brave",
   google_chrome = "Google Chrome",
   safari = "Safari",
+  firefox = "Firefox",
+  firefox_dev = "Firefox Developer Edition",
 }
 
 ---Set the configuration state.
@@ -92,6 +94,7 @@ return telescope.register_extension {
   setup = function(ext_config)
     set_config_state("selected_browser", ext_config.selected_browser, "brave")
     set_config_state("url_open_command", ext_config.url_open_command, "open")
+    set_config_state("firefox_profile_name", ext_config.firefox_profile_name, nil)
   end,
   exports = {bookmarks = bookmarks},
 }
