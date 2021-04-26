@@ -127,21 +127,8 @@ local function plist_parse(s)
   local ni, label, empty, _
 
   while label ~= "plist" do
-    local last_index = i
     ni, i, label, _ = string.find(s, "<[?!]?([%w:]+)(.-)>", i+1)
-
-    if ni == nil then
-      error(
-        string.format(
-          "Fatal: Something has gone wrong in `plist_parser.parse` at #%s: '%s'",
-          last_index+1,
-          s
-        )
-      )
-      return nil
-    else
-      assert(ni)
-    end
+    assert(ni)
   end
 
   _, i, _, label, empty = plp.next_tag(s, i)
