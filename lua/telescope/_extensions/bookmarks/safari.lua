@@ -1,5 +1,4 @@
-local utils = require('telescope.utils')
-
+local utils = require('telescope._extensions.bookmarks.utils')
 local plist_parse = require('telescope._extensions.bookmarks.plist_parser')
 
 local safari = {}
@@ -58,14 +57,11 @@ function safari.collect_bookmarks(state)
 
   local filepath = vim.fn.join(components, state.path_sep)
   filepath = state.os_home .. state.path_sep .. filepath
+
   local command = {"plutil",  "-convert", "xml1", "-o", "-", filepath}
-  local output, code, err = utils.get_os_command_output(command)
-
-  if code > 0 then
-    error(table.concat(err, "\n"))
-  end
-
+  local output = utils.get_os_command_output(command)
   output = table.concat(output, "\n")
+
   local data = plist_parse(output)
   return parse_bookmarks_data(data)
 end
