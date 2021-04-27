@@ -2,7 +2,10 @@ local ffi = require("ffi")
 
 local utils = require('telescope._extensions.bookmarks.utils')
 
-local C = ffi.load('lz4')
+local ok, C = pcall(ffi.load, "lz4")
+if not ok then
+  error("Firefox requires the LZ4 compression library (https://github.com/lz4/lz4)")
+end
 
 -- https://github.com/lz4/lz4/blob/dev/lib/lz4.h#L231
 ffi.cdef[[
@@ -39,12 +42,9 @@ local exclude_names = {"menu", "toolbar"}
 ---@return string
 local function decompress_file_content(filepath)
   local file = io.open(filepath, "r")
-  if not file then
-    error("File does not exist: " .. filepath)
-  end
-
   local src = file:read("*a")
   file:close()
+
   local src_size = #src
   if src_size < 12 then
     error("Buffer is too short (no header) - Data: " .. src)
@@ -55,10 +55,11 @@ local function decompress_file_content(filepath)
     error("Invalid header (no magic number) - Header: " .. header)
   end
 
-  local expected_decompressed_size = string.byte(src, 9)
-    + bit.lshift(string.byte(src, 10), 8)
-    + bit.lshift(string.byte(src, 11), 16)
-    + bit.lshift(string.byte(src, 12), 24)
+  local buf_size = {string.byte(src, 9, 12)}
+  local expected_decompressed_size = buf_size[1]
+    + bit.lshift(buf_size[2], 8)
+    + bit.lshift(buf_size[3], 16)
+    + bit.lshift(buf_size[4], 24)
 
   local output_buffer = ffi.new("char[?]", expected_decompressed_size)
   local actual_decompressed_size = C.LZ4_decompress_safe_partial(
@@ -111,7 +112,7 @@ local function firefox_profile_name(state, profile_path)
   local match = {}
   for _, dir in ipairs(dirs) do
     for _, pat in ipairs(suffix_pattern) do
-      local matched = string.match(dir, ".*%." .. pat .. "$")
+      local matched = string.match(dir, "^.-%." .. pat .. "$")
       if matched and matched ~= "" then
         table.insert(match, matched)
       end
@@ -174,14 +175,16 @@ function firefox.collect_bookmarks(state)
   local profile_name = firefox_profile_name(state, profile_path)
 
   if not profile_name then
-    error("No Firefox profile found at: " .. profile_path)
+    utils.warn("No Firefox profile found at: " .. profile_path)
+    return nil
   end
 
   local bookmark_dir = profile_path .. sep .. profile_name .. sep .. "bookmarkbackups"
   local bookmark_file = get_latest_bookmark_file(state, bookmark_dir)
 
   if not bookmark_file then
-    error("No Firefox bookmark file found at: " .. bookmark_dir)
+    utils.warn("No Firefox bookmark file found at: " .. bookmark_dir)
+    return nil
   end
 
   bookmark_file = bookmark_dir .. state.path_sep .. bookmark_file

@@ -39,14 +39,21 @@ end
 ---@param opts table
 local function bookmarks(opts)
   opts = opts or {}
-  local module_path = 'telescope._extensions.bookmarks.' .. state.selected_browser
+  local selected_browser = state.selected_browser
+
+  local module_path = 'telescope._extensions.bookmarks.' .. selected_browser
   local ok, browser = pcall(require, module_path)
 
   if not ok then
-    error("Unsupported browser: " .. state.selected_browser)
+    if not aliases[selected_browser] then
+      error("Unsupported browser: " .. selected_browser)
+    else
+      error(browser)
+    end
   end
 
   local results = browser.collect_bookmarks(state)
+  if not results then return end
 
   local displayer = entry_display.create {
     separator = " ",
@@ -64,7 +71,7 @@ local function bookmarks(opts)
   end
 
   pickers.new(opts, {
-    prompt_title = "Search " .. aliases[state.selected_browser] .. " Bookmarks",
+    prompt_title = "Search " .. aliases[selected_browser] .. " Bookmarks",
     finder = finders.new_table {
       results = results,
       entry_maker = function(entry)

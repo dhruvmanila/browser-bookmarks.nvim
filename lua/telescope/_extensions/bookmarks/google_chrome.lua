@@ -1,3 +1,5 @@
+local utils = require('telescope._extensions.bookmarks.utils')
+
 ---Default categories of bookmarks to look for.
 local categories = {"bookmark_bar", "synced", "other"}
 
@@ -59,7 +61,8 @@ function google_chrome.collect_bookmarks(state)
   local file = io.open(filepath, "r")
 
   if not file then
-    error("Unable to find the bookmarks file at: " .. filepath)
+    utils.warn("No Google Chrome bookmarks file found at: " .. filepath)
+    return nil
   end
 
   local content = file:read("*a")
