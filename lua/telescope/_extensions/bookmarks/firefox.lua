@@ -1,11 +1,21 @@
+local ffi = require("ffi")
+
 local utils = require('telescope._extensions.bookmarks.utils')
 
-local firefox = {}
+local C = ffi.load('lz4')
 
----Path to the program 'lz4jsoncat' which is installed by running `make` from
----the root of the project.
-local rootdir = string.match(debug.getinfo(1).source, "@(.*telescope%-bookmarks%.nvim)")
-local program_path = rootdir .. "/bin/lz4jsoncat"
+-- https://github.com/lz4/lz4/blob/dev/lib/lz4.h#L231
+ffi.cdef[[
+int LZ4_decompress_safe_partial(
+  const char* src,
+  char* dst,
+  int srcSize,
+  int targetOutputSize,
+  int dstCapacity
+);
+]]
+
+local firefox = {}
 
 ---Path components to the Firefox profiles directory for the respective OS.
 local profiles_path = {
@@ -16,6 +26,55 @@ local profiles_path = {
 
 ---Names to be excluded from the full bookmark name.
 local exclude_names = {"menu", "toolbar"}
+
+---Decompressor for files in Mozilla's "mozLz4" format. Firefox uses this file
+---format to compress e.g., bookmark backups (*.jsonlz4).
+---
+---This file format is in fact just plain LZ4 data with a custom header
+---(magic number [8 bytes] and uncompressed file size [4 bytes, little endian]).
+---
+---File format reference:
+---https://hg.mozilla.org/mozilla-central/file/tip/toolkit/components/lz4/lz4.js
+---@param filepath string
+---@return string
+local function decompress_file_content(filepath)
+  local file = io.open(filepath, "r")
+  if not file then
+    error("File does not exist: " .. filepath)
+  end
+
+  local src = file:read("*a")
+  file:close()
+  local src_size = #src
+  if src_size < 12 then
+    error("Buffer is too short (no header) - Data: " .. src)
+  end
+
+  local header = string.sub(src, 1, 8)
+  if header ~= "mozLz40\0" then
+    error("Invalid header (no magic number) - Header: " .. header)
+  end
+
+  local expected_decompressed_size = string.byte(src, 9)
+    + bit.lshift(string.byte(src, 10), 8)
+    + bit.lshift(string.byte(src, 11), 16)
+    + bit.lshift(string.byte(src, 12), 24)
+
+  local output_buffer = ffi.new("char[?]", expected_decompressed_size)
+  local actual_decompressed_size = C.LZ4_decompress_safe_partial(
+    string.sub(src, 13),
+    output_buffer,
+    src_size - 12,
+    expected_decompressed_size,
+    expected_decompressed_size
+  )
+
+  if actual_decompressed_size < 0 then
+    error("Failed to decompress the data for file: " .. filepath)
+  end
+
+  return ffi.string(output_buffer, actual_decompressed_size)
+end
 
 ---Return the Firefox profile name.
 ---
@@ -126,8 +185,8 @@ function firefox.collect_bookmarks(state)
   end
 
   bookmark_file = bookmark_dir .. state.path_sep .. bookmark_file
-  local output = utils.get_os_command_output({program_path, bookmark_file})
-  local json_output = vim.fn.json_decode(output)
+  local decompressed_data = decompress_file_content(bookmark_file)
+  local json_output = vim.fn.json_decode(decompressed_data)
   return parse_bookmarks_data(json_output)
 end
 
