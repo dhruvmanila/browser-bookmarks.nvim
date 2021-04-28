@@ -53,7 +53,7 @@ end
 
 ---Collect all the bookmarks for the Google Chrome browser.
 ---@param state table
----@return table
+---@return table|nil
 function google_chrome.collect_bookmarks(state)
   local components = bookmarks_filepath[state.os_name][state.selected_browser]
   local filepath = vim.fn.join(components, state.path_sep)

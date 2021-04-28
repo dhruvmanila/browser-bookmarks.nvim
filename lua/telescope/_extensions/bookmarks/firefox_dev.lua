@@ -4,7 +4,7 @@ local firefox_dev = {}
 
 ---Collect all the bookmarks for the Firefox Developer Edition browser.
 ---@param state table
----@return table
+---@return table|nil
 function firefox_dev.collect_bookmarks(state)
   return firefox.collect_bookmarks(state)
 end

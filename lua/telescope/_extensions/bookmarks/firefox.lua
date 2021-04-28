@@ -2,11 +2,6 @@ local ffi = require("ffi")
 
 local utils = require('telescope._extensions.bookmarks.utils')
 
-local ok, C = pcall(ffi.load, "lz4")
-if not ok then
-  error("Firefox requires the LZ4 compression library (https://github.com/lz4/lz4)")
-end
-
 -- https://github.com/lz4/lz4/blob/dev/lib/lz4.h#L231
 ffi.cdef[[
 int LZ4_decompress_safe_partial(
@@ -17,6 +12,12 @@ int LZ4_decompress_safe_partial(
   int dstCapacity
 );
 ]]
+
+local ok, C = pcall(ffi.load, "lz4")
+
+if not ok then
+  error("Firefox requires the LZ4 compression library (https://github.com/lz4/lz4)")
+end
 
 local firefox = {}
 
@@ -167,7 +168,7 @@ end
 
 ---Collect all the bookmarks for the Firefox browser.
 ---@param state table
----@return table
+---@return table|nil
 function firefox.collect_bookmarks(state)
   local sep = state.path_sep
   local components = profiles_path[state.os_name]

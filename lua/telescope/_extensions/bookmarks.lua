@@ -41,17 +41,12 @@ local function bookmarks(opts)
   opts = opts or {}
   local selected_browser = state.selected_browser
 
-  local module_path = 'telescope._extensions.bookmarks.' .. selected_browser
-  local ok, browser = pcall(require, module_path)
-
-  if not ok then
-    if not aliases[selected_browser] then
-      error("Unsupported browser: " .. selected_browser)
-    else
-      error(browser)
-    end
+  if not aliases[selected_browser] then
+    local supported = " (" .. table.concat(vim.tbl_keys(aliases), ", ") .. ")"
+    error("Unsupported browser: " .. selected_browser .. supported)
   end
 
+  local browser = require('telescope._extensions.bookmarks.' .. selected_browser)
   local results = browser.collect_bookmarks(state)
   if not results then return end
 
