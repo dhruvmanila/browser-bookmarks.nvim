@@ -8,8 +8,8 @@ function utils.warn(msg)
   vim.api.nvim_echo({{"[telescope-bookmarks] " .. msg, "WarningMsg"}}, true, {})
 end
 
----Wrapper around telescope utility functino `get_os_command_output` to raise
----an error if there are any otherwise return the output as it is.
+---Wrapper around telescope utility function `get_os_command_output` to raise
+---an error if there are any, otherwise return the output as it is.
 ---@param command table
 ---@return table
 function utils.get_os_command_output(command)

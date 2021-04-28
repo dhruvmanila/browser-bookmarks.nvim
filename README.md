@@ -47,13 +47,13 @@ Supported browsers on the respective OS:
       <td align=center>☑️</td>
     </tr>
     <tr>
-      <td>Safari <a href="https://github.com/dhruvmanila/telescope-bookmarks.nvim#Safari"><sup>[1]</sup></a></td>
+      <td>Safari <a href="README.md#Safari"><sup>[1]</sup></a></td>
       <td align=center>☑️</td>
       <td align=center>-</td>
       <td align=center>-</td>
     </tr>
     <tr>
-      <td>Firefox <a href="https://github.com/dhruvmanila/telescope-bookmarks.nvim#Firefox"><sup>[2]</sup></a></td>
+      <td>Firefox <a href="README.md#Firefox"><sup>[2]</sup></a></td>
       <td align=center>☑️</td>
       <td align=center>☑️</td>
       <td align=center>☑️</td>
@@ -61,7 +61,7 @@ Supported browsers on the respective OS:
   </tbody>
 </table>
 
-_Please take a look at the [**Caveats**](https://github.com/dhruvmanila/telescope-bookmarks.nvim#Caveats) section if you're planning to use this plugin with **Safari** and **Firefox** browser_
+_Please take a look at the [**Caveats**](README.md#Caveats) section if you're planning to use this plugin with **Safari** or **Firefox** browser._
 
 ## Requirements
 
@@ -95,13 +95,16 @@ Extension options:
 require('telescope').setup {
   extensions =
     bookmarks = {
-      -- Available: 'brave', 'google_chrome', 'safari'
+      -- Available: 'brave', 'google_chrome', 'safari', 'firefox', 'firefox_dev'
       selected_browser = 'brave',
       url_open_command = 'open',
+      firefox_profile_name = nil,
     },
   }
 }
 ```
+
+For Firefox users, it is highly recommended to provide the `firefox_profile_name`. By default, it will use the `*.default-release` or `*.default` for the release version (former is preferred) and `*.dev-edition-default` for the developer edition.
 
 ## Available Commands
 
