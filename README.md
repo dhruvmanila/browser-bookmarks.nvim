@@ -47,13 +47,13 @@ Supported browsers on the respective OS:
       <td align=center>☑️</td>
     </tr>
     <tr>
-      <td>Safari <a href="README.md#Safari"><sup>[1]</sup></a></td>
+      <td>Safari <a href="#safari"><sup>[1]</sup></a></td>
       <td align=center>☑️</td>
       <td align=center>-</td>
       <td align=center>-</td>
     </tr>
     <tr>
-      <td>Firefox <a href="README.md#Firefox"><sup>[2]</sup></a></td>
+      <td>Firefox <a href="#firefox"><sup>[2]</sup></a></td>
       <td align=center>☑️</td>
       <td align=center>☑️</td>
       <td align=center>☑️</td>
@@ -61,7 +61,7 @@ Supported browsers on the respective OS:
   </tbody>
 </table>
 
-_Please take a look at the [**Caveats**](README.md#Caveats) section if you're planning to use this plugin with **Safari** or **Firefox** browser._
+_Please take a look at the [**Caveats**](#caveats) section if you're planning to use this plugin with **Safari** or **Firefox** browser._
 
 ## Requirements
 
@@ -134,7 +134,7 @@ The application which is used to run neovim should be allowed full disk access a
 
 Firefox uses the Mozilla's "mozLz4" format to compress e.g., bookmarks backups (.jsonlz4). This file format is in fact just plain LZ4 data with a custom header: magic number (8 bytes) and uncompressed file size (4 bytes, little endian).
 
-There's a `decompress_file_content` function which will decompress the given file content which is in the above format, but that requires the [LZ4 compression library](https://github.com/lz4/lz4) which needs to be downloaded by the user.
+There's a [`decompress_file_content`](https://github.com/dhruvmanila/telescope-bookmarks.nvim/blob/main/lua/telescope/_extensions/bookmarks/firefox.lua#L44) function which will decompress the given file content which is in the above format, but that requires the [LZ4 compression library](https://github.com/lz4/lz4) which needs to be downloaded by the user.
 
 ## References
 
