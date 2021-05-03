@@ -124,8 +124,10 @@ local function get_latest_bookmark_file(state, bookmark_dir)
 
   for _, filename in ipairs(vim.fn.readdir(bookmark_dir)) do
     local filepath = bookmark_dir .. state.path_sep .. filename
-    if vim.fn.getftime(filepath) > last_edited then
+    local time = vim.fn.getftime(filepath)
+    if time > last_edited then
       latest_file = filepath
+      last_edited = time
     end
   end
 
