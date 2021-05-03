@@ -93,14 +93,6 @@ local function firefox_profile_name(state, profile_path)
     return state.firefox_profile_name
   end
 
-  local dirs
-  if state.os_name == "Windows_NT" then
-    -- "/b": Only provide the directory/file name
-    dirs = utils.get_os_command_output({"dir", "/b", profile_path})
-  else
-    dirs = utils.get_os_command_output({"ls", profile_path})
-  end
-
   -- Default profile name pattern.
   -- For release edition, the name changed from 'default' to 'default-release'.
   -- https://blog.nightly.mozilla.org/2019/01/14/moving-to-a-profile-per-install-architecture/
@@ -111,7 +103,7 @@ local function firefox_profile_name(state, profile_path)
   end
 
   local match = {}
-  for _, dir in ipairs(dirs) do
+  for _, dir in ipairs(vim.fn.readdir(profile_path)) do
     for _, pat in ipairs(suffix_pattern) do
       local matched = string.match(dir, "^.-%." .. pat .. "$")
       if matched and matched ~= "" then
@@ -127,14 +119,17 @@ end
 ---@param bookmark_dir string
 ---@return string|nil
 local function get_latest_bookmark_file(state, bookmark_dir)
-  local files
-  if state.os_name == "Windows_NT" then
-    -- Sort the output by date/time, in reverse order.
-    files = utils.get_os_command_output({"dir", "/b", "/o-d", bookmark_dir})
-  else
-    files = utils.get_os_command_output({"ls", "-t", bookmark_dir})
+  local latest_file
+  local last_edited = 0
+
+  for _, filename in ipairs(vim.fn.readdir(bookmark_dir)) do
+    local filepath = bookmark_dir .. state.path_sep .. filename
+    if vim.fn.getftime(filepath) > last_edited then
+      latest_file = filepath
+    end
   end
-  return files[1]
+
+  return latest_file
 end
 
 ---Parse the bookmarks data in a table in the following form:
@@ -188,7 +183,6 @@ function firefox.collect_bookmarks(state)
     return nil
   end
 
-  bookmark_file = bookmark_dir .. state.path_sep .. bookmark_file
   local decompressed_data = decompress_file_content(bookmark_file)
   local json_output = vim.fn.json_decode(decompressed_data)
   return parse_bookmarks_data(json_output)
