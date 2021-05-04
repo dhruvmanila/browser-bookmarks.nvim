@@ -97,7 +97,13 @@ require('telescope').setup {
     bookmarks = {
       -- Available: 'brave', 'google_chrome', 'safari', 'firefox', 'firefox_dev'
       selected_browser = 'brave',
+
+      -- Either provide a shell command to open the URL
       url_open_command = 'open',
+
+      -- Or provide the plugin name which is already installed
+      -- Available: 'vim_external', 'open_browser'
+      url_open_plugin = nil,
       firefox_profile_name = nil,
     },
   }
@@ -105,6 +111,11 @@ require('telescope').setup {
 ```
 
 For Firefox users, it is highly recommended to provide the `firefox_profile_name`. By default, it will use the `*.default-release` or `*.default` for the release version (former is preferred) and `*.dev-edition-default` for the developer edition.
+
+If the user has provided `url_open_plugin` then it will be used, otherwise default to using `url_open_command`. Supported plugins for `url_open_plugin` and the respective plugin function used to open the URL:
+
+* [open-browser.vim](https://github.com/tyru/open-browser.vim) - `openbrowser#open`
+* [vim-external](https://github.com/itchyny/vim-external) - `external#browser`
 
 ## Available Commands
 
