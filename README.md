@@ -126,7 +126,7 @@ Telescope bookmarks
 lua require('telescope').extensions.bookmarks.bookmarks(opts)
 ```
 
-When you press `<CR>` on a selected bookmark, it will open the URL using the `url_open_command` option in your default browser.
+When you press `<CR>` on a selected bookmark, it will open the URL using either the `url_open_plugin` or `url_open_command` option in your default browser.
 
 ## Caveats
 
