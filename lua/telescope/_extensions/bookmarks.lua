@@ -8,9 +8,10 @@ local finders = require("telescope.finders")
 local pickers = require("telescope.pickers")
 local config = require("telescope.config").values
 local actions = require("telescope.actions")
-local action_state = require("telescope.actions.state")
 local entry_display = require("telescope.pickers.entry_display")
 local pathlib = require("telescope.path")
+
+local smart_url_opener = require("telescope._extensions.bookmarks.actions").smart_url_opener
 
 local state = {
   os_name = vim.loop.os_uname().sysname,
@@ -42,8 +43,8 @@ local function bookmarks(opts)
   local selected_browser = state.selected_browser
 
   if not aliases[selected_browser] then
-    local supported = " (" .. table.concat(vim.tbl_keys(aliases), ", ") .. ")"
-    error("Unsupported browser: " .. selected_browser .. supported)
+    local supported = table.concat(vim.tbl_keys(aliases), ", ")
+    error(string.format("Unsupported browser: %s (%s)", selected_browser, supported))
   end
 
   local browser = require('telescope._extensions.bookmarks.' .. selected_browser)
@@ -80,13 +81,8 @@ local function bookmarks(opts)
     },
     previewer = false,
     sorter = config.generic_sorter(opts),
-    attach_mappings = function(prompt_bufnr)
-      actions.select_default:replace(function()
-        local selection = action_state.get_selected_entry()
-        actions.close(prompt_bufnr)
-
-        os.execute(state.url_open_command .. ' "' .. selection.value .. '" &> /dev/null')
-      end)
+    attach_mappings = function()
+      actions.select_default:replace(smart_url_opener(state))
       return true
     end,
   }):find()
@@ -96,6 +92,7 @@ return telescope.register_extension {
   setup = function(ext_config)
     set_config_state("selected_browser", ext_config.selected_browser, "brave")
     set_config_state("url_open_command", ext_config.url_open_command, "open")
+    set_config_state("url_open_plugin", ext_config.url_open_plugin, nil)
     set_config_state("firefox_profile_name", ext_config.firefox_profile_name, nil)
   end,
   exports = {bookmarks = bookmarks},
