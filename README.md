@@ -1,7 +1,16 @@
+<div align="center">
+  
 # telescope-bookmarks.nvim
+
+<a href="https://github.com/neovim/neovim"> ![Requires Neovim](https://img.shields.io/badge/requires-neovim%200.5%2B-green?style=flat-square&logo=neovim)</a>
+<a href="https://github.com/nvim-telescope/telescope.nvim"> ![Requires Telescope](https://img.shields.io/badge/requires-telescope.nvim-lightgrey?style=flat-square&logo=telescope)</a>
+<a href="/LICENSE"> ![License](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)</a>
+
 A Neovim Telescope extension to open your browser bookmarks right from the editor!
 
 ![telescope-bookmarks.nvim](https://user-images.githubusercontent.com/67177269/115862442-c89d7280-a451-11eb-94c5-501095f88ed7.png)
+
+</div>
 
 <details>
 <summary><em>Screenshot configuration</em></summary>
