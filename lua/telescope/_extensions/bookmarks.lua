@@ -61,7 +61,7 @@ local function bookmarks(opts)
   local displayer = entry_display.create {
     separator = " ",
     items = {
-      { width = config.width * vim.o.columns / 2 },
+      { width = 65 },
       { remaining = true },
     },
   }
