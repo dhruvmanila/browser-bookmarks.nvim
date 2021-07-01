@@ -1,16 +1,20 @@
-local utils = require('telescope._extensions.bookmarks.utils')
-local plist_parse = require('telescope._extensions.bookmarks.plist_parser')
+local utils = require "telescope._extensions.bookmarks.utils"
+local plist_parse = require "telescope._extensions.bookmarks.plist_parser"
 
 local safari = {}
 
 ---Path components to the bookmarks file for the respective OS.
 ---Safari browser is only supported in MacOS.
 local bookmarks_filepath = {
-  Darwin = {"Library", "Safari", "Bookmarks.plist"},
+  Darwin = { "Library", "Safari", "Bookmarks.plist" },
 }
 
 ---Names to be excluded from the full bookmark name.
-local exclude_names = {"BookmarksBar", "BookmarksMenu", "com.apple.ReadingList"}
+local exclude_names = {
+  "BookmarksBar",
+  "BookmarksMenu",
+  "com.apple.ReadingList",
+}
 
 ---Parse the bookmarks data in a table in the following form:
 ---{
@@ -24,19 +28,20 @@ local function parse_bookmarks_data(data)
 
   local function insert_items(parent, bookmark)
     local name = ""
-    if bookmark.WebBookmarkType == 'WebBookmarkTypeList' then
+    if bookmark.WebBookmarkType == "WebBookmarkTypeList" then
       -- Exclude the category name from the final name
       if not vim.tbl_contains(exclude_names, bookmark.Title) then
-        name = parent ~= "" and parent .. "/" .. bookmark.Title or bookmark.Title
+        name = parent ~= "" and parent .. "/" .. bookmark.Title
+          or bookmark.Title
       end
       local children = bookmark.Children or {}
       for _, child in ipairs(children) do
         insert_items(name, child)
       end
-    elseif bookmark.WebBookmarkType == 'WebBookmarkTypeLeaf' then
+    elseif bookmark.WebBookmarkType == "WebBookmarkTypeLeaf" then
       local title = bookmark.URIDictionary.title
       name = parent ~= "" and parent .. "/" .. title or title
-      table.insert(items, {name = name, url = bookmark.URLString})
+      table.insert(items, { name = name, url = bookmark.URLString })
     end
   end
 
@@ -58,7 +63,7 @@ function safari.collect_bookmarks(state)
   local filepath = vim.fn.join(components, state.path_sep)
   filepath = state.os_home .. state.path_sep .. filepath
 
-  local command = {"plutil",  "-convert", "xml1", "-o", "-", filepath}
+  local command = { "plutil", "-convert", "xml1", "-o", "-", filepath }
   local output = utils.get_os_command_output(command)
   output = table.concat(output, "\n")
 

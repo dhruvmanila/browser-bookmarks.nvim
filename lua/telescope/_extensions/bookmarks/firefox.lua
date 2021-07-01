@@ -1,9 +1,9 @@
-local ffi = require("ffi")
+local ffi = require "ffi"
 
-local utils = require('telescope._extensions.bookmarks.utils')
+local utils = require "telescope._extensions.bookmarks.utils"
 
 -- https://github.com/lz4/lz4/blob/dev/lib/lz4.h#L231
-ffi.cdef[[
+ffi.cdef [[
 int LZ4_decompress_safe_partial(
   const char* src,
   char* dst,
@@ -16,20 +16,20 @@ int LZ4_decompress_safe_partial(
 local ok, C = pcall(ffi.load, "lz4")
 
 if not ok then
-  error("Firefox requires the LZ4 compression library (https://github.com/lz4/lz4)")
+  error "Firefox requires the LZ4 compression library (https://github.com/lz4/lz4)"
 end
 
 local firefox = {}
 
 ---Path components to the Firefox profiles directory for the respective OS.
 local profiles_path = {
-  Darwin = {"Library", "Application Support", "Firefox", "Profiles"},
-  Linux = {".mozilla", "firefox"},
-  Windows_NT = {"AppData", "Roaming", "Mozilla", "Firefox", "Profiles"},
+  Darwin = { "Library", "Application Support", "Firefox", "Profiles" },
+  Linux = { ".mozilla", "firefox" },
+  Windows_NT = { "AppData", "Roaming", "Mozilla", "Firefox", "Profiles" },
 }
 
 ---Names to be excluded from the full bookmark name.
-local exclude_names = {"menu", "toolbar"}
+local exclude_names = { "menu", "toolbar" }
 
 ---Decompressor for files in Mozilla's "mozLz4" format. Firefox uses this file
 ---format to compress e.g., bookmark backups (*.jsonlz4).
@@ -43,7 +43,7 @@ local exclude_names = {"menu", "toolbar"}
 ---@return string
 local function decompress_file_content(filepath)
   local file = io.open(filepath, "r")
-  local src = file:read("*a")
+  local src = file:read "*a"
   file:close()
 
   local src_size = #src
@@ -56,7 +56,7 @@ local function decompress_file_content(filepath)
     error("Invalid header (no magic number) - Header: " .. header)
   end
 
-  local buf_size = {string.byte(src, 9, 12)}
+  local buf_size = { string.byte(src, 9, 12) }
   local expected_decompressed_size = buf_size[1]
     + bit.lshift(buf_size[2], 8)
     + bit.lshift(buf_size[3], 16)
@@ -97,9 +97,9 @@ local function firefox_profile_name(state, profile_path)
   -- For release edition, the name changed from 'default' to 'default-release'.
   -- https://blog.nightly.mozilla.org/2019/01/14/moving-to-a-profile-per-install-architecture/
   -- NOTE: Order matters (first match is chosen)
-  local suffix_pattern = {"default%-release", "default"}
+  local suffix_pattern = { "default%-release", "default" }
   if state.selected_browser == "firefox_dev" then
-    suffix_pattern = {"dev%-edition%-default"}
+    suffix_pattern = { "dev%-edition%-default" }
   end
 
   local match = {}
@@ -155,7 +155,7 @@ local function parse_bookmarks_data(data)
         insert_items(name, child)
       end
     elseif bookmark.type == "text/x-moz-place" then
-      table.insert(items, {name = name, url = bookmark.uri})
+      table.insert(items, { name = name, url = bookmark.uri })
     end
   end
 
@@ -177,7 +177,11 @@ function firefox.collect_bookmarks(state)
     return nil
   end
 
-  local bookmark_dir = profile_path .. sep .. profile_name .. sep .. "bookmarkbackups"
+  local bookmark_dir = profile_path
+    .. sep
+    .. profile_name
+    .. sep
+    .. "bookmarkbackups"
   local bookmark_file = get_latest_bookmark_file(state, bookmark_dir)
 
   if not bookmark_file then

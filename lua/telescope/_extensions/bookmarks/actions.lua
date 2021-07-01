@@ -1,11 +1,11 @@
-local actions = require("telescope.actions")
-local action_state = require("telescope.actions.state")
+local actions = require "telescope.actions"
+local action_state = require "telescope.actions.state"
 
 local plugin_actions = {}
 
 local url_plugin_function = {
-  open_browser = 'openbrowser#open',
-  vim_external = 'external#browser',
+  open_browser = "openbrowser#open",
+  vim_external = "external#browser",
 }
 
 ---Smart URL opener.
@@ -19,16 +19,24 @@ function plugin_actions.smart_url_opener(state)
     local selection = action_state.get_selected_entry()
     actions.close(prompt_bufnr)
 
-    if plugin_name and plugin_name ~= '' then
+    if plugin_name and plugin_name ~= "" then
       local fname = url_plugin_function[plugin_name]
       if not fname then
         local supported = table.concat(vim.tbl_keys(url_plugin_function), ", ")
-        error(string.format("Unsupported plugin opener: %s (%s)", plugin_name, supported))
+        error(
+          string.format(
+            "Unsupported plugin opener: %s (%s)",
+            plugin_name,
+            supported
+          )
+        )
       end
 
       vim.fn[fname](selection.value)
     else
-      os.execute(string.format('%s "%s"', state.url_open_command, selection.value))
+      os.execute(
+        string.format('%s "%s"', state.url_open_command, selection.value)
+      )
     end
   end
 end

@@ -1,4 +1,4 @@
-local google_chrome = require('telescope._extensions.bookmarks.google_chrome')
+local google_chrome = require "telescope._extensions.bookmarks.google_chrome"
 
 local brave = {}
 

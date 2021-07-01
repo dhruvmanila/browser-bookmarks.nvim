@@ -27,7 +27,8 @@ function plp.next_tag(s, i)
 end
 
 function plp.array(s, i)
-  local arr, next_tag, array, dictionary = {}, plp.next_tag, plp.array, plp.dictionary
+  local arr, next_tag, array, dictionary =
+    {}, plp.next_tag, plp.array, plp.dictionary
   local ni, j, c, label, empty
 
   while true do
@@ -38,28 +39,28 @@ function plp.array(s, i)
       local _
       if empty == "/" then
         if label == "dict" or label == "array" then
-          arr[#arr+1] = {}
+          arr[#arr + 1] = {}
         else
-          arr[#arr+1] = (label == "true") and true or false
+          arr[#arr + 1] = (label == "true") and true or false
         end
       elseif label == "array" then
-        arr[#arr+1], _, j = array(s, j+1)
+        arr[#arr + 1], _, j = array(s, j + 1)
       elseif label == "dict" then
-        arr[#arr+1], _, j = dictionary(s, j+1)
+        arr[#arr + 1], _, j = dictionary(s, j + 1)
       else
         i = j + 1
         ni, j, _, label, _ = next_tag(s, i)
 
-        local val = string.sub(s, i, ni-1)
+        local val = string.sub(s, i, ni - 1)
         if label == "integer" or label == "real" then
-          arr[#arr+1] = tonumber(val)
+          arr[#arr + 1] = tonumber(val)
         else
-          arr[#arr+1] = val
+          arr[#arr + 1] = val
         end
       end
     elseif c == "/" then
       assert(label == "array")
-      return arr, j+1, j
+      return arr, j + 1, j
     end
 
     i = j + 1
@@ -67,7 +68,8 @@ function plp.array(s, i)
 end
 
 function plp.dictionary(s, i)
-  local dict, next_tag, array, dictionary = {}, plp.next_tag, plp.array, plp.dictionary
+  local dict, next_tag, array, dictionary =
+    {}, plp.next_tag, plp.array, plp.dictionary
   local ni, j, c, label, empty, _
 
   while true do
@@ -80,7 +82,7 @@ function plp.dictionary(s, i)
         ni, j, c, label = next_tag(s, i)
         assert(c == "/" and label == "key")
 
-        local key = string.sub(s, i, ni-1)
+        local key = string.sub(s, i, ni - 1)
 
         i = j + 1
         _, j, _, label, empty = next_tag(s, i)
@@ -93,14 +95,14 @@ function plp.dictionary(s, i)
           end
         else
           if label == "dict" then
-            dict[key], _, j = dictionary(s, j+1)
+            dict[key], _, j = dictionary(s, j + 1)
           elseif label == "array" then
-            dict[key], _, j = array(s, j+1)
+            dict[key], _, j = array(s, j + 1)
           else
             i = j + 1
             ni, j, _, label, _ = next_tag(s, i)
 
-            local val = string.sub(s, i, ni-1)
+            local val = string.sub(s, i, ni - 1)
             if label == "integer" or label == "real" then
               dict[key] = tonumber(val)
             else
@@ -111,7 +113,7 @@ function plp.dictionary(s, i)
       end
     elseif c == "/" then
       assert(label == "dict")
-      return dict, j+1, j
+      return dict, j + 1, j
     end
 
     i = j + 1
@@ -127,7 +129,7 @@ local function plist_parse(s)
   local ni, label, empty, _
 
   while label ~= "plist" do
-    ni, i, label, _ = string.find(s, "<[?!]?([%w:]+)(.-)>", i+1)
+    ni, i, label, _ = string.find(s, "<[?!]?([%w:]+)(.-)>", i + 1)
     assert(ni)
   end
 
@@ -136,9 +138,9 @@ local function plist_parse(s)
   if empty == "/" then
     return {}
   elseif label == "dict" then
-    return plp.dictionary(s, i+1)
+    return plp.dictionary(s, i + 1)
   elseif label == "array" then
-    return plp.array(s, i+1)
+    return plp.array(s, i + 1)
   end
 end
 

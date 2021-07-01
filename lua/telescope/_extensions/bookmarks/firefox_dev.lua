@@ -1,4 +1,4 @@
-local firefox = require('telescope._extensions.bookmarks.firefox')
+local firefox = require "telescope._extensions.bookmarks.firefox"
 
 local firefox_dev = {}
 

@@ -1,22 +1,63 @@
-local utils = require('telescope._extensions.bookmarks.utils')
+local utils = require "telescope._extensions.bookmarks.utils"
 
 ---Default categories of bookmarks to look for.
-local categories = {"bookmark_bar", "synced", "other"}
+local categories = { "bookmark_bar", "synced", "other" }
 
 ---Path components to the bookmarks file for the respective OS and browser.
 ---Brave and Google Chrome uses the same underlying format to store bookmarks.
 local bookmarks_filepath = {
   Darwin = {
-    brave = {"Library", "Application Support", "BraveSoftware", "Brave-Browser", "Default", "Bookmarks"},
-    google_chrome = {"Library", "Application Support", "Google", "Chrome", "Default", "Bookmarks"},
+    brave = {
+      "Library",
+      "Application Support",
+      "BraveSoftware",
+      "Brave-Browser",
+      "Default",
+      "Bookmarks",
+    },
+    google_chrome = {
+      "Library",
+      "Application Support",
+      "Google",
+      "Chrome",
+      "Default",
+      "Bookmarks",
+    },
   },
   Linux = {
-    brave = {".config", "BraveSoftware", "Brave-Browser", "Default", "Bookmarks"},
-    google_chrome = {".config", "google-chrome", "Default", "Bookmarks"},
+    brave = {
+      ".config",
+      "BraveSoftware",
+      "Brave-Browser",
+      "Default",
+      "Bookmarks",
+    },
+    google_chrome = {
+      ".config",
+      "google-chrome",
+      "Default",
+      "Bookmarks",
+    },
   },
   Windows_NT = {
-    brave = {"AppData", "Local", "BraveSoftware", "Brave-Browser", "User Data", "Default", "Bookmarks"},
-    google_chrome = {"AppData", "Local", "Google", "Chrome", "User Data", "Default", "Bookmarks"},
+    brave = {
+      "AppData",
+      "Local",
+      "BraveSoftware",
+      "Brave-Browser",
+      "User Data",
+      "Default",
+      "Bookmarks",
+    },
+    google_chrome = {
+      "AppData",
+      "Local",
+      "Google",
+      "Chrome",
+      "User Data",
+      "Default",
+      "Bookmarks",
+    },
   },
 }
 
@@ -34,14 +75,14 @@ local function parse_bookmarks_data(data)
 
   local function insert_items(parent, bookmark)
     local name = parent
-      and (parent ~= "" and parent .. "/" .. bookmark.name or bookmark.name)
+        and (parent ~= "" and parent .. "/" .. bookmark.name or bookmark.name)
       or ""
     if bookmark.type == "folder" then
       for _, child in ipairs(bookmark.children) do
         insert_items(name, child)
       end
     else
-      table.insert(items, {name = name, url = bookmark.url})
+      table.insert(items, { name = name, url = bookmark.url })
     end
   end
 
@@ -65,7 +106,7 @@ function google_chrome.collect_bookmarks(state)
     return nil
   end
 
-  local content = file:read("*a")
+  local content = file:read "*a"
   file:close()
   local data = vim.fn.json_decode(content)
   return parse_bookmarks_data(data)

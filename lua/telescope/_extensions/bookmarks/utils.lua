@@ -1,11 +1,15 @@
-local telescope_utils = require('telescope.utils')
+local telescope_utils = require "telescope.utils"
 
 local utils = {}
 
 ---Emit a warning message.
 ---@param msg string
 function utils.warn(msg)
-  vim.api.nvim_echo({{"[telescope-bookmarks] " .. msg, "WarningMsg"}}, true, {})
+  vim.api.nvim_echo(
+    { { "[telescope-bookmarks] " .. msg, "WarningMsg" } },
+    true,
+    {}
+  )
 end
 
 ---Wrapper around telescope utility function `get_os_command_output` to raise
