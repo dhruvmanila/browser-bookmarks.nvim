@@ -1,5 +1,5 @@
 <div align="center">
-  
+
 # telescope-bookmarks.nvim
 
 <a href="https://github.com/neovim/neovim"> ![Requires Neovim](https://img.shields.io/badge/requires-neovim%200.5%2B-green?style=flat-square&logo=neovim)</a>
@@ -18,8 +18,10 @@ A Neovim Telescope extension to open your browser bookmarks right from the edito
 ```lua
 require('telescope').extensions.bookmarks.bookmarks(
   require('telescope.themes').get_dropdown {
-    width = 0.8,
-    results_height = 0.8,
+    layout_config = {
+      width = 0.8,
+      height = 0.8,
+    },
     previewer = false,
   }
 )
