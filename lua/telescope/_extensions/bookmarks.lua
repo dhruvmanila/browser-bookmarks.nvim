@@ -9,7 +9,6 @@ local pickers = require "telescope.pickers"
 local config = require("telescope.config").values
 local actions = require "telescope.actions"
 local entry_display = require "telescope.pickers.entry_display"
-local pathlib = require "telescope.path"
 
 local smart_url_opener =
   require("telescope._extensions.bookmarks.actions").smart_url_opener
@@ -17,7 +16,7 @@ local smart_url_opener =
 local state = {
   os_name = vim.loop.os_uname().sysname,
   os_home = vim.loop.os_homedir(),
-  path_sep = pathlib.separator,
+  path_sep = require("plenary.path").path.sep,
 }
 
 ---Aliases to be displayed in the prompt title.
