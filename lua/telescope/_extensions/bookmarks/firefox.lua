@@ -16,7 +16,10 @@ int LZ4_decompress_safe_partial(
 local ok, C = pcall(ffi.load, "lz4")
 
 if not ok then
-  error "Firefox requires the LZ4 compression library (https://github.com/lz4/lz4)"
+  error(
+    "Failed to load the LZ4 compression library (https://github.com/lz4/lz4) due to:\n"
+      .. C
+  )
 end
 
 local firefox = {}
