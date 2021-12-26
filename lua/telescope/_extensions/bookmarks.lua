@@ -25,7 +25,6 @@ local aliases = {
   google_chrome = "Google Chrome",
   safari = "Safari",
   firefox = "Firefox",
-  firefox_dev = "Firefox Developer Edition",
 }
 
 ---Set the configuration state.
