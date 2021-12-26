@@ -64,7 +64,7 @@ Supported browsers on the respective OS:
       <td align=center>-</td>
     </tr>
     <tr>
-      <td>Firefox <a href="#firefox"><sup>[2]</sup></a></td>
+      <td>Firefox</td>
       <td align=center>☑️</td>
       <td align=center>☑️</td>
       <td align=center>☑️</td>
@@ -72,24 +72,33 @@ Supported browsers on the respective OS:
   </tbody>
 </table>
 
-_Please take a look at the [**Caveats**](#caveats) section if you're planning to use this plugin with **Safari** or **Firefox** browser._
+_Please take a look at the [**Caveats**](#caveats) section if you're planning to use this plugin with **Safari**._
 
 ## Requirements
 
 * [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim)
+* [sqlite.lua](https://github.com/tami5/sqlite.lua) (only for Firefox browser)
 
 ## Installation
 
 Using [packer.nvim](https://github.com/wbthomason/packer.nvim)
 
 ```lua
-use 'dhruvmanila/telescope-bookmarks.nvim'
+use {
+  'dhruvmanila/telescope-bookmarks.nvim',
+  -- Uncomment if the selected browser is Firefox
+  -- requires = {
+  --   'tami5/sqlite.lua',
+  -- }
+}
 ```
 
 Using [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```vim
 Plug 'dhruvmanila/telescope-bookmarks.nvim'
+" Uncomment if the selected browser is Firefox
+" Plug 'tami5/sqlite.lua'
 ```
 
 ## Telescope Config
@@ -104,9 +113,9 @@ Extension options:
 
 ```lua
 require('telescope').setup {
-  extensions =
+  extensions = {
     bookmarks = {
-      -- Available: 'brave', 'google_chrome', 'safari', 'firefox', 'firefox_dev'
+      -- Available: 'brave', 'google_chrome', 'safari', 'firefox'
       selected_browser = 'brave',
 
       -- Either provide a shell command to open the URL
@@ -115,13 +124,15 @@ require('telescope').setup {
       -- Or provide the plugin name which is already installed
       -- Available: 'vim_external', 'open_browser'
       url_open_plugin = nil,
+
+      -- Provide a custom profile name for Firefox
       firefox_profile_name = nil,
     },
   }
 }
 ```
 
-For Firefox users, it is highly recommended to provide the `firefox_profile_name`. By default, it will use the `*.default-release` or `*.default` for the release version (former is preferred) and `*.dev-edition-default` for the developer edition.
+For Firefox users, the default profile will be used if `firefox_profile_name` is not provided. This is obtained by parsing the profiles config file present in the default config directory.
 
 If the user has provided `url_open_plugin` then it will be used, otherwise default to using `url_open_command`. Supported plugins for `url_open_plugin` and the respective plugin function used to open the URL:
 
@@ -131,6 +142,7 @@ If the user has provided `url_open_plugin` then it will be used, otherwise defau
 ## Available Commands
 
 ```vim
+" From the command-line
 Telescope bookmarks
 
 " Using lua function
@@ -152,14 +164,7 @@ The application which is used to run neovim should be allowed full disk access a
 
 </details>
 
-### Firefox
-
-Firefox uses the Mozilla's "mozLz4" format to compress e.g., bookmarks backups (.jsonlz4). This file format is in fact just plain LZ4 data with a custom header: magic number (8 bytes) and uncompressed file size (4 bytes, little endian).
-
-There's a [`decompress_file_content`](https://github.com/dhruvmanila/telescope-bookmarks.nvim/blob/main/lua/telescope/_extensions/bookmarks/firefox.lua#L44) function which will decompress the given file content which is in the above format, but that requires the [LZ4 compression library](https://github.com/lz4/lz4) which needs to be downloaded by the user.
-
 ## References
 
 * [Browsing Chrome bookmarks with fzf](https://junegunn.kr/2015/04/browsing-chrome-bookmarks-with-fzf/)
 * [Code: plist parser](https://codea.io/talk/discussion/1269/code-plist-parser)
-* [Firefox bookmarks file format](https://hg.mozilla.org/mozilla-central/file/tip/toolkit/components/lz4/lz4.js)
