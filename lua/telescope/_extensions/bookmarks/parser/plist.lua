@@ -120,7 +120,7 @@ function plp.dictionary(s, i)
   end
 end
 
-local function plist_parse(s)
+local function parse(s)
   if type(s) == "nil" or s == "" then
     return nil
   end
@@ -144,4 +144,4 @@ local function plist_parse(s)
   end
 end
 
-return plist_parse
+return { parse = parse }

@@ -1,5 +1,5 @@
 local utils = require "telescope._extensions.bookmarks.utils"
-local plist_parse = require "telescope._extensions.bookmarks.plist_parser"
+local plist = require "telescope._extensions.bookmarks.parser.plist"
 
 local safari = {}
 
@@ -67,7 +67,7 @@ function safari.collect_bookmarks(state)
   local output = utils.get_os_command_output(command)
   output = table.concat(output, "\n")
 
-  local data = plist_parse(output)
+  local data = plist.parse(output)
   return parse_bookmarks_data(data)
 end
 
