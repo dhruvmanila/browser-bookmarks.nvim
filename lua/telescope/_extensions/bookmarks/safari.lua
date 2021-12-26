@@ -60,8 +60,7 @@ function safari.collect_bookmarks(state)
     error("Unsupported OS for Safari browser: " .. state.os_name)
   end
 
-  local filepath = vim.fn.join(components, state.path_sep)
-  filepath = state.os_home .. state.path_sep .. filepath
+  local filepath = utils.join_path(state.os_homedir, components)
 
   local command = { "plutil", "-convert", "xml1", "-o", "-", filepath }
   local output = utils.get_os_command_output(command)

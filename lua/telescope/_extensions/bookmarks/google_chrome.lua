@@ -97,10 +97,9 @@ end
 ---@return table|nil
 function google_chrome.collect_bookmarks(state)
   local components = bookmarks_filepath[state.os_name][state.selected_browser]
-  local filepath = vim.fn.join(components, state.path_sep)
-  filepath = state.os_home .. state.path_sep .. filepath
-  local file = io.open(filepath, "r")
 
+  local filepath = utils.join_path(state.os_homedir, components)
+  local file = io.open(filepath, "r")
   if not file then
     utils.warn("No Google Chrome bookmarks file found at: " .. filepath)
     return nil

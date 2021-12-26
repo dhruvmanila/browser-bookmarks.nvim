@@ -1,6 +1,8 @@
+local utils = {}
+
 local telescope_utils = require "telescope.utils"
 
-local utils = {}
+local path_sep = require("plenary.path").path.sep
 
 ---Emit a warning message.
 ---@param msg string
@@ -22,6 +24,22 @@ function utils.get_os_command_output(command)
     error(table.concat(err, "\n"))
   end
   return output
+end
+
+---Return a path string made up of the given mix of strings or tables.
+---@param ... string|[]string
+---@return string
+function utils.join_path(...)
+  local components = {}
+  for i = 1, select("#", ...) do
+    local component = select(i, ...)
+    if type(component) == "table" then
+      table.insert(components, table.concat(component, path_sep))
+    elseif type(component) == "string" then
+      table.insert(components, component)
+    end
+  end
+  return table.concat(components, path_sep)
 end
 
 return utils
