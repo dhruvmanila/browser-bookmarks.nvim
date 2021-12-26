@@ -13,10 +13,10 @@ local entry_display = require "telescope.pickers.entry_display"
 local smart_url_opener =
   require("telescope._extensions.bookmarks.actions").smart_url_opener
 
+---@type ConfigState
 local state = {
   os_name = vim.loop.os_uname().sysname,
-  os_home = vim.loop.os_homedir(),
-  path_sep = require("plenary.path").path.sep,
+  os_homedir = vim.loop.os_homedir(),
 }
 
 ---Aliases to be displayed in the prompt title.
@@ -52,7 +52,7 @@ local function bookmarks(opts)
     "telescope._extensions.bookmarks." .. selected_browser
   )
   local results = browser.collect_bookmarks(state)
-  if not results then
+  if not results or vim.tbl_isempty(results) then
     return
   end
 

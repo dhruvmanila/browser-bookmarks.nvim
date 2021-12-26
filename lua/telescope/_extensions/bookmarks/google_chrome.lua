@@ -1,3 +1,5 @@
+local google_chrome = {}
+
 local utils = require "telescope._extensions.bookmarks.utils"
 
 ---Default categories of bookmarks to look for.
@@ -61,13 +63,7 @@ local bookmarks_filepath = {
   },
 }
 
-local google_chrome = {}
-
----Parse the bookmarks data in a table in the following form:
----{
----  {name = <bookmark name>, url = <bookmark url>},
----  ...,
----}
+---Parse the bookmarks data to a lua table.
 ---@param data table
 ---@return table
 local function parse_bookmarks_data(data)
@@ -92,16 +88,30 @@ local function parse_bookmarks_data(data)
   return items
 end
 
----Collect all the bookmarks for the Google Chrome browser.
----@param state table
----@return table|nil
+---Collect all the bookmarks for Google Chrome or Brave browser.
+---@param state ConfigState
+---@return Bookmark[]|nil
 function google_chrome.collect_bookmarks(state)
   local components = bookmarks_filepath[state.os_name][state.selected_browser]
+  if not components then
+    utils.warn(
+      ("Unsupported OS for %s: %s"):format(
+        state.selected_browser,
+        state.os_name
+      )
+    )
+    return nil
+  end
 
   local filepath = utils.join_path(state.os_homedir, components)
   local file = io.open(filepath, "r")
   if not file then
-    utils.warn("No Google Chrome bookmarks file found at: " .. filepath)
+    utils.warn(
+      ("No %s bookmarks file found at: %s"):format(
+        state.selected_browser,
+        filepath
+      )
+    )
     return nil
   end
 
