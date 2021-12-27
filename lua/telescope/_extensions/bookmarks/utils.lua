@@ -26,20 +26,12 @@ function utils.get_os_command_output(command)
   return output
 end
 
----Return a path string made up of the given mix of strings or tables.
----@param ... string|[]string
+---Return a path string made up of the given mix of strings or tables in the
+---order they are provided.
+---@param ... string|string[]
 ---@return string
 function utils.join_path(...)
-  local components = {}
-  for i = 1, select("#", ...) do
-    local component = select(i, ...)
-    if type(component) == "table" then
-      table.insert(components, table.concat(component, path_sep))
-    elseif type(component) == "string" then
-      table.insert(components, component)
-    end
-  end
-  return table.concat(components, path_sep)
+  return table.concat(vim.tbl_flatten { ... }, path_sep)
 end
 
 return utils

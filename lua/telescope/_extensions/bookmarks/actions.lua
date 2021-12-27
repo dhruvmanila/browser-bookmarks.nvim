@@ -11,7 +11,7 @@ local url_plugin_function = {
 ---Smart URL opener.
 ---If `state.url_open_plugin` is given, then open it using the plugin function
 ---otherwise open it using `state.url_open_command`.
----@param state table
+---@param state ConfigState
 ---@return function
 function plugin_actions.smart_url_opener(state)
   return function(prompt_bufnr)
