@@ -1,4 +1,4 @@
-local google_chrome = require "telescope._extensions.bookmarks.google_chrome"
+local chrome = require "telescope._extensions.bookmarks.chrome"
 
 local brave = {}
 
@@ -7,7 +7,7 @@ local brave = {}
 ---@param state ConfigState
 ---@return Bookmark[]|nil
 function brave.collect_bookmarks(state)
-  return google_chrome.collect_bookmarks(state)
+  return chrome.collect_bookmarks(state)
 end
 
 return brave

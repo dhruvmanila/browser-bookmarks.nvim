@@ -10,6 +10,7 @@ local config = require("telescope.config").values
 local actions = require "telescope.actions"
 local entry_display = require "telescope.pickers.entry_display"
 
+local utils = require "telescope._extensions.bookmarks.utils"
 local smart_url_opener =
   require("telescope._extensions.bookmarks.actions").smart_url_opener
 
@@ -19,13 +20,13 @@ local state = {
   os_homedir = vim.loop.os_homedir(),
 }
 
----Aliases to be displayed in the prompt title.
-local aliases = {
+---Prompt title.
+local title = {
   brave = "Brave",
-  google_chrome = "Google Chrome",
-  safari = "Safari",
+  chrome = "Chrome",
+  edge = "Edge",
   firefox = "Firefox",
-  edge = "Microsoft Edge",
+  safari = "Safari",
 }
 
 ---Set the configuration state.
@@ -40,10 +41,16 @@ end
 ---@param opts table
 local function bookmarks(opts)
   opts = opts or {}
+  -- TODO: Deprecation warning start: Removal scheduled at: 31/01/2022
+  if state.selected_browser == "google_chrome" then
+    utils.warn "Deprecated browser name: 'google_chrome'. Please use 'chrome' instead."
+    state.selected_browser = "chrome"
+  end
+  -- TODO: Deprecation warning end
   local selected_browser = state.selected_browser
 
-  if not aliases[selected_browser] then
-    local supported = table.concat(vim.tbl_keys(aliases), ", ")
+  if not title[selected_browser] then
+    local supported = table.concat(vim.tbl_keys(title), ", ")
     error(
       string.format("Unsupported browser: %s (%s)", selected_browser, supported)
     )
@@ -73,7 +80,7 @@ local function bookmarks(opts)
   end
 
   pickers.new(opts, {
-    prompt_title = "Search " .. aliases[selected_browser] .. " Bookmarks",
+    prompt_title = "Search " .. title[selected_browser] .. " Bookmarks",
     finder = finders.new_table {
       results = results,
       entry_maker = function(entry)

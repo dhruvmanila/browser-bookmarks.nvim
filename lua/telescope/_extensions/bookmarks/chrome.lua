@@ -1,4 +1,4 @@
-local google_chrome = {}
+local chrome = {}
 
 local utils = require "telescope._extensions.bookmarks.utils"
 
@@ -17,7 +17,7 @@ local bookmarks_filepath = {
       "Default",
       "Bookmarks",
     },
-    google_chrome = {
+    chrome = {
       "Library",
       "Application Support",
       "Google",
@@ -41,7 +41,7 @@ local bookmarks_filepath = {
       "Default",
       "Bookmarks",
     },
-    google_chrome = {
+    chrome = {
       ".config",
       "google-chrome",
       "Default",
@@ -64,7 +64,7 @@ local bookmarks_filepath = {
       "Default",
       "Bookmarks",
     },
-    google_chrome = {
+    chrome = {
       "AppData",
       "Local",
       "Google",
@@ -117,7 +117,7 @@ end
 ---Collect all the bookmarks for Google Chrome or Brave browser.
 ---@param state ConfigState
 ---@return Bookmark[]|nil
-function google_chrome.collect_bookmarks(state)
+function chrome.collect_bookmarks(state)
   local components = bookmarks_filepath[state.os_name][state.selected_browser]
   if not components then
     utils.warn(
@@ -147,4 +147,4 @@ function google_chrome.collect_bookmarks(state)
   return parse_bookmarks_data(data)
 end
 
-return google_chrome
+return chrome
