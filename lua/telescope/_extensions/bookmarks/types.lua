@@ -1,6 +1,7 @@
 ---@class ConfigState
 ---@field os_name string
 ---@field os_homedir string
+---@field full_path boolean
 ---@field selected_browser string
 ---@field url_open_command string
 ---@field url_open_plugin string
@@ -8,4 +9,5 @@
 
 ---@class Bookmark
 ---@field name string
+---@field path string
 ---@field url string

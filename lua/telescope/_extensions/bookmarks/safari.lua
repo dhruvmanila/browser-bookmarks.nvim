@@ -23,21 +23,25 @@ local function parse_bookmarks_data(data)
   local items = {}
 
   local function insert_items(parent, bookmark)
-    local name = ""
+    local path = ""
     if bookmark.WebBookmarkType == "WebBookmarkTypeList" then
       -- Exclude the category name from the final name
       if not vim.tbl_contains(exclude_names, bookmark.Title) then
-        name = parent ~= "" and parent .. "/" .. bookmark.Title
+        path = parent ~= "" and parent .. "/" .. bookmark.Title
           or bookmark.Title
       end
       local children = bookmark.Children or {}
       for _, child in ipairs(children) do
-        insert_items(name, child)
+        insert_items(path, child)
       end
     elseif bookmark.WebBookmarkType == "WebBookmarkTypeLeaf" then
       local title = bookmark.URIDictionary.title
-      name = parent ~= "" and parent .. "/" .. title or title
-      table.insert(items, { name = name, url = bookmark.URLString })
+      path = parent ~= "" and parent .. "/" .. title or title
+      table.insert(items, {
+        name = title,
+        path = path,
+        url = bookmark.URLString,
+      })
     end
   end
 

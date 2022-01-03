@@ -78,7 +78,7 @@ local function bookmarks(opts)
       entry_maker = function(entry)
         return {
           display = make_display,
-          name = entry.name,
+          name = state.full_path and entry.path or entry.name,
           value = entry.url,
           ordinal = entry.name .. " " .. entry.url,
         }
@@ -95,6 +95,7 @@ end
 
 return telescope.register_extension {
   setup = function(ext_config)
+    set_config_state("full_path", ext_config.full_path, true)
     set_config_state("selected_browser", ext_config.selected_browser, "brave")
     set_config_state("url_open_command", ext_config.url_open_command, "open")
     set_config_state("url_open_plugin", ext_config.url_open_plugin, nil)

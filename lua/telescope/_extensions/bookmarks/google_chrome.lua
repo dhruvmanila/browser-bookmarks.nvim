@@ -70,15 +70,19 @@ local function parse_bookmarks_data(data)
   local items = {}
 
   local function insert_items(parent, bookmark)
-    local name = parent
+    local path = parent
         and (parent ~= "" and parent .. "/" .. bookmark.name or bookmark.name)
       or ""
     if bookmark.type == "folder" then
       for _, child in ipairs(bookmark.children) do
-        insert_items(name, child)
+        insert_items(path, child)
       end
     else
-      table.insert(items, { name = name, url = bookmark.url })
+      table.insert(items, {
+        name = bookmark.name,
+        path = path,
+        url = bookmark.url,
+      })
     end
   end
 

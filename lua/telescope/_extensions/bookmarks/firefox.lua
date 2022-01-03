@@ -100,7 +100,8 @@ function firefox.collect_bookmarks(state)
     end
 
     table.insert(bookmarks, {
-      name = table.concat(path, "/"),
+      name = row.title,
+      path = table.concat(path, "/"),
       url = url,
     })
   end
