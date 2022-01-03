@@ -121,7 +121,7 @@ function google_chrome.collect_bookmarks(state)
 
   local content = file:read "*a"
   file:close()
-  local data = vim.fn.json_decode(content)
+  local data = vim.json.decode(content)
   return parse_bookmarks_data(data)
 end
 
