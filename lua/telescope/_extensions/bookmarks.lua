@@ -23,6 +23,7 @@ local state = {
 ---Prompt title.
 local title = {
   brave = "Brave",
+  buku = "Buku",
   chrome = "Chrome",
   edge = "Edge",
   firefox = "Firefox",

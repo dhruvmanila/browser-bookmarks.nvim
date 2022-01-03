@@ -78,12 +78,17 @@ Supported browsers on the respective OS:
   </tbody>
 </table>
 
+Supported tools:
+
+- [buku](https://github.com/jarun/buku) - bookmark manager
+
 _Please take a look at the [**Caveats**](#caveats) section if you're planning to use this plugin with **Safari**._
 
 ## Requirements
 
 * [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim)
-* [sqlite.lua](https://github.com/tami5/sqlite.lua) (only for Firefox browser)
+* [sqlite.lua](https://github.com/tami5/sqlite.lua) (only for Firefox browser
+  and buku)
 
 ## Installation
 
@@ -121,7 +126,7 @@ Extension options:
 require('telescope').setup {
   extensions = {
     bookmarks = {
-      -- Available: 'brave', 'chrome', 'edge', 'firefox', 'safari'
+      -- Available: 'brave', 'buku', 'chrome', 'edge', 'safari', 'firefox'
       selected_browser = 'brave',
 
       -- Either provide a shell command to open the URL
