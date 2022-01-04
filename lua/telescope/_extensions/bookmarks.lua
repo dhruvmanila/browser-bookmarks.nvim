@@ -25,6 +25,7 @@ local aliases = {
   google_chrome = "Google Chrome",
   safari = "Safari",
   firefox = "Firefox",
+  microsoft_edge = "Microsoft Edge",
 }
 
 ---Set the configuration state.
