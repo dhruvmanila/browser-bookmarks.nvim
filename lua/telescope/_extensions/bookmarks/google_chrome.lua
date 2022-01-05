@@ -25,7 +25,7 @@ local bookmarks_filepath = {
       "Default",
       "Bookmarks",
     },
-    microsoft_edge = {
+    edge = {
       "Library",
       "Application Support",
       "Microsoft Edge",
@@ -47,7 +47,7 @@ local bookmarks_filepath = {
       "Default",
       "Bookmarks",
     },
-    microsoft_edge = {
+    edge = {
       ".config",
       "microsoft-edge",
       "Default",
@@ -73,7 +73,7 @@ local bookmarks_filepath = {
       "Default",
       "Bookmarks",
     },
-    microsoft_edge = {
+    edge = {
       "AppData",
       "Local",
       "Microsoft",
