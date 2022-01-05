@@ -25,6 +25,13 @@ local bookmarks_filepath = {
       "Default",
       "Bookmarks",
     },
+    edge = {
+      "Library",
+      "Application Support",
+      "Microsoft Edge",
+      "Default",
+      "Bookmarks",
+    },
   },
   Linux = {
     brave = {
@@ -37,6 +44,12 @@ local bookmarks_filepath = {
     google_chrome = {
       ".config",
       "google-chrome",
+      "Default",
+      "Bookmarks",
+    },
+    edge = {
+      ".config",
+      "microsoft-edge",
       "Default",
       "Bookmarks",
     },
@@ -56,6 +69,15 @@ local bookmarks_filepath = {
       "Local",
       "Google",
       "Chrome",
+      "User Data",
+      "Default",
+      "Bookmarks",
+    },
+    edge = {
+      "AppData",
+      "Local",
+      "Microsoft",
+      "Edge",
       "User Data",
       "Default",
       "Bookmarks",

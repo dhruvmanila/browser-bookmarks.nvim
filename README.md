@@ -69,6 +69,12 @@ Supported browsers on the respective OS:
       <td align=center>☑️</td>
       <td align=center>☑️</td>
     </tr>
+    <tr>
+      <td>Microsoft Edge</td>
+      <td align=center>☑️</td>
+      <td align=center>☑️</td>
+      <td align=center>☑️</td>
+    </tr>
   </tbody>
 </table>
 
@@ -115,7 +121,8 @@ Extension options:
 require('telescope').setup {
   extensions = {
     bookmarks = {
-      -- Available: 'brave', 'google_chrome', 'safari', 'firefox'
+      -- Available: 'brave', 'google_chrome', 'safari', 'firefox',
+      -- 'edge'
       selected_browser = 'brave',
 
       -- Either provide a shell command to open the URL
