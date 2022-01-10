@@ -121,8 +121,7 @@ Extension options:
 require('telescope').setup {
   extensions = {
     bookmarks = {
-      -- Available: 'brave', 'google_chrome', 'safari', 'firefox',
-      -- 'edge'
+      -- Available: 'brave', 'chrome', 'edge', 'firefox', 'safari'
       selected_browser = 'brave',
 
       -- Either provide a shell command to open the URL
