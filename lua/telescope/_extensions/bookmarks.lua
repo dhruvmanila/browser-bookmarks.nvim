@@ -84,11 +84,12 @@ local function bookmarks(opts)
     finder = finders.new_table {
       results = results,
       entry_maker = function(entry)
+        local name = (state.full_path and entry.path or entry.name) or ""
         return {
           display = make_display,
-          name = state.full_path and entry.path or entry.name,
+          name = name,
           value = entry.url,
-          ordinal = (entry.name or '') .. " " .. entry.url,
+          ordinal = name .. " " .. entry.url,
         }
       end,
     },
