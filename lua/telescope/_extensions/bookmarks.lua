@@ -88,7 +88,7 @@ local function bookmarks(opts)
           display = make_display,
           name = state.full_path and entry.path or entry.name,
           value = entry.url,
-          ordinal = entry.name .. " " .. entry.url,
+          ordinal = (entry.name or '') .. " " .. entry.url,
         }
       end,
     },
