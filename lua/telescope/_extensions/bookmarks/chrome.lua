@@ -25,6 +25,14 @@ local bookmarks_filepath = {
       "Default",
       "Bookmarks",
     },
+    chrome_beta = {
+      "Library",
+      "Application Support",
+      "Google",
+      "Chrome Beta",
+      "Default",
+      "Bookmarks",
+    },
     edge = {
       "Library",
       "Application Support",
@@ -44,6 +52,12 @@ local bookmarks_filepath = {
     chrome = {
       ".config",
       "google-chrome",
+      "Default",
+      "Bookmarks",
+    },
+    chrome_beta = {
+      ".config",
+      "google-chrome-beta",
       "Default",
       "Bookmarks",
     },
@@ -69,6 +83,15 @@ local bookmarks_filepath = {
       "Local",
       "Google",
       "Chrome",
+      "User Data",
+      "Default",
+      "Bookmarks",
+    },
+    chrome_beta = {
+      "AppData",
+      "Local",
+      "Google",
+      "Chrome Beta",
       "User Data",
       "Default",
       "Bookmarks",
@@ -114,7 +137,7 @@ local function parse_bookmarks_data(data)
   return items
 end
 
----Collect all the bookmarks for Google Chrome or Brave browser.
+---Collect all the bookmarks for Chromium based browsers.
 ---@param state ConfigState
 ---@return Bookmark[]|nil
 function chrome.collect_bookmarks(state)
