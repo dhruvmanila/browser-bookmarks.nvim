@@ -25,6 +25,7 @@ local title = {
   brave = "Brave",
   buku = "Buku",
   chrome = "Chrome",
+  chrome_beta = "Chrome",
   edge = "Edge",
   firefox = "Firefox",
   safari = "Safari",
