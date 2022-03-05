@@ -56,6 +56,14 @@ local function get_profile_dir(state)
       end
     end
   end
+
+  if profile_dir == nil then
+    utils.warn(
+      "Unable to deduce the default firefox profile name. "
+        .. "Please provide one with `firefox_profile_name` option."
+    )
+  end
+
   return profile_dir
 end
 
@@ -65,7 +73,6 @@ end
 function firefox.collect_bookmarks(state)
   local profile_dir = get_profile_dir(state)
   if profile_dir == nil then
-    utils.warn "Unable to deduce the default firefox profile name. Please provide one with `firefox_profile_name` option."
     return nil
   end
 
