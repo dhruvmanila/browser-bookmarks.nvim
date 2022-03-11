@@ -82,6 +82,12 @@ Supported browsers on the respective OS:
       <td align=center>☑️</td>
       <td align=center>☑️</td>
     </tr>
+    <tr>
+      <td>Vivaldi</td>
+      <td align=center>☑️</td>
+      <td align=center>☑️</td>
+      <td align=center>☑️</td>
+    </tr>
   </tbody>
 </table>
 
@@ -133,7 +139,7 @@ Extension options:
 require('telescope').setup {
   extensions = {
     bookmarks = {
-      -- Available: 'brave', 'buku', 'chrome', 'chrome_beta', 'edge', 'safari', 'firefox'
+      -- Available: 'brave', 'buku', 'chrome', 'chrome_beta', 'edge', 'safari', 'firefox', 'vivaldi'
       selected_browser = 'brave',
 
       -- Either provide a shell command to open the URL

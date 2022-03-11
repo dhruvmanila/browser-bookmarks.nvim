@@ -29,6 +29,7 @@ local title = {
   edge = "Edge",
   firefox = "Firefox",
   safari = "Safari",
+  vivaldi = "Vivaldi",
 }
 
 ---Set the configuration state.

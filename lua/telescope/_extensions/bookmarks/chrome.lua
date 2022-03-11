@@ -40,6 +40,13 @@ local bookmarks_filepath = {
       "Default",
       "Bookmarks",
     },
+    vivaldi = {
+      "Library",
+      "Application Support",
+      "Vivaldi",
+      "Default",
+      "Bookmarks",
+    },
   },
   Linux = {
     brave = {
@@ -64,6 +71,12 @@ local bookmarks_filepath = {
     edge = {
       ".config",
       "microsoft-edge",
+      "Default",
+      "Bookmarks",
+    },
+    vivaldi = {
+      ".config",
+      "vivaldi",
       "Default",
       "Bookmarks",
     },
@@ -101,6 +114,14 @@ local bookmarks_filepath = {
       "Local",
       "Microsoft",
       "Edge",
+      "User Data",
+      "Default",
+      "Bookmarks",
+    },
+    vivaldi = {
+      "AppData",
+      "Local",
+      "Vivaldi",
       "User Data",
       "Default",
       "Bookmarks",
