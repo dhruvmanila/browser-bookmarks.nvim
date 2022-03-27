@@ -20,7 +20,7 @@ function ini.load(path)
         result[section] = result[section] or {}
       else
         -- Key=Value pairs
-        local key, value = line:match "^([%w_]+)%s-=%s-(.+)$"
+        local key, value = line:match "^([%w_]+)%s*=%s*(.*)$"
         local number_value = tonumber(value)
         if number_value ~= nil then
           value = number_value
