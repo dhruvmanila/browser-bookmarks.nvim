@@ -11,7 +11,7 @@
 ---Usage:
 ---```lua
 ---local plist_str = <string-ified plist file>
----local plist_table = plist_parse(plist_str)
+---local plist_table = plist.parse(plist_str)
 ---```
 ---
 ---CHANGELOG:
