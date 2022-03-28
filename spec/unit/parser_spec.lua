@@ -1,18 +1,7 @@
 local ini = require "telescope._extensions.bookmarks.parser.ini"
 local plist = require "telescope._extensions.bookmarks.parser.plist"
 
--- Read the content from the given filename.
----@param filename string
----@return string
-local function get_file_contents(filename)
-  local file = io.open(filename, "r")
-  if not file then
-    error("Unable to open the file: " .. filename)
-  end
-  local content = file:read "*a"
-  file:close()
-  return content
-end
+local helpers = require "spec.helpers"
 
 describe("ini parser", function()
   it("should ignore comments", function()
@@ -56,21 +45,21 @@ end)
 describe("plist parser", function()
   it("should parse empty", function()
     assert.are.same(
-      plist.parse(get_file_contents "spec/fixtures/plist/empty.xml"),
+      plist.parse(helpers.readfile "spec/fixtures/plist/empty.xml"),
       {}
     )
   end)
 
   it("should parse array elements", function()
     assert.are.same(
-      plist.parse(get_file_contents "spec/fixtures/plist/array.xml"),
+      plist.parse(helpers.readfile "spec/fixtures/plist/array.xml"),
       { "foo", 1, 1.5, true }
     )
   end)
 
   it("should parse dictionary elements", function()
     assert.are.same(
-      plist.parse(get_file_contents "spec/fixtures/plist/dictionary.xml"),
+      plist.parse(helpers.readfile "spec/fixtures/plist/dictionary.xml"),
       {
         string = "foo",
         integer = 1,
@@ -82,7 +71,7 @@ describe("plist parser", function()
 
   it("should parse nested array/dictionary elements", function()
     assert.are.same(
-      plist.parse(get_file_contents "spec/fixtures/plist/nested.xml"),
+      plist.parse(helpers.readfile "spec/fixtures/plist/nested.xml"),
       {
         dictionary = {
           { nested = true },
