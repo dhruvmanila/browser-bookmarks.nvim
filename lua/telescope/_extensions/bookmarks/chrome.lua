@@ -162,7 +162,8 @@ end
 ---@param state ConfigState
 ---@return Bookmark[]|nil
 function chrome.collect_bookmarks(state)
-  local components = bookmarks_filepath[state.os_name][state.selected_browser]
+  local components =
+    (bookmarks_filepath[state.os_name] or {})[state.selected_browser]
   if not components then
     utils.warn(
       ("Unsupported OS for %s: %s"):format(
