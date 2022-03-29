@@ -121,4 +121,8 @@ function firefox.collect_bookmarks(state)
   return bookmarks
 end
 
+if _TEST then
+  firefox._get_profile_dir = get_profile_dir
+end
+
 return firefox
