@@ -2,11 +2,11 @@
 
 # telescope-bookmarks.nvim
 
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/dhruvmanila/telescope-bookmarks.nvim/ci?label=CI&logo=github&style=flat-square)](https://github.com/dhruvmanila/telescope-bookmarks.nvim/actions/workflows/ci.yml)
-[![Requires Neovim](https://img.shields.io/badge/requires-neovim%200.6%2B-green?style=flat-square&logo=neovim)](https://github.com/neovim/neovim)
-[![Requires Telescope](https://img.shields.io/badge/requires-telescope.nvim-lightgrey?style=flat-square&logo=telescope)](https://github.com/nvim-telescope/telescope.nvim)
-[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/dhruvmanila/telescope-bookmarks.nvim?style=flat-square)](https://github.com/dhruvmanila/telescope-bookmarks.nvim/releases/latest)
-[![License](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](/LICENSE)
+[![test](https://github.com/dhruvmanila/telescope-bookmarks.nvim/actions/workflows/test.yml/badge.svg)](https://github.com/dhruvmanila/telescope-bookmarks.nvim/actions/workflows/test.yml)
+[![Requires Neovim](https://img.shields.io/badge/requires-neovim%200.6%2B-green?logo=neovim)](https://github.com/neovim/neovim)
+[![Requires Telescope](https://img.shields.io/badge/requires-telescope.nvim-lightgrey?logo=telescope)](https://github.com/nvim-telescope/telescope.nvim)
+[![GitHub release](https://img.shields.io/github/v/release/dhruvmanila/telescope-bookmarks.nvim)](https://github.com/dhruvmanila/telescope-bookmarks.nvim/releases/latest)
+[![License](https://img.shields.io/badge/license-MIT-brightgreen)](/LICENSE)
 
 A Neovim Telescope extension to open your browser bookmarks right from the editor!
 
