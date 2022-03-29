@@ -58,10 +58,14 @@ local function get_profile_dir(state)
   end
 
   if profile_dir == nil then
-    utils.warn(
-      "Unable to deduce the default firefox profile name. "
-        .. "Please provide one with `firefox_profile_name` option."
-    )
+    if user_profile then
+      utils.warn("Given firefox profile does not exist: " .. user_profile)
+    else
+      utils.warn(
+        "Unable to deduce the default firefox profile name. "
+          .. "Please provide one with `firefox_profile_name` option."
+      )
+    end
   end
 
   return profile_dir
