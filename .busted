@@ -1,0 +1,11 @@
+-- Default options for `busted` test runner.
+
+return {
+  default = {
+    helper = "./spec/conftest.lua",
+    verbose = true,
+    output = "gtest",
+  },
+}
+
+-- vim: ft=lua

@@ -1,3 +1,5 @@
+.DEFAULT_GOAL := test
+
 .deps/sqlite.lua:
 	git clone --depth=1 https://github.com/tami5/sqlite.lua $@
 
@@ -13,6 +15,4 @@ fmt:
 
 .PHONY: test
 test: .deps/sqlite.lua .deps/telescope.nvim .deps/plenary.nvim
-	VUSTED_ARGS='--headless --clean' vusted \
-		--helper=$(CURDIR)/spec/conftest.lua \
-		--output=gtest
+	VUSTED_ARGS='--headless --clean' vusted
