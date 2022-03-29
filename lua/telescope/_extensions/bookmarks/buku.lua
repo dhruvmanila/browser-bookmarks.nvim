@@ -8,7 +8,7 @@ local buku = {}
 local utils = require "telescope._extensions.bookmarks.utils"
 
 ---Determine the directory path where the dbfile is stored.
----@see https://github.com/jarun/buku/blob/master/buku#L409
+---@see https://github.com/jarun/buku/blob/master/buku BukuDb.get_default_dbdir
 ---@param state ConfigState
 ---@return string
 local function get_default_dbdir(state)
@@ -49,6 +49,10 @@ function buku.collect_bookmarks(state)
 
   db:close()
   return bookmarks
+end
+
+if _TEST then
+  buku._get_default_dbdir = get_default_dbdir
 end
 
 return buku
