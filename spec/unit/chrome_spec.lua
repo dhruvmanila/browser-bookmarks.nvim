@@ -19,7 +19,9 @@ describe("chrome", function()
         selected_browser = "chrome",
       }
 
-      assert.stub(utils.warn).was_called_with(match.is_string())
+      assert.stub(utils.warn).was_called_with(
+        match.matches "Unsupported OS for chrome"
+      )
       assert.is_nil(bookmarks)
     end)
 
@@ -30,7 +32,9 @@ describe("chrome", function()
         os_homedir = ".",
       }
 
-      assert.stub(utils.warn).was_called_with(match.is_string())
+      assert.stub(utils.warn).was_called_with(
+        match.matches "No chrome bookmarks file found at"
+      )
       assert.is_nil(bookmarks)
     end)
   end)

@@ -14,7 +14,9 @@ describe("safari", function()
         os_name = "Linux",
       }
 
-      assert.stub(utils.warn).was_called_with(match.is_string())
+      assert.stub(utils.warn).was_called_with(
+        match.matches "Unsupported OS for Safari"
+      )
       assert.is_nil(bookmarks)
     end)
   end)
