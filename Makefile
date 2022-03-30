@@ -11,7 +11,7 @@
 
 .PHONY: fmt
 fmt:
-	stylua --config-path stylua.toml --glob 'lua/**/*.lua' -- lua
+	stylua --config-path .stylua.toml --glob 'lua/**/*.lua' -- lua
 
 .PHONY: test
 test: .deps/sqlite.lua .deps/telescope.nvim .deps/plenary.nvim
