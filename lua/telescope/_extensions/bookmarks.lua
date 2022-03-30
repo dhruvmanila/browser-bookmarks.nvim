@@ -64,7 +64,7 @@ local function bookmarks(opts)
   local displayer = entry_display.create {
     separator = " ",
     items = {
-      { width = 65 },
+      { width = 0.5 },
       { remaining = true },
     },
   }
