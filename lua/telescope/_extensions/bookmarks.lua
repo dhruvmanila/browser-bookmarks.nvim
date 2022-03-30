@@ -44,12 +44,6 @@ end
 ---@param opts table
 local function bookmarks(opts)
   opts = opts or {}
-  -- TODO: Deprecation warning start: Removal scheduled at: 31/01/2022
-  if state.selected_browser == "google_chrome" then
-    utils.warn "Deprecated browser name: 'google_chrome'. Please use 'chrome' instead."
-    state.selected_browser = "chrome"
-  end
-  -- TODO: Deprecation warning end
   local selected_browser = state.selected_browser
 
   if not title[selected_browser] then
