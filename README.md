@@ -3,8 +3,7 @@
 # telescope-bookmarks.nvim
 
 [![test](https://github.com/dhruvmanila/telescope-bookmarks.nvim/actions/workflows/test.yml/badge.svg)](https://github.com/dhruvmanila/telescope-bookmarks.nvim/actions/workflows/test.yml)
-[![Requires Neovim](https://img.shields.io/badge/requires-neovim%200.6%2B-green?logo=neovim)](https://github.com/neovim/neovim)
-[![Requires Telescope](https://img.shields.io/badge/requires-telescope.nvim-lightgrey?logo=telescope)](https://github.com/nvim-telescope/telescope.nvim)
+[![codecov](https://codecov.io/gh/dhruvmanila/telescope-bookmarks.nvim/branch/main/graph/badge.svg)](https://codecov.io/gh/dhruvmanila/telescope-bookmarks.nvim)
 [![GitHub release](https://img.shields.io/github/v/release/dhruvmanila/telescope-bookmarks.nvim)](https://github.com/dhruvmanila/telescope-bookmarks.nvim/releases/latest)
 [![License](https://img.shields.io/badge/license-MIT-brightgreen)](/LICENSE)
 
@@ -99,6 +98,8 @@ Supported tools:
 _Please take a look at the [**Caveats**](#caveats) section if you're planning to use this plugin with **Safari**._
 
 ## Requirements
+
+[![Requires Neovim](https://img.shields.io/badge/requires-neovim%200.6%2B-green?logo=neovim)](https://github.com/neovim/neovim)
 
 * [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim)
 * [sqlite.lua](https://github.com/tami5/sqlite.lua) (only for Firefox browser

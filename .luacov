@@ -1,0 +1,13 @@
+return {
+  modules = {
+    -- the main module
+    ["bookmarks"] = "lua/telescope/_extensions/bookmarks.lua",
+    -- and everything namespaced underneath it
+    ["bookmarks.*"] = "lua/telescope/_extensions",
+  },
+
+  -- This is set to get the true coverage of the entire project.
+  includeuntestedfiles = true,
+}
+
+-- vim: ft=lua

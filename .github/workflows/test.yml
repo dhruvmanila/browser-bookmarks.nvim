@@ -37,10 +37,22 @@ jobs:
       - name: Setup luarocks
         uses: leafo/gh-actions-luarocks@v4
 
-      - name: Install vusted
-        run: luarocks --lua-version=5.1 install vusted
+      - name: Install luarocks dependencies
+        run: luarocks --lua-version=5.1 install vusted cluacov
 
       - name: Run tests
         run: make test
         env:
           VUSTED_NVIM: ${{ steps.nvim.outputs.executable }}
+
+      - name: Generate coverage report
+        run: |
+          luacov
+          # Print the summary part of the report. Update the number of lines
+          # to print if the number of files changes.
+          tail -n21 luacov.report.out
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          file: luacov.report.out

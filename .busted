@@ -5,6 +5,7 @@ return {
     helper = "./spec/conftest.lua",
     verbose = true,
     output = "gtest",
+    coverage = true,
   },
 }
 

@@ -1,0 +1,15 @@
+# Validate this file:
+#   curl --data-binary @.codecov.yml https://codecov.io/validate
+
+coverage:
+  range: 60..10
+  status:
+    project:
+      default:
+        target: 0 # always succeed
+    patch:
+      default:
+        target: 0 # always succeed
+
+# Don't post a comment on pull requests.
+comment: false
