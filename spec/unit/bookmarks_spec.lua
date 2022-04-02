@@ -1,7 +1,7 @@
-local bookmarks = require "telescope._extensions.bookmarks"
-
 describe("bookmarks", function()
-  describe("config", function()
+  insulate("config", function()
+    local bookmarks = require "telescope._extensions.bookmarks"
+
     it("should populate the config table with defaults", function()
       assert.are.same(bookmarks._config, {})
       bookmarks.setup {}
@@ -13,6 +13,10 @@ describe("bookmarks", function()
         firefox_profile_name = nil,
       })
     end)
+  end)
+
+  insulate("config", function()
+    local bookmarks = require "telescope._extensions.bookmarks"
 
     it("should prefer user config over defaults", function()
       local test_config = {
@@ -28,7 +32,9 @@ describe("bookmarks", function()
     end)
   end)
 
-  describe("entrypoint", function()
+  insulate("entrypoint", function()
+    local bookmarks = require "telescope._extensions.bookmarks"
+
     it("should error if browser not supported", function()
       assert.error_matches(function()
         bookmarks.setup { selected_browser = "random" }
