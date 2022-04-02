@@ -112,4 +112,5 @@ return telescope.register_extension {
   exports = {
     bookmarks = bookmarks,
   },
+  _config = _TEST and config,
 }
