@@ -8,14 +8,15 @@ local url_plugin_function = {
   vim_external = "external#browser",
 }
 
----Smart URL opener.
----If `state.url_open_plugin` is given, then open it using the plugin function
----otherwise open it using `state.url_open_command`.
----@param state ConfigState
+-- Smart URL opener.
+--
+-- If `config.url_open_plugin` is given, then open it using the plugin function
+-- otherwise open it using `config.url_open_command`.
+---@param config TelescopeBookmarksConfig
 ---@return function
-function plugin_actions.smart_url_opener(state)
+function plugin_actions.smart_url_opener(config)
   return function(prompt_bufnr)
-    local plugin_name = state.url_open_plugin
+    local plugin_name = config.url_open_plugin
     local selection = action_state.get_selected_entry()
     actions.close(prompt_bufnr)
 
@@ -35,7 +36,7 @@ function plugin_actions.smart_url_opener(state)
       vim.fn[fname](selection.value)
     else
       os.execute(
-        string.format('%s "%s"', state.url_open_command, selection.value)
+        string.format('%s "%s"', config.url_open_command, selection.value)
       )
     end
   end

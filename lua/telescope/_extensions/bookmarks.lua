@@ -93,7 +93,7 @@ local function bookmarks(opts)
     previewer = false,
     sorter = telescope_config.generic_sorter(opts),
     attach_mappings = function()
-      actions.select_default:replace(smart_url_opener(state))
+      actions.select_default:replace(smart_url_opener(config))
       return true
     end,
   }):find()
