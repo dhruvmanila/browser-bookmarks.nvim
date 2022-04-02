@@ -19,10 +19,11 @@ describe("chrome", function()
         { selected_browser = "chrome" }
       )
 
+      assert.is_nil(bookmarks)
+      assert.stub(utils.warn).was_called()
       assert.stub(utils.warn).was_called_with(
         match.matches "Unsupported OS for chrome"
       )
-      assert.is_nil(bookmarks)
     end)
 
     it("should warn if file is absent", function()
@@ -31,10 +32,11 @@ describe("chrome", function()
         { selected_browser = "chrome" }
       )
 
+      assert.is_nil(bookmarks)
+      assert.stub(utils.warn).was_called()
       assert.stub(utils.warn).was_called_with(
         match.matches "No chrome bookmarks file found at"
       )
-      assert.is_nil(bookmarks)
     end)
   end)
 
