@@ -9,9 +9,9 @@ describe("get_os_command_output", function()
   end)
 
   it("errors on failure", function()
-    assert.has.errors(function()
+    assert.error_matches(function()
       utils.get_os_command_output { "false" }
-    end)
+    end, "")
   end)
 end)
 

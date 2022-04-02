@@ -12,9 +12,9 @@ describe("actions", function()
     end
 
     it("should error for unsupported plugin", function()
-      assert.has_error(function()
+      assert.error_matches(function()
         custom_actions.smart_url_opener { url_open_plugin = "random" }()
-      end)
+      end, "Unsupported plugin opener")
     end)
 
     it("should call the correct plugin function for open_browser", function()
