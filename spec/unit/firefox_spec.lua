@@ -31,6 +31,14 @@ local profiles = {
 }
 
 describe("firefox", function()
+  before_each(function()
+    stub(utils, "warn")
+  end)
+
+  after_each(function()
+    utils.warn:revert()
+  end)
+
   -- Insulate this block to avoid `ini.load` being overridden in other blocks.
   insulate("get_profile_dir", function()
     local match = require "luassert.match"
@@ -44,14 +52,6 @@ describe("firefox", function()
       local key = vim.split(path, "/")[1]
       return profiles[key]
     end
-
-    before_each(function()
-      stub(utils, "warn")
-    end)
-
-    after_each(function()
-      utils.warn:revert()
-    end)
 
     it("should warn if OS not supported", function()
       local profile_dir = firefox._get_profile_dir({ os_name = "random" }, {})
@@ -121,7 +121,20 @@ describe("firefox", function()
   end)
 
   describe("collect_bookmarks", function()
+    local match = require "luassert.match"
     local firefox = require "telescope._extensions.bookmarks.firefox"
+
+    it("should return nil if unable to get profile directory", function()
+      local bookmarks = firefox.collect_bookmarks(
+        { os_name = "Darwin", os_homedir = "spec/fixtures" },
+        { firefox_profile_name = "random" }
+      )
+
+      assert.is_nil(bookmarks)
+      assert.stub(utils.warn).was_called_with(
+        match.matches "Given firefox profile does not exist"
+      )
+    end)
 
     it("should parse bookmarks data", function()
       local bookmarks = firefox.collect_bookmarks({
