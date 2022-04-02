@@ -11,8 +11,12 @@
 
 .PHONY: fmt
 fmt:
-	stylua --config-path .stylua.toml --glob 'lua/**/*.lua' -- lua
+	stylua --config-path .stylua.toml lua spec
 
 .PHONY: test
 test: .deps/sqlite.lua .deps/telescope.nvim .deps/plenary.nvim
 	VUSTED_ARGS='--headless --clean' vusted
+
+.PHONY: clean
+clean:
+	-rm luacov.*
