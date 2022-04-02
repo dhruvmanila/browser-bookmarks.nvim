@@ -20,13 +20,7 @@ local state = {
 }
 
 ---@type TelescopeBookmarksConfig
-local config = {
-  full_path = true,
-  selected_browser = "brave",
-  url_open_command = "open",
-  url_open_plugin = nil,
-  firefox_profile_name = nil,
-}
+local config = {}
 
 ---Prompt title.
 local title = {
@@ -39,6 +33,14 @@ local title = {
   safari = "Safari",
   vivaldi = "Vivaldi",
 }
+
+-- Set the configuration state.
+---@param opt_name string
+---@param value any
+---@param default any
+local function set_config(opt_name, value, default)
+  config[opt_name] = value == nil and default or value
+end
 
 ---Main entrypoint for Telescope.
 ---@param opts table
@@ -101,7 +103,13 @@ end
 
 return telescope.register_extension {
   setup = function(ext_config)
-    config = vim.tbl_extend("force", config, ext_config)
+    set_config("full_path", ext_config.full_path, true)
+    set_config("selected_browser", ext_config.selected_browser, "brave")
+    set_config("url_open_command", ext_config.url_open_command, "open")
+    set_config("url_open_plugin", ext_config.url_open_plugin, nil)
+    set_config("firefox_profile_name", ext_config.firefox_profile_name, nil)
   end,
-  exports = { bookmarks = bookmarks },
+  exports = {
+    bookmarks = bookmarks,
+  },
 }
