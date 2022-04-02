@@ -159,15 +159,16 @@ local function parse_bookmarks_data(data)
 end
 
 ---Collect all the bookmarks for Chromium based browsers.
----@param state ConfigState
+---@param state TelescopeBookmarksState
+---@param config TelescopeBookmarksConfig
 ---@return Bookmark[]|nil
-function chrome.collect_bookmarks(state)
+function chrome.collect_bookmarks(state, config)
   local components =
-    (bookmarks_filepath[state.os_name] or {})[state.selected_browser]
+    (bookmarks_filepath[state.os_name] or {})[config.selected_browser]
   if not components then
     utils.warn(
       ("Unsupported OS for %s: %s"):format(
-        state.selected_browser,
+        config.selected_browser,
         state.os_name
       )
     )
@@ -179,7 +180,7 @@ function chrome.collect_bookmarks(state)
   if not file then
     utils.warn(
       ("No %s bookmarks file found at: %s"):format(
-        state.selected_browser,
+        config.selected_browser,
         filepath
       )
     )

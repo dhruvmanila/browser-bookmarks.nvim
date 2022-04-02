@@ -1,6 +1,8 @@
----@class ConfigState
+---@class TelescopeBookmarksState
 ---@field os_name string
 ---@field os_homedir string
+
+---@class TelescopeBookmarksConfig
 ---@field full_path boolean
 ---@field selected_browser string
 ---@field url_open_command string

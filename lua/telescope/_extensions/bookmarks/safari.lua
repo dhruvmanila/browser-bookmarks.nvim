@@ -51,7 +51,7 @@ end
 
 ---Collect all the bookmarks for the Safari browser.
 ---NOTE: Only MacOS is supported for Safari bookmarks.
----@param state ConfigState
+---@param state TelescopeBookmarksState
 ---@return Bookmark[]|nil
 function safari.collect_bookmarks(state)
   local components = bookmarks_filepath[state.os_name]

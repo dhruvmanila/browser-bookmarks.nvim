@@ -14,10 +14,10 @@ describe("chrome", function()
     end)
 
     it("should warn if OS not supported", function()
-      local bookmarks = chrome.collect_bookmarks {
-        os_name = "random",
-        selected_browser = "chrome",
-      }
+      local bookmarks = chrome.collect_bookmarks(
+        { os_name = "random" },
+        { selected_browser = "chrome" }
+      )
 
       assert.stub(utils.warn).was_called_with(
         match.matches "Unsupported OS for chrome"
@@ -26,11 +26,10 @@ describe("chrome", function()
     end)
 
     it("should warn if file is absent", function()
-      local bookmarks = chrome.collect_bookmarks {
-        os_name = "Darwin",
-        selected_browser = "chrome",
-        os_homedir = ".",
-      }
+      local bookmarks = chrome.collect_bookmarks(
+        { os_name = "Darwin", os_homedir = "." },
+        { selected_browser = "chrome" }
+      )
 
       assert.stub(utils.warn).was_called_with(
         match.matches "No chrome bookmarks file found at"
@@ -41,11 +40,10 @@ describe("chrome", function()
 
   describe("parse_bookmarks_data", function()
     it("should parse bookmarks file", function()
-      local bookmarks = chrome.collect_bookmarks {
-        os_name = "Darwin",
-        selected_browser = "chrome",
-        os_homedir = "spec/fixtures",
-      }
+      local bookmarks = chrome.collect_bookmarks(
+        { os_name = "Darwin", os_homedir = "spec/fixtures" },
+        { selected_browser = "chrome" }
+      )
 
       assert.are.same(bookmarks, {
         {

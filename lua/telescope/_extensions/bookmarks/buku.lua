@@ -9,7 +9,7 @@ local utils = require "telescope._extensions.bookmarks.utils"
 
 ---Determine the directory path where the dbfile is stored.
 ---@see https://github.com/jarun/buku/blob/master/buku BukuDb.get_default_dbdir
----@param state ConfigState
+---@param state TelescopeBookmarksState
 ---@return string
 local function get_default_dbdir(state)
   local data_home = os.getenv "XDG_DATA_HOME"
@@ -28,7 +28,7 @@ end
 
 ---Collect all the bookmarks for Buku.
 ---@see https://github.com/jarun/buku
----@param state ConfigState
+---@param state TelescopeBookmarksState
 ---@return Bookmark[]|nil
 function buku.collect_bookmarks(state)
   local dbdir = get_default_dbdir(state)

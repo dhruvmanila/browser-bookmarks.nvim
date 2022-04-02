@@ -23,9 +23,10 @@ local exclude_names = { "menu", "toolbar" }
 --
 -- The profile name will either be the one provided by the user or the default
 -- one. The user can define the profile name using `firefox_profile_name` option.
----@param state ConfigState
+---@param state TelescopeBookmarksState
+---@param config TelescopeBookmarksConfig
 ---@return string|nil
-local function get_profile_dir(state)
+local function get_profile_dir(state, config)
   local components = default_config_dir[state.os_name]
   if not components then
     utils.warn("Unsupported OS for firefox browser: " .. state.os_name)
@@ -35,15 +36,15 @@ local function get_profile_dir(state)
   local default_dir = utils.join_path(state.os_homedir, components)
   local config_file = utils.join_path(default_dir, "profiles.ini")
 
-  local config = ini.load(config_file)
-  if vim.tbl_isempty(config) then
+  local profiles_config = ini.load(config_file)
+  if vim.tbl_isempty(profiles_config) then
     utils.warn("Unable to parse firefox profiles config file: " .. config_file)
     return nil
   end
 
   local profile_dir
-  local user_profile = state.firefox_profile_name
-  for section, info in pairs(config) do
+  local user_profile = config.firefox_profile_name
+  for section, info in pairs(profiles_config) do
     if vim.startswith(section, "Profile") then
       if
         user_profile == info.Name or (info.Default == 1 and not user_profile)
@@ -72,10 +73,11 @@ local function get_profile_dir(state)
 end
 
 -- Collect all the bookmarks for the Firefox browser.
----@param state ConfigState
+---@param state TelescopeBookmarksState
+---@param config TelescopeBookmarksConfig
 ---@return Bookmark[]|nil
-function firefox.collect_bookmarks(state)
-  local profile_dir = get_profile_dir(state)
+function firefox.collect_bookmarks(state, config)
+  local profile_dir = get_profile_dir(state, config)
   if profile_dir == nil then
     return nil
   end

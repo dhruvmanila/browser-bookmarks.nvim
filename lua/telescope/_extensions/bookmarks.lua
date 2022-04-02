@@ -6,18 +6,26 @@ end
 
 local finders = require "telescope.finders"
 local pickers = require "telescope.pickers"
-local config = require("telescope.config").values
+local telescope_config = require("telescope.config").values
 local actions = require "telescope.actions"
 local entry_display = require "telescope.pickers.entry_display"
 
-local utils = require "telescope._extensions.bookmarks.utils"
 local smart_url_opener =
   require("telescope._extensions.bookmarks.actions").smart_url_opener
 
----@type ConfigState
+---@type TelescopeBookmarksState
 local state = {
   os_name = vim.loop.os_uname().sysname,
   os_homedir = vim.loop.os_homedir(),
+}
+
+---@type TelescopeBookmarksConfig
+local config = {
+  full_path = true,
+  selected_browser = "brave",
+  url_open_command = "open",
+  url_open_plugin = nil,
+  firefox_profile_name = nil,
 }
 
 ---Prompt title.
@@ -32,19 +40,11 @@ local title = {
   vivaldi = "Vivaldi",
 }
 
----Set the configuration state.
----@param opt_name string
----@param value any
----@param default any
-local function set_config_state(opt_name, value, default)
-  state[opt_name] = value == nil and default or value
-end
-
 ---Main entrypoint for Telescope.
 ---@param opts table
 local function bookmarks(opts)
   opts = opts or {}
-  local selected_browser = state.selected_browser
+  local selected_browser = config.selected_browser
 
   if not title[selected_browser] then
     local supported = table.concat(vim.tbl_keys(title), ", ")
@@ -56,7 +56,7 @@ local function bookmarks(opts)
   local browser = require(
     "telescope._extensions.bookmarks." .. selected_browser
   )
-  local results = browser.collect_bookmarks(state)
+  local results = browser.collect_bookmarks(state, config)
   if not results or vim.tbl_isempty(results) then
     return
   end
@@ -81,7 +81,7 @@ local function bookmarks(opts)
     finder = finders.new_table {
       results = results,
       entry_maker = function(entry)
-        local name = (state.full_path and entry.path or entry.name) or ""
+        local name = (config.full_path and entry.path or entry.name) or ""
         return {
           display = make_display,
           name = name,
@@ -91,7 +91,7 @@ local function bookmarks(opts)
       end,
     },
     previewer = false,
-    sorter = config.generic_sorter(opts),
+    sorter = telescope_config.generic_sorter(opts),
     attach_mappings = function()
       actions.select_default:replace(smart_url_opener(state))
       return true
@@ -101,15 +101,7 @@ end
 
 return telescope.register_extension {
   setup = function(ext_config)
-    set_config_state("full_path", ext_config.full_path, true)
-    set_config_state("selected_browser", ext_config.selected_browser, "brave")
-    set_config_state("url_open_command", ext_config.url_open_command, "open")
-    set_config_state("url_open_plugin", ext_config.url_open_plugin, nil)
-    set_config_state(
-      "firefox_profile_name",
-      ext_config.firefox_profile_name,
-      nil
-    )
+    config = vim.tbl_extend("force", config, ext_config)
   end,
   exports = { bookmarks = bookmarks },
 }
