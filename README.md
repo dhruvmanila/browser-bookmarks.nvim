@@ -99,7 +99,7 @@ _Please take a look at the [**Caveats**](#caveats) section if you're planning to
 
 ## Requirements
 
-[![Requires Neovim](https://img.shields.io/badge/requires-neovim%200.6%2B-green?logo=neovim)](https://github.com/neovim/neovim)
+[![Requires Neovim](https://img.shields.io/badge/requires-neovim%200.7%2B-green?logo=neovim)](https://github.com/neovim/neovim)
 
 * [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim)
 * [sqlite.lua](https://github.com/tami5/sqlite.lua) (only for Firefox browser
