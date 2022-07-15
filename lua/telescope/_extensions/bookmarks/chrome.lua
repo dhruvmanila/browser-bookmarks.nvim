@@ -163,8 +163,7 @@ end
 ---@param config TelescopeBookmarksConfig
 ---@return Bookmark[]|nil
 function chrome.collect_bookmarks(state, config)
-  local components =
-    (bookmarks_filepath[state.os_name] or {})[config.selected_browser]
+  local components = (bookmarks_filepath[state.os_name] or {})[config.selected_browser]
   if not components then
     utils.warn(
       ("Unsupported OS for %s: %s"):format(

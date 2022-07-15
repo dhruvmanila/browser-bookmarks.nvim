@@ -55,9 +55,8 @@ local function bookmarks(opts)
     )
   end
 
-  local browser = require(
-    "telescope._extensions.bookmarks." .. selected_browser
-  )
+  local browser =
+    require("telescope._extensions.bookmarks." .. selected_browser)
   local results = browser.collect_bookmarks(state, config)
   if not results or vim.tbl_isempty(results) then
     return
@@ -78,27 +77,29 @@ local function bookmarks(opts)
     }
   end
 
-  pickers.new(opts, {
-    prompt_title = "Search " .. title[selected_browser] .. " Bookmarks",
-    finder = finders.new_table {
-      results = results,
-      entry_maker = function(entry)
-        local name = (config.full_path and entry.path or entry.name) or ""
-        return {
-          display = make_display,
-          name = name,
-          value = entry.url,
-          ordinal = name .. " " .. entry.url,
-        }
+  pickers
+    .new(opts, {
+      prompt_title = "Search " .. title[selected_browser] .. " Bookmarks",
+      finder = finders.new_table {
+        results = results,
+        entry_maker = function(entry)
+          local name = (config.full_path and entry.path or entry.name) or ""
+          return {
+            display = make_display,
+            name = name,
+            value = entry.url,
+            ordinal = name .. " " .. entry.url,
+          }
+        end,
+      },
+      previewer = false,
+      sorter = telescope_config.generic_sorter(opts),
+      attach_mappings = function()
+        actions.select_default:replace(smart_url_opener(config))
+        return true
       end,
-    },
-    previewer = false,
-    sorter = telescope_config.generic_sorter(opts),
-    attach_mappings = function()
-      actions.select_default:replace(smart_url_opener(config))
-      return true
-    end,
-  }):find()
+    })
+    :find()
 end
 
 return telescope.register_extension {

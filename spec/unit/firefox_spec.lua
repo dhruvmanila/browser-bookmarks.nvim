@@ -58,9 +58,9 @@ describe("firefox", function()
 
       assert.is_nil(profile_dir)
       assert.stub(utils.warn).was_called()
-      assert.stub(utils.warn).was_called_with(
-        match.matches "Unsupported OS for firefox browser"
-      )
+      assert
+        .stub(utils.warn)
+        .was_called_with(match.matches "Unsupported OS for firefox browser")
     end)
 
     it("should warn if failed to parse profiles.ini", function()
@@ -71,9 +71,9 @@ describe("firefox", function()
 
       assert.is_nil(profile_dir)
       assert.stub(utils.warn).was_called()
-      assert.stub(utils.warn).was_called_with(
-        match.matches "Unable to parse firefox profiles config file"
-      )
+      assert
+        .stub(utils.warn)
+        .was_called_with(match.matches "Unable to parse firefox profiles config file")
     end)
 
     it("should return default profile directory", function()
@@ -105,9 +105,9 @@ describe("firefox", function()
 
       assert.is_nil(profile_dir)
       assert.stub(utils.warn).was_called()
-      assert.stub(utils.warn).was_called_with(
-        match.matches "Given firefox profile does not exist"
-      )
+      assert
+        .stub(utils.warn)
+        .was_called_with(match.matches "Given firefox profile does not exist")
     end)
 
     it("should warn if unable to deduce default profile", function()
@@ -118,9 +118,9 @@ describe("firefox", function()
 
       assert.is_nil(profile_dir)
       assert.stub(utils.warn).was_called()
-      assert.stub(utils.warn).was_called_with(
-        match.matches "Unable to deduce the default firefox profile name"
-      )
+      assert
+        .stub(utils.warn)
+        .was_called_with(match.matches "Unable to deduce the default firefox profile name")
     end)
   end)
 
@@ -136,9 +136,9 @@ describe("firefox", function()
 
       assert.is_nil(bookmarks)
       assert.stub(utils.warn).was_called()
-      assert.stub(utils.warn).was_called_with(
-        match.matches "Given firefox profile does not exist"
-      )
+      assert
+        .stub(utils.warn)
+        .was_called_with(match.matches "Given firefox profile does not exist")
     end)
 
     it("should parse bookmarks data", function()

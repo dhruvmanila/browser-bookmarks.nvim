@@ -21,14 +21,18 @@ describe("actions", function()
       stub(vim.fn, "openbrowser#open")
       custom_actions.smart_url_opener { url_open_plugin = "open_browser" }()
       assert.stub(vim.fn["openbrowser#open"]).was_called()
-      assert.stub(vim.fn["openbrowser#open"]).was_called_with "https://github.com"
+      assert
+        .stub(vim.fn["openbrowser#open"])
+        .was_called_with "https://github.com"
     end)
 
     it("should call the correct plugin function for vim_external", function()
       stub(vim.fn, "external#browser")
       custom_actions.smart_url_opener { url_open_plugin = "vim_external" }()
       assert.stub(vim.fn["external#browser"]).was_called()
-      assert.stub(vim.fn["external#browser"]).was_called_with "https://github.com"
+      assert
+        .stub(vim.fn["external#browser"])
+        .was_called_with "https://github.com"
     end)
 
     it("should execute the open command", function()
