@@ -15,7 +15,7 @@ fmt:
 
 .PHONY: test
 test: .deps/sqlite.lua .deps/telescope.nvim .deps/plenary.nvim
-	VUSTED_ARGS='--headless --clean' vusted
+	vusted
 
 .PHONY: clean
 clean:
