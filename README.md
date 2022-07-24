@@ -112,7 +112,7 @@ Using [packer.nvim](https://github.com/wbthomason/packer.nvim)
 ```lua
 use {
   'dhruvmanila/telescope-bookmarks.nvim',
-  -- Uncomment if the selected browser is Firefox
+  -- Uncomment if the selected browser is Firefox or buku
   -- requires = {
   --   'tami5/sqlite.lua',
   -- }
@@ -123,7 +123,7 @@ Using [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```vim
 Plug 'dhruvmanila/telescope-bookmarks.nvim'
-" Uncomment if the selected browser is Firefox
+" Uncomment if the selected browser is Firefox or buku
 " Plug 'tami5/sqlite.lua'
 ```
 

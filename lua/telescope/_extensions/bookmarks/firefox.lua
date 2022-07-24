@@ -82,7 +82,10 @@ function firefox.collect_bookmarks(state, config)
     return nil
   end
 
-  local db = sqlite.new(utils.join_path(profile_dir, "places.sqlite")):open()
+  local uri = "file:"
+    .. utils.join_path(profile_dir, "places.sqlite")
+    .. "?immutable=1"
+  local db = sqlite.new(uri, { open_mode = "ro" }):open()
   local rows = db:select("moz_bookmarks", {
     keys = { "fk", "parent", "title" },
     where = { type = 1 },
