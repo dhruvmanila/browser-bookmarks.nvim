@@ -4,6 +4,30 @@ local telescope_utils = require "telescope.utils"
 
 local path_sep = require("plenary.path").path.sep
 
+---Emit a debug message. The given arguments are passed through `vim.inspect`
+---function and then shown.
+---@vararg any
+function utils.debug(...)
+  if _TELESCOPE_BOOKMARKS_DEBUG then
+    local parts = {}
+    for i = 1, select("#", ...) do
+      local arg = select(i, ...)
+      if arg == nil then
+        table.insert(parts, "nil")
+      else
+        table.insert(parts, vim.inspect(arg))
+      end
+    end
+
+    vim.api.nvim_out_write(
+      ("[telescope-bookmarks] [%s] [DEBUG]: %s\n"):format(
+        os.date "%Y-%m-%d %H:%M:%S",
+        table.concat(parts, " ")
+      )
+    )
+  end
+end
+
 ---Emit a warning message.
 ---@param msg string
 function utils.warn(msg)
