@@ -33,6 +33,7 @@ local title = {
   firefox = "Firefox",
   safari = "Safari",
   vivaldi = "Vivaldi",
+  waterfox = "Waterfox",
 }
 
 -- Set the configuration state.
@@ -133,6 +134,7 @@ return telescope.register_extension {
     set_config("url_open_command", ext_config.url_open_command, "open")
     set_config("url_open_plugin", ext_config.url_open_plugin, nil)
     set_config("firefox_profile_name", ext_config.firefox_profile_name, nil)
+    set_config("waterfox_profile_name", ext_config.waterfox_profile_name, nil)
     set_config("buku_include_tags", ext_config.buku_include_tags, false)
 
     utils.debug("state:", state)

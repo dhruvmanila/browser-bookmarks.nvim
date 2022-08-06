@@ -11,6 +11,7 @@ describe("bookmarks", function()
         url_open_command = "open",
         url_open_plugin = nil,
         firefox_profile_name = nil,
+        waterfox_profile_name = nil,
         buku_include_tags = false,
       })
     end)
@@ -26,6 +27,7 @@ describe("bookmarks", function()
         url_open_command = "xdg-open",
         url_open_plugin = "vim_external",
         firefox_profile_name = "default-release",
+        waterfox_profile_name = "default",
         buku_include_tags = true,
       }
       assert.are.same(bookmarks._config, {})

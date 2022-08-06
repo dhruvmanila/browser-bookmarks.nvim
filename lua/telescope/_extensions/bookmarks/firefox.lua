@@ -10,9 +10,18 @@ local ini = require "telescope._extensions.bookmarks.parser.ini"
 
 -- Path components to the default Firefox config directory for the respective OS.
 local default_config_dir = {
-  Darwin = { "Library", "Application Support", "Firefox" },
-  Linux = { ".mozilla", "firefox" },
-  Windows_NT = { "AppData", "Roaming", "Mozilla", "Firefox" },
+  Darwin = {
+    firefox = { "Library", "Application Support", "Firefox" },
+    waterfox = { "Library", "Application Support", "Waterfox" },
+  },
+  Linux = {
+    firefox = { ".mozilla", "firefox" },
+    waterfox = { ".waterfox" },
+  },
+  Windows_NT = {
+    firefox = { "AppData", "Roaming", "Mozilla", "Firefox" },
+    waterfox = { "AppData", "Roaming", "Waterfox" },
+  },
 }
 
 -- Names to be excluded from the full bookmark name.
@@ -52,9 +61,14 @@ end
 ---@param config TelescopeBookmarksConfig
 ---@return string|nil
 local function get_profile_dir(state, config)
-  local components = default_config_dir[state.os_name]
+  local components = (default_config_dir[state.os_name] or {})[config.selected_browser]
   if not components then
-    utils.warn("Unsupported OS for firefox browser: " .. state.os_name)
+    utils.warn(
+      ("Unsupported OS for %s browser: %s"):format(
+        config.selected_browser,
+        state.os_name
+      )
+    )
     return nil
   end
 
@@ -64,12 +78,15 @@ local function get_profile_dir(state, config)
   local profiles = collect_profiles(profiles_file)
   if not profiles then
     utils.warn(
-      "Unable to parse firefox profiles config file: " .. profiles_file
+      ("Unable to parse %s profiles config file: %s"):format(
+        config.selected_browser,
+        profiles_file
+      )
     )
     return nil
   end
 
-  local user_profile = config.firefox_profile_name
+  local user_profile = config[config.selected_browser .. "_profile_name"]
 
   local profile_info
   if vim.tbl_count(profiles) == 1 then
@@ -78,7 +95,13 @@ local function get_profile_dir(state, config)
   elseif user_profile ~= nil then
     profile_info = vim.tbl_get(profiles, user_profile)
     if profile_info == nil then
-      utils.warn("Given firefox profile does not exist: " .. user_profile)
+      utils.warn(
+        ("Given %s profile does not exist: %s"):format(
+          config.selected_browser,
+          user_profile
+        )
+      )
+      return nil
     end
   else
     for _, info in pairs(profiles) do
@@ -96,8 +119,10 @@ local function get_profile_dir(state, config)
 
   if profile_info == nil then
     utils.warn(
-      "Unable to deduce the firefox profile name. "
-        .. "Please provide one with `firefox_profile_name` option."
+      (
+        "Unable to deduce the default %s profile name. "
+        .. "Please provide one with `%s_profile_name` option."
+      ):format(config.selected_browser, config.selected_browser)
     )
     return nil
   end
@@ -122,8 +147,10 @@ function firefox.collect_bookmarks(state, config)
   local db_file = utils.join_path(profile_dir, "places.sqlite")
   if not vim.loop.fs_stat(db_file) then
     utils.warn(
-      "Firefox bookmarks database file is not present in the profile directory: "
-        .. db_file
+      (
+        "Bookmarks database file for %s browser is not present "
+        .. "in the profile directory: %s"
+      ):format(config.selected_browser, db_file)
     )
     return nil
   end
