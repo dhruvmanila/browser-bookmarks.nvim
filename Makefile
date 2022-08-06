@@ -20,3 +20,4 @@ test: .deps/sqlite.lua .deps/telescope.nvim .deps/plenary.nvim
 .PHONY: clean
 clean:
 	-rm luacov.*
+	-rm -rf .deps

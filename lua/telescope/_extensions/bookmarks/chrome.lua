@@ -188,6 +188,15 @@ function chrome.collect_bookmarks(state, config)
 
   local content = file:read "*a"
   file:close()
+  if not content then
+    utils.warn(
+      ("No content found in %s bookmarks file at: %s"):format(
+        config.selected_browser,
+        filepath
+      )
+    )
+    return nil
+  end
   local data = vim.json.decode(content)
   return parse_bookmarks_data(data)
 end

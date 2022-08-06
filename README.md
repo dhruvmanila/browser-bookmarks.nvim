@@ -156,6 +156,9 @@ require('telescope').setup {
 
       -- Provide a custom profile name for Firefox
       firefox_profile_name = nil,
+
+      -- Provide debug messages
+      debug = false,
     },
   }
 }
