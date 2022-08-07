@@ -60,11 +60,13 @@ local function bookmarks(opts)
   local browser =
     require("telescope._extensions.bookmarks." .. selected_browser)
   local results = browser.collect_bookmarks(state, config)
-  if not results or vim.tbl_isempty(results) then
-    utils.warn(
+  if not results then
+    return nil
+  end
+  if vim.tbl_isempty(results) then
+    return utils.warn(
       ("No bookmarks available for %s browser"):format(selected_browser)
     )
-    return
   end
 
   local displayer = entry_display.create {
