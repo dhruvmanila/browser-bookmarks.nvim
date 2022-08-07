@@ -82,9 +82,16 @@ function firefox.collect_bookmarks(state, config)
     return nil
   end
 
-  local uri = "file:"
-    .. utils.join_path(profile_dir, "places.sqlite")
-    .. "?immutable=1"
+  local db_file = utils.join_path(profile_dir, "places.sqlite")
+  if not vim.loop.fs_stat(db_file) then
+    utils.warn(
+      "Firefox bookmarks database file is not present in the profile directory: "
+        .. db_file
+    )
+    return nil
+  end
+
+  local uri = "file:" .. db_file .. "?immutable=1"
   local db = sqlite.new(uri, { open_mode = "ro" }):open()
   local rows = db:select("moz_bookmarks", {
     keys = { "fk", "parent", "title" },
