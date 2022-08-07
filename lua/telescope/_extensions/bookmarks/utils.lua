@@ -8,24 +8,26 @@ local path_sep = require("plenary.path").path.sep
 ---function and then shown.
 ---@vararg any
 function utils.debug(...)
-  if _TELESCOPE_BOOKMARKS_DEBUG then
-    local parts = {}
-    for i = 1, select("#", ...) do
-      local arg = select(i, ...)
-      if arg == nil then
-        table.insert(parts, "nil")
-      else
-        table.insert(parts, vim.inspect(arg))
-      end
-    end
-
-    vim.api.nvim_out_write(
-      ("[telescope-bookmarks] [%s] [DEBUG]: %s\n"):format(
-        os.date "%Y-%m-%d %H:%M:%S",
-        table.concat(parts, " ")
-      )
-    )
+  if not _TELESCOPE_BOOKMARKS_DEBUG then
+    return
   end
+
+  local parts = {}
+  for i = 1, select("#", ...) do
+    local arg = select(i, ...)
+    if arg == nil then
+      table.insert(parts, "nil")
+    else
+      table.insert(parts, vim.inspect(arg))
+    end
+  end
+
+  vim.api.nvim_out_write(
+    ("[telescope-bookmarks] [%s] [DEBUG]: %s\n"):format(
+      os.date "%Y-%m-%d %H:%M:%S",
+      table.concat(parts, " ")
+    )
+  )
 end
 
 ---Emit a warning message.
