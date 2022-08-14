@@ -14,4 +14,4 @@
 ---@field name string
 ---@field path string
 ---@field url string
----@field tags string
+---@field tags? string
