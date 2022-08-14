@@ -40,7 +40,11 @@ local title = {
 ---@param value any
 ---@param default any
 local function set_config(opt_name, value, default)
-  config[opt_name] = value == nil and default or value
+  if value == nil then
+    config[opt_name] = default
+  else
+    config[opt_name] = value
+  end
 end
 
 ---Main entrypoint for Telescope.
