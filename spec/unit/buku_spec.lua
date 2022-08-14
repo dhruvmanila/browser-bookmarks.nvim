@@ -37,7 +37,7 @@ describe("buku", function()
   describe("collect_bookmarks", function()
     it("should parse bookmarks data", function()
       vim.env.XDG_DATA_HOME = "spec/fixtures"
-      assert.are.same(buku.collect_bookmarks {}, {
+      assert.are.same(buku.collect_bookmarks({}, { buku_include_tags = true }), {
         {
           name = "GitHub",
           path = "GitHub",
@@ -49,6 +49,22 @@ describe("buku", function()
           path = "Google",
           url = "https://google.com/",
           tags = "search",
+        },
+      })
+    end)
+
+    it("should not include tags if `buku_include_tags = false`", function()
+      vim.env.XDG_DATA_HOME = "spec/fixtures"
+      assert.are.same(buku.collect_bookmarks({}, { buku_include_tags = false }), {
+        {
+          name = "GitHub",
+          path = "GitHub",
+          url = "https://github.com/",
+        },
+        {
+          name = "Google",
+          path = "Google",
+          url = "https://google.com/",
         },
       })
     end)

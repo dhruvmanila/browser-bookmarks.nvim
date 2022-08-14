@@ -29,23 +29,30 @@ end
 ---Collect all the bookmarks for Buku.
 ---@see https://github.com/jarun/buku
 ---@param state TelescopeBookmarksState
+---@param config TelescopeBookmarksConfig
 ---@return Bookmark[]|nil
-function buku.collect_bookmarks(state)
+function buku.collect_bookmarks(state, config)
   local dbdir = get_default_dbdir(state)
 
   local db = sqlite.new(utils.join_path(dbdir, "bookmarks.db")):open()
-  local rows = db:select("bookmarks", {
-    keys = { "URL", "metadata", "tags" },
-  })
+  local keys = { "url", "metadata" }
+  if config.buku_include_tags then
+    table.insert(keys, "tags")
+  end
+  local rows = db:select("bookmarks", { keys = keys })
 
   local bookmarks = {}
   for _, row in ipairs(rows) do
-    table.insert(bookmarks, {
+    local bookmark = {
       name = row.metadata,
       path = row.metadata,
       url = row.URL,
-      tags = row.tags:sub(2, -2), -- exclude leading and trailing comma
-    })
+    }
+    if config.buku_include_tags then
+      -- exclude leading and trailing comma
+      bookmark.tags = row.tags:sub(2, -2)
+    end
+    table.insert(bookmarks, bookmark)
   end
 
   db:close()
