@@ -80,14 +80,14 @@ local function bookmarks(opts)
   }
 
   local function make_display(entry)
-    return displayer(config.buku_include_tags and {
-      entry.name,
-      { entry.tags, "Tags" },
-      { entry.value, "Comment" },
-    } or {
+    local display_columns = {
       entry.name,
       { entry.value, "Comment" },
-    })
+    }
+    if config.buku_include_tags then
+      table.insert(display_columns, 2, { entry.tags, "Special" })
+    end
+    return displayer(display_columns)
   end
 
   pickers
@@ -97,20 +97,13 @@ local function bookmarks(opts)
         results = results,
         entry_maker = function(entry)
           local name = (config.full_path and entry.path or entry.name) or ""
-          return config.buku_include_tags
-              and {
-                display = make_display,
-                name = name,
-                value = entry.url,
-                tags = entry.tags,
-                ordinal = name .. " " .. entry.tags .. " " .. entry.url,
-              }
-            or {
-              display = make_display,
-              name = name,
-              value = entry.url,
-              ordinal = name .. " " .. entry.url,
-            }
+          return {
+            display = make_display,
+            name = name,
+            value = entry.url,
+            tags = entry.tags,
+            ordinal = name .. " " .. (entry.tags or "") .. " " .. entry.url,
+          }
         end,
       },
       previewer = false,
