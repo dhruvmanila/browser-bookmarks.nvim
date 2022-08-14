@@ -47,7 +47,7 @@ end
 ---@param opts table
 local function bookmarks(opts)
   opts = opts or {}
-  utils.debug("opts", opts)
+  utils.debug("opts:", opts)
 
   local selected_browser = config.selected_browser
   if not title[selected_browser] then
@@ -121,8 +121,8 @@ return telescope.register_extension {
     set_config("url_open_plugin", ext_config.url_open_plugin, nil)
     set_config("firefox_profile_name", ext_config.firefox_profile_name, nil)
 
-    utils.debug("state", state)
-    utils.debug("config", config)
+    utils.debug("state:", state)
+    utils.debug("config:", config)
   end,
   exports = {
     bookmarks = bookmarks,

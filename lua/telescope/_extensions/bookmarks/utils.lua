@@ -17,6 +17,8 @@ function utils.debug(...)
     local arg = select(i, ...)
     if arg == nil then
       table.insert(parts, "nil")
+    elseif type(arg) == "string" then
+      table.insert(parts, arg)
     else
       table.insert(parts, vim.inspect(arg))
     end
