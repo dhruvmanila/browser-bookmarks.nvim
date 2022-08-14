@@ -10,7 +10,7 @@ describe("buku", function()
   describe("get_default_dbdir", function()
     it("when XDG_DATA_HOME is available", function()
       vim.env.XDG_DATA_HOME = "."
-      local dbdir = buku._get_default_dbdir()
+      local dbdir = buku._get_default_dbdir {}
       assert.are.equal(dbdir, "./buku")
     end)
 
@@ -37,7 +37,7 @@ describe("buku", function()
   describe("collect_bookmarks", function()
     it("should parse bookmarks data", function()
       vim.env.XDG_DATA_HOME = "spec/fixtures"
-      assert.are.same(buku.collect_bookmarks(), {
+      assert.are.same(buku.collect_bookmarks {}, {
         {
           name = "GitHub",
           path = "GitHub",
