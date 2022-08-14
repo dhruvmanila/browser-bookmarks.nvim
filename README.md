@@ -157,6 +157,9 @@ require('telescope').setup {
       -- Provide a custom profile name for Firefox
       firefox_profile_name = nil,
 
+      -- Add a column which contains the tags for each bookmark for buku
+      buku_include_tags = false,
+
       -- Provide debug messages
       debug = false,
     },
