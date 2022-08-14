@@ -7,7 +7,7 @@
 [![GitHub release](https://img.shields.io/github/v/release/dhruvmanila/telescope-bookmarks.nvim)](https://github.com/dhruvmanila/telescope-bookmarks.nvim/releases/latest)
 [![License](https://img.shields.io/badge/license-MIT-brightgreen)](/LICENSE)
 
-A Neovim Telescope extension to open your browser bookmarks right from the editor!
+A _Neovim Telescope extension_ to open your browser bookmarks right from the editor!
 
 ![telescope-bookmarks.nvim](https://user-images.githubusercontent.com/67177269/115862442-c89d7280-a451-11eb-94c5-501095f88ed7.png)
 
@@ -105,13 +105,25 @@ _Please take a look at the [**Caveats**](#caveats) section if you're planning to
 * [sqlite.lua](https://github.com/kkharji/sqlite.lua) (only for Firefox browser
   and buku)
 
+Neovim version requirement is the same as that of
+[telescope.nvim](https://github.com/nvim-telescope/telescope.nvim#getting-started).
+
 ## Installation
 
-Using [packer.nvim](https://github.com/wbthomason/packer.nvim)
+The project follows semantic versioning, so it's recommended to specify the
+tag when installing. The latest released version can be found
+[here](https://github.com/dhruvmanila/telescope-bookmarks.nvim/releases/latest).
+
+The plugin managers mentioned below supports wildcard (`*`) in the tag key which
+points to the latest git tag. You can specify a specific version if you'd prefer
+to inspect the changes before updating.
+
+### Using [packer.nvim](https://github.com/wbthomason/packer.nvim)
 
 ```lua
 use {
   'dhruvmanila/telescope-bookmarks.nvim',
+  tag = '*',
   -- Uncomment if the selected browser is Firefox or buku
   -- requires = {
   --   'kkharji/sqlite.lua',
@@ -119,21 +131,43 @@ use {
 }
 ```
 
-Using [vim-plug](https://github.com/junegunn/vim-plug)
+### Using [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```vim
-Plug 'dhruvmanila/telescope-bookmarks.nvim'
+Plug 'dhruvmanila/telescope-bookmarks.nvim', { 'tag': '*' }
 " Uncomment if the selected browser is Firefox or buku
 " Plug 'kkharji/sqlite.lua'
 ```
 
-## Telescope Config
+## Usage
 
-Loading the extension:
+To get started, simply load the extension:
 
 ```lua
 require('telescope').load_extension('bookmarks')
 ```
+
+You can open the picker either from the command-line or calling the lua
+function:
+
+```vim
+" From the command-line
+Telescope bookmarks
+
+" Using lua function
+lua require('telescope').extensions.bookmarks.bookmarks(opts)
+```
+
+Telescope can lazily load the extension when needed, but that can only be
+called using the lua function. The command-line argument will not work as the
+extension is not yet loaded.
+
+When you press <kbd>Enter</kbd> on a selected bookmark, it will open the URL
+using either the `url_open_plugin` or `url_open_command` option in your default
+browser. Multiple bookmarks can be opened at the same time using multi
+selections feature in Telescope.
+
+## Configuration
 
 Extension options:
 
@@ -167,30 +201,26 @@ require('telescope').setup {
 }
 ```
 
-For Firefox users, the default profile will be used if `firefox_profile_name` is not provided. This is obtained by parsing the profiles config file present in the default config directory.
+For Firefox users, the default profile will be used if `firefox_profile_name` is
+not provided. This is obtained by parsing the profiles config file present in
+the default config directory.
 
-If the user has provided `url_open_plugin` then it will be used, otherwise default to using `url_open_command`. Supported plugins for `url_open_plugin` and the respective plugin function used to open the URL:
+If the user has provided `url_open_plugin` then it will be used, otherwise
+default to using `url_open_command`. Supported plugins for `url_open_plugin` and
+the respective plugin function used to open the URL:
 
 * [open-browser.vim](https://github.com/tyru/open-browser.vim) - `openbrowser#open`
 * [vim-external](https://github.com/itchyny/vim-external) - `external#browser`
-
-## Available Commands
-
-```vim
-" From the command-line
-Telescope bookmarks
-
-" Using lua function
-lua require('telescope').extensions.bookmarks.bookmarks(opts)
-```
-
-When you press `<CR>` on a selected bookmark, it will open the URL using either the `url_open_plugin` or `url_open_command` option in your default browser.
 
 ## Caveats
 
 ### Safari
 
-The application which is used to run neovim should be allowed full disk access as the bookmarks file (`~/Library/Safari/Bookmarks.plist`) is in a restricted directory. This can be done in ***System Preferences > Security & Privacy > Full Disk Access*** and then click on the checkbox next to your preferred application. Please take a look at the below image for more details:
+The application which is used to run neovim should be allowed full disk access
+as the bookmarks file (`~/Library/Safari/Bookmarks.plist`) is in a restricted
+directory. This can be done in ***System Preferences > Security & Privacy > Full
+Disk Access*** and then click on the checkbox next to your preferred
+application. Please take a look at the below image for more details:
 
 <details>
   <summary><i>Allow full disk access to the application running neovim (iTerm2)</i></summary>
