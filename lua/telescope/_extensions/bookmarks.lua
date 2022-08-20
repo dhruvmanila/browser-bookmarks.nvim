@@ -31,6 +31,7 @@ local title = {
   chrome_beta = "Chrome",
   edge = "Edge",
   firefox = "Firefox",
+  qutebrowser = "qutebrowser",
   safari = "Safari",
   vivaldi = "Vivaldi",
   waterfox = "Waterfox",
