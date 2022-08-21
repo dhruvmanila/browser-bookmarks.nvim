@@ -144,7 +144,7 @@ describe("firefox", function()
       assert.stub(utils.warn).was_called()
       assert
         .stub(utils.warn)
-        .was_called_with(match.matches "Unable to deduce the default firefox profile name")
+        .was_called_with(match.matches "Unable to deduce the firefox profile name")
     end)
   end)
 
