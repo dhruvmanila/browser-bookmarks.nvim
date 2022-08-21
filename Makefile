@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := test
 
 .deps/sqlite.lua:
-	git clone --depth=1 https://github.com/tami5/sqlite.lua $@
+	git clone --depth=1 https://github.com/kkharji/sqlite.lua $@
 
 .deps/telescope.nvim:
 	git clone --depth=1 https://github.com/nvim-telescope/telescope.nvim $@

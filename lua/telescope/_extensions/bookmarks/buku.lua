@@ -1,6 +1,6 @@
 local ok, sqlite = pcall(require, "sqlite")
 if not ok then
-  error "Buku depends on sqlite.lua (https://github.com/tami5/sqlite.lua)"
+  error "Buku depends on sqlite.lua (https://github.com/kkharji/sqlite.lua)"
 end
 
 local buku = {}
