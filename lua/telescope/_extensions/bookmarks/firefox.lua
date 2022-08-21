@@ -172,6 +172,7 @@ end
 
 if _TEST then
   firefox._get_profile_dir = get_profile_dir
+  firefox._collect_profiles = collect_profiles
 end
 
 return firefox

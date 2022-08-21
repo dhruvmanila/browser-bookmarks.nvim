@@ -1,6 +1,6 @@
 local utils = require "telescope._extensions.bookmarks.utils"
 
-local profiles = {
+local test_profiles = {
   -- There was some parse error, so an empty table was returned.
   parse_failure = {},
 
@@ -54,7 +54,7 @@ describe("firefox", function()
   end)
 
   -- Insulate this block to avoid `ini.load` being overridden in other blocks.
-  insulate("get_profile_dir", function()
+  insulate("helpers", function()
     local match = require "luassert.match"
     local ini = require "telescope._extensions.bookmarks.parser.ini"
     local firefox = require "telescope._extensions.bookmarks.firefox"
@@ -64,87 +64,114 @@ describe("firefox", function()
     -- the key which is the `os_homedir` in the state table.
     ini.load = function(path)
       local key = vim.split(path, "/")[1]
-      return profiles[key]
+      return test_profiles[key]
     end
 
-    it("should warn if OS not supported", function()
-      local profile_dir = firefox._get_profile_dir({ os_name = "random" }, {})
+    describe("collect_profiles", function()
+      it("should return nil if failed to parse profiles.ini", function()
+        local profiles = firefox._collect_profiles "parse_failure"
+        assert.is_nil(profiles)
+      end)
 
-      assert.is_nil(profile_dir)
-      assert.stub(utils.warn).was_called()
-      assert
-        .stub(utils.warn)
-        .was_called_with(match.matches "Unsupported OS for firefox browser")
+      it("should return a mapping of profile name to info", function()
+        local profiles = firefox._collect_profiles "default_profile"
+        assert.is_not_nil(profiles)
+        assert.are.same(profiles, {
+          ["default-release"] = {
+            Name = "default-release",
+            IsRelative = 1,
+            Path = "Profiles/default-release",
+            Default = 1,
+          },
+          ["dev-edition-default"] = {
+            Name = "dev-edition-default",
+            IsRelative = 0,
+            Path = "Profiles/dev-edition-default",
+          },
+        })
+      end)
     end)
 
-    it("should warn if failed to parse profiles.ini", function()
-      local profile_dir = firefox._get_profile_dir({
-        os_name = "Darwin",
-        os_homedir = "parse_failure",
-      }, {})
+    describe("get_profile_dir", function()
+      it("should warn if OS not supported", function()
+        local profile_dir = firefox._get_profile_dir({ os_name = "random" }, {})
 
-      assert.is_nil(profile_dir)
-      assert.stub(utils.warn).was_called()
-      assert
-        .stub(utils.warn)
-        .was_called_with(match.matches "Unable to parse firefox profiles config file")
-    end)
+        assert.is_nil(profile_dir)
+        assert.stub(utils.warn).was_called()
+        assert
+          .stub(utils.warn)
+          .was_called_with(match.matches "Unsupported OS for firefox browser")
+      end)
 
-    it("should pick the only profile available", function()
-      local profile_dir = firefox._get_profile_dir({
-        os_name = "Darwin",
-        os_homedir = "one_profile",
-      }, {})
+      it("should warn if failed to parse profiles.ini", function()
+        local profile_dir = firefox._get_profile_dir({
+          os_name = "Darwin",
+          os_homedir = "parse_failure",
+        }, {})
 
-      assert.is_not_nil(profile_dir)
-      assert.is_true(vim.endswith(profile_dir, "Profiles/one-profile"))
-    end)
+        assert.is_nil(profile_dir)
+        assert.stub(utils.warn).was_called()
+        assert
+          .stub(utils.warn)
+          .was_called_with(match.matches "Unable to parse firefox profiles config file")
+      end)
 
-    it("should return default profile directory", function()
-      local profile_dir = firefox._get_profile_dir({
-        os_name = "Darwin",
-        os_homedir = "default_profile",
-      }, {})
+      it("should pick the only profile available", function()
+        local profile_dir = firefox._get_profile_dir({
+          os_name = "Darwin",
+          os_homedir = "one_profile",
+        }, {})
 
-      assert.is_not_nil(profile_dir)
-      assert.is_true(vim.endswith(profile_dir, "Profiles/default-release"))
-    end)
+        assert.is_not_nil(profile_dir)
+        assert.is_true(vim.endswith(profile_dir, "Profiles/one-profile"))
+      end)
 
-    it("should return user given profile directory", function()
-      local profile_dir = firefox._get_profile_dir(
-        { os_name = "Darwin", os_homedir = "default_profile" },
-        { firefox_profile_name = "dev-edition-default" }
-      )
+      it("should return default profile directory", function()
+        local profile_dir = firefox._get_profile_dir({
+          os_name = "Darwin",
+          os_homedir = "default_profile",
+        }, {})
 
-      assert.is_not_nil(profile_dir)
-      -- Also testing if the `IsRelative` key is being considered or not.
-      assert.are_equal(profile_dir, "Profiles/dev-edition-default")
-    end)
+        assert.is_not_nil(profile_dir)
+        assert.is_true(vim.endswith(profile_dir, "Profiles/default-release"))
+      end)
 
-    it("should warn if user given profile does not exist", function()
-      local profile_dir = firefox._get_profile_dir(
-        { os_name = "Darwin", os_homedir = "default_profile" },
-        { firefox_profile_name = "random" }
-      )
+      it("should return user given profile directory", function()
+        local profile_dir = firefox._get_profile_dir(
+          { os_name = "Darwin", os_homedir = "default_profile" },
+          { firefox_profile_name = "dev-edition-default" }
+        )
 
-      assert.is_nil(profile_dir)
-      assert.stub(utils.warn).was_called()
-      assert
-        .stub(utils.warn)
-        .was_called_with(match.matches "Given firefox profile does not exist")
-    end)
+        assert.is_not_nil(profile_dir)
+        -- Also testing if the `IsRelative` key is being considered or not.
+        assert.are_equal(profile_dir, "Profiles/dev-edition-default")
+      end)
 
-    it("should warn if unable to deduce default profile", function()
-      local profile_dir = firefox._get_profile_dir({
-        os_name = "Darwin",
-        os_homedir = "no_default_profile",
-      }, {})
+      it("should warn if user given profile does not exist", function()
+        local profile_dir = firefox._get_profile_dir(
+          { os_name = "Darwin", os_homedir = "default_profile" },
+          { firefox_profile_name = "random" }
+        )
 
-      assert.is_nil(profile_dir)
-      assert.stub(utils.warn).was_called()
-      assert
-        .stub(utils.warn)
-        .was_called_with(match.matches "Unable to deduce the firefox profile name")
+        assert.is_nil(profile_dir)
+        assert.stub(utils.warn).was_called()
+        assert
+          .stub(utils.warn)
+          .was_called_with(match.matches "Given firefox profile does not exist")
+      end)
+
+      it("should warn if unable to deduce default profile", function()
+        local profile_dir = firefox._get_profile_dir({
+          os_name = "Darwin",
+          os_homedir = "no_default_profile",
+        }, {})
+
+        assert.is_nil(profile_dir)
+        assert.stub(utils.warn).was_called()
+        assert
+          .stub(utils.warn)
+          .was_called_with(match.matches "Unable to deduce the firefox profile name")
+      end)
     end)
   end)
 
