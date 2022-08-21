@@ -20,12 +20,26 @@ local profiles = {
     },
   },
 
-  -- There is no default profile in this config.
+  -- There's only one profile available so use that.
+  one_profile = {
+    Profile0 = {
+      Name = "one-profile",
+      IsRelative = 1,
+      Path = "Profiles/one-profile",
+    },
+  },
+
+  -- Multiple profiles with no default one.
   no_default_profile = {
     Profile0 = {
-      Name = "default-release",
+      Name = "profile0",
       IsRelative = 1,
-      Path = "Profiles/default-release",
+      Path = "Profiles/profile0",
+    },
+    Profile1 = {
+      Name = "profile1",
+      IsRelative = 1,
+      Path = "Profiles/profile1",
     },
   },
 }
@@ -74,6 +88,16 @@ describe("firefox", function()
       assert
         .stub(utils.warn)
         .was_called_with(match.matches "Unable to parse firefox profiles config file")
+    end)
+
+    it("should pick the only profile available", function()
+      local profile_dir = firefox._get_profile_dir({
+        os_name = "Darwin",
+        os_homedir = "one_profile",
+      }, {})
+
+      assert.is_not_nil(profile_dir)
+      assert.is_true(vim.endswith(profile_dir, "Profiles/one-profile"))
     end)
 
     it("should return default profile directory", function()

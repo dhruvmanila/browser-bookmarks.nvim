@@ -18,8 +18,33 @@ local default_config_dir = {
 -- Names to be excluded from the full bookmark name.
 local exclude_names = { "menu", "toolbar" }
 
--- Returns the absolute path to the Firefox profile directory, nil if the OS
--- is not supported by the plugin or if it failed to parse the config file.
+---Return the profile information available in the given profiles config file.
+---
+---The return value will be a mapping of profile name to the information
+---available, `nil` if unable to parse the config file.
+---@param profiles_file string
+---@return table<string, table>|nil
+local function collect_profiles(profiles_file)
+  local profiles_config = ini.load(profiles_file)
+  if vim.tbl_isempty(profiles_config) then
+    return nil
+  end
+
+  local profiles = {}
+  for section, info in pairs(profiles_config) do
+    if vim.startswith(section, "Profile") then
+      profiles[info.Name] = info
+    end
+  end
+  return profiles
+end
+
+-- Returns the absolute path to the Firefox profile directory.
+--
+-- It will return `nil` if:
+--   - the OS is not supported by the plugin
+--   - it failed to parse the config file
+--   - unable to deduce the profile directory for some unknown reason
 --
 -- The profile name will either be the one provided by the user or the default
 -- one. The user can define the profile name using `firefox_profile_name` option.
@@ -33,43 +58,55 @@ local function get_profile_dir(state, config)
     return nil
   end
 
-  local default_dir = utils.join_path(state.os_homedir, components)
-  local config_file = utils.join_path(default_dir, "profiles.ini")
+  local config_dir = utils.join_path(state.os_homedir, components)
+  local profiles_file = utils.join_path(config_dir, "profiles.ini")
 
-  local profiles_config = ini.load(config_file)
-  if vim.tbl_isempty(profiles_config) then
-    utils.warn("Unable to parse firefox profiles config file: " .. config_file)
+  local profiles = collect_profiles(profiles_file)
+  if not profiles then
+    utils.warn(
+      "Unable to parse firefox profiles config file: " .. profiles_file
+    )
     return nil
   end
 
-  local profile_dir
   local user_profile = config.firefox_profile_name
-  for section, info in pairs(profiles_config) do
-    if vim.startswith(section, "Profile") then
-      if
-        user_profile == info.Name or (info.Default == 1 and not user_profile)
-      then
-        if info.IsRelative == 1 then
-          profile_dir = utils.join_path(default_dir, info.Path)
-        else
-          profile_dir = info.Path
-        end
+
+  local profile_info
+  if vim.tbl_count(profiles) == 1 then
+    -- Use the only profile available
+    _, profile_info = next(profiles)
+  elseif user_profile ~= nil then
+    profile_info = vim.tbl_get(profiles, user_profile)
+    if profile_info == nil then
+      utils.warn("Given firefox profile does not exist: " .. user_profile)
+    end
+  else
+    for _, info in pairs(profiles) do
+      -- The browser sets the default profile when it's opened for the first
+      -- time or when a new profile is created and there was only one profile
+      -- present before that which was not the default profile. This does not
+      -- correspond to the default profile as set by the user. So, we will use
+      -- it only as a fallback.
+      if info.Default == 1 then
+        profile_info = info
+        break
       end
     end
   end
 
-  if profile_dir == nil then
-    if user_profile then
-      utils.warn("Given firefox profile does not exist: " .. user_profile)
-    else
-      utils.warn(
-        "Unable to deduce the default firefox profile name. "
-          .. "Please provide one with `firefox_profile_name` option."
-      )
-    end
+  if profile_info == nil then
+    utils.warn(
+      "Unable to deduce the firefox profile name. "
+        .. "Please provide one with `firefox_profile_name` option."
+    )
+    return nil
   end
 
-  return profile_dir
+  if profile_info.IsRelative == 1 then
+    return utils.join_path(config_dir, profile_info.Path)
+  else
+    return profile_info.Path
+  end
 end
 
 -- Collect all the bookmarks for the Firefox browser.
