@@ -47,6 +47,12 @@ Supported browsers on the respective OS:
   </thead>
   <tbody>
     <tr>
+      <td>Brave</td>
+      <td align=center>☑️</td>
+      <td align=center>☑️</td>
+      <td align=center>☑️</td>
+    </tr>
+    <tr>
       <td>Google Chrome</td>
       <td align=center>☑️</td>
       <td align=center>☑️</td>
@@ -59,7 +65,19 @@ Supported browsers on the respective OS:
       <td align=center>☑️</td>
     </tr>
     <tr>
-      <td>Brave</td>
+      <td>Microsoft Edge</td>
+      <td align=center>☑️</td>
+      <td align=center>☑️</td>
+      <td align=center>☑️</td>
+    </tr>
+    <tr>
+      <td>Firefox</td>
+      <td align=center>☑️</td>
+      <td align=center>☑️</td>
+      <td align=center>☑️</td>
+    </tr>
+    <tr>
+      <td>qutebrowser</td>
       <td align=center>☑️</td>
       <td align=center>☑️</td>
       <td align=center>☑️</td>
@@ -71,25 +89,13 @@ Supported browsers on the respective OS:
       <td align=center>-</td>
     </tr>
     <tr>
-      <td>Firefox</td>
+      <td>Vivaldi</td>
       <td align=center>☑️</td>
       <td align=center>☑️</td>
       <td align=center>☑️</td>
     </tr>
     <tr>
       <td>Waterfox</td>
-      <td align=center>☑️</td>
-      <td align=center>☑️</td>
-      <td align=center>☑️</td>
-    </tr>
-    <tr>
-      <td>Microsoft Edge</td>
-      <td align=center>☑️</td>
-      <td align=center>☑️</td>
-      <td align=center>☑️</td>
-    </tr>
-    <tr>
-      <td>Vivaldi</td>
       <td align=center>☑️</td>
       <td align=center>☑️</td>
       <td align=center>☑️</td>
@@ -187,10 +193,11 @@ require('telescope').setup {
       --  * 'chrome'
       --  * 'chrome_beta'
       --  * 'edge'
-      --  * 'safari'
       --  * 'firefox'
-      --  * 'waterfox'
+      --  * 'qutebrowser'
+      --  * 'safari'
       --  * 'vivaldi'
+      --  * 'waterfox'
       selected_browser = 'brave',
 
       -- Either provide a shell command to open the URL
