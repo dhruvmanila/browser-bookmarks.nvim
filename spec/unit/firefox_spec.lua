@@ -94,7 +94,10 @@ describe("firefox", function()
 
     describe("get_profile_dir", function()
       it("should warn if OS not supported", function()
-        local profile_dir = firefox._get_profile_dir({ os_name = "random" }, {})
+        local profile_dir = firefox._get_profile_dir(
+          { os_name = "random" },
+          { selected_browser = "firefox" }
+        )
 
         assert.is_nil(profile_dir)
         assert.stub(utils.warn).was_called()
@@ -107,7 +110,7 @@ describe("firefox", function()
         local profile_dir = firefox._get_profile_dir({
           os_name = "Darwin",
           os_homedir = "parse_failure",
-        }, {})
+        }, { selected_browser = "firefox" })
 
         assert.is_nil(profile_dir)
         assert.stub(utils.warn).was_called()
@@ -120,7 +123,7 @@ describe("firefox", function()
         local profile_dir = firefox._get_profile_dir({
           os_name = "Darwin",
           os_homedir = "one_profile",
-        }, {})
+        }, { selected_browser = "firefox" })
 
         assert.is_not_nil(profile_dir)
         assert.is_true(vim.endswith(profile_dir, "Profiles/one-profile"))
@@ -130,7 +133,7 @@ describe("firefox", function()
         local profile_dir = firefox._get_profile_dir({
           os_name = "Darwin",
           os_homedir = "default_profile",
-        }, {})
+        }, { selected_browser = "firefox" })
 
         assert.is_not_nil(profile_dir)
         assert.is_true(vim.endswith(profile_dir, "Profiles/default-release"))
@@ -139,7 +142,10 @@ describe("firefox", function()
       it("should return user given profile directory", function()
         local profile_dir = firefox._get_profile_dir(
           { os_name = "Darwin", os_homedir = "default_profile" },
-          { firefox_profile_name = "dev-edition-default" }
+          {
+            selected_browser = "firefox",
+            firefox_profile_name = "dev-edition-default",
+          }
         )
 
         assert.is_not_nil(profile_dir)
@@ -150,7 +156,7 @@ describe("firefox", function()
       it("should warn if user given profile does not exist", function()
         local profile_dir = firefox._get_profile_dir(
           { os_name = "Darwin", os_homedir = "default_profile" },
-          { firefox_profile_name = "random" }
+          { selected_browser = "firefox", firefox_profile_name = "random" }
         )
 
         assert.is_nil(profile_dir)
@@ -164,13 +170,13 @@ describe("firefox", function()
         local profile_dir = firefox._get_profile_dir({
           os_name = "Darwin",
           os_homedir = "no_default_profile",
-        }, {})
+        }, { selected_browser = "firefox" })
 
         assert.is_nil(profile_dir)
         assert.stub(utils.warn).was_called()
         assert
           .stub(utils.warn)
-          .was_called_with(match.matches "Unable to deduce the firefox profile name")
+          .was_called_with(match.matches "Unable to deduce the default firefox profile name")
       end)
     end)
   end)
@@ -182,7 +188,7 @@ describe("firefox", function()
     it("should return nil if unable to get profile directory", function()
       local bookmarks = firefox.collect_bookmarks(
         { os_name = "Darwin", os_homedir = "spec/fixtures" },
-        { firefox_profile_name = "random" }
+        { selected_browser = "firefox", firefox_profile_name = "random" }
       )
 
       assert.is_nil(bookmarks)
@@ -196,7 +202,7 @@ describe("firefox", function()
       local bookmarks = firefox.collect_bookmarks({
         os_name = "Darwin",
         os_homedir = "spec/fixtures",
-      }, {})
+      }, { selected_browser = "firefox" })
 
       assert.are.same(bookmarks, {
         {
@@ -220,7 +226,10 @@ describe("firefox", function()
     it("should parse bookmarks data for given firefox profile", function()
       local bookmarks = firefox.collect_bookmarks(
         { os_name = "Darwin", os_homedir = "spec/fixtures" },
-        { firefox_profile_name = "dev-edition-default" }
+        {
+          selected_browser = "firefox",
+          firefox_profile_name = "dev-edition-default",
+        }
       )
 
       assert.are.same(bookmarks, {
