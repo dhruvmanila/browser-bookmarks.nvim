@@ -77,6 +77,12 @@ Supported browsers on the respective OS:
       <td align=center>☑️</td>
     </tr>
     <tr>
+      <td>Waterfox</td>
+      <td align=center>☑️</td>
+      <td align=center>☑️</td>
+      <td align=center>☑️</td>
+    </tr>
+    <tr>
       <td>Microsoft Edge</td>
       <td align=center>☑️</td>
       <td align=center>☑️</td>
@@ -102,8 +108,8 @@ _Please take a look at the [**Caveats**](#caveats) section if you're planning to
 [![Requires Neovim](https://img.shields.io/badge/requires-neovim%200.7%2B-green?logo=neovim)](https://github.com/neovim/neovim)
 
 * [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim)
-* [sqlite.lua](https://github.com/kkharji/sqlite.lua) (only for Firefox browser
-  and buku)
+* [sqlite.lua](https://github.com/kkharji/sqlite.lua) (only for Firefox,
+  Waterfox browser and buku)
 
 Neovim version requirement is the same as that of
 [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim#getting-started).
@@ -124,7 +130,7 @@ to inspect the changes before updating.
 use {
   'dhruvmanila/telescope-bookmarks.nvim',
   tag = '*',
-  -- Uncomment if the selected browser is Firefox or buku
+  -- Uncomment if the selected browser is Firefox, Waterfox or buku
   -- requires = {
   --   'kkharji/sqlite.lua',
   -- }
@@ -135,7 +141,7 @@ use {
 
 ```vim
 Plug 'dhruvmanila/telescope-bookmarks.nvim', { 'tag': '*' }
-" Uncomment if the selected browser is Firefox or buku
+" Uncomment if the selected browser is Firefox, Waterfox or buku
 " Plug 'kkharji/sqlite.lua'
 ```
 
@@ -175,7 +181,16 @@ Extension options:
 require('telescope').setup {
   extensions = {
     bookmarks = {
-      -- Available: 'brave', 'buku', 'chrome', 'chrome_beta', 'edge', 'safari', 'firefox', 'vivaldi'
+      -- Available:
+      --  * 'brave'
+      --  * 'buku'
+      --  * 'chrome'
+      --  * 'chrome_beta'
+      --  * 'edge'
+      --  * 'safari'
+      --  * 'firefox'
+      --  * 'waterfox'
+      --  * 'vivaldi'
       selected_browser = 'brave',
 
       -- Either provide a shell command to open the URL
@@ -188,8 +203,11 @@ require('telescope').setup {
       -- Show the full path to the bookmark instead of just the bookmark name
       full_path = true,
 
-      -- Provide a custom profile name for Firefox
+      -- Provide a custom profile name for Firefox browser
       firefox_profile_name = nil,
+
+      -- Provide a custom profile name for Waterfox browser
+      waterfox_profile_name = nil,
 
       -- Add a column which contains the tags for each bookmark for buku
       buku_include_tags = false,
@@ -201,9 +219,9 @@ require('telescope').setup {
 }
 ```
 
-For Firefox users, the default profile will be used if `firefox_profile_name` is
-not provided. This is obtained by parsing the profiles config file present in
-the default config directory.
+For Firefox/Waterfox users, the default profile will be used if
+`firefox_profile_name`/`waterfox_profile_name` is not provided. This is obtained
+by parsing the profiles config file present in the default config directory.
 
 If the user has provided `url_open_plugin` then it will be used, otherwise
 default to using `url_open_command`. Supported plugins for `url_open_plugin` and
