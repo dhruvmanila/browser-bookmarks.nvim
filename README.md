@@ -31,83 +31,29 @@ require('telescope').extensions.bookmarks.bookmarks(
 </details>
 
 
-Supported browsers on the respective OS:
+### Supported browsers
 
-<table>
-  <thead>
-    <tr>
-       <th rowspan=2>Browser</th>
-       <th colspan=3>Operating System</th>
-    </tr>
-    <tr>
-      <td align=center>MacOS</td>
-      <td align=center>Linux</td>
-      <td align=center>Windows</td>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Brave</td>
-      <td align=center>☑️</td>
-      <td align=center>☑️</td>
-      <td align=center>☑️</td>
-    </tr>
-    <tr>
-      <td>Google Chrome</td>
-      <td align=center>☑️</td>
-      <td align=center>☑️</td>
-      <td align=center>☑️</td>
-    </tr>
-    <tr>
-      <td>Google Chrome Beta</td>
-      <td align=center>☑️</td>
-      <td align=center>☑️</td>
-      <td align=center>☑️</td>
-    </tr>
-    <tr>
-      <td>Microsoft Edge</td>
-      <td align=center>☑️</td>
-      <td align=center>☑️</td>
-      <td align=center>☑️</td>
-    </tr>
-    <tr>
-      <td>Firefox</td>
-      <td align=center>☑️</td>
-      <td align=center>☑️</td>
-      <td align=center>☑️</td>
-    </tr>
-    <tr>
-      <td>qutebrowser</td>
-      <td align=center>☑️</td>
-      <td align=center>☑️</td>
-      <td align=center>☑️</td>
-    </tr>
-    <tr>
-      <td>Safari <a href="#safari"><sup>[1]</sup></a></td>
-      <td align=center>☑️</td>
-      <td align=center>-</td>
-      <td align=center>-</td>
-    </tr>
-    <tr>
-      <td>Vivaldi</td>
-      <td align=center>☑️</td>
-      <td align=center>☑️</td>
-      <td align=center>☑️</td>
-    </tr>
-    <tr>
-      <td>Waterfox</td>
-      <td align=center>☑️</td>
-      <td align=center>☑️</td>
-      <td align=center>☑️</td>
-    </tr>
-  </tbody>
-</table>
+| Browser            | MacOS   | Linux   | Windows   |
+| ------------------ | :-----: | :-----: | :-------: |
+| Brave              | ☑️       | ☑️       | ☑️         |
+| Google Chrome      | ☑️       | ☑️       | ☑️         |
+| Google Chrome Beta | ☑️       | ☑️       | ☑️         |
+| Microsoft Edge     | ☑️       | ☑️       | ☑️         |
+| Firefox            | ☑️       | ☑️       | ☑️         |
+| qutebrowser        | ☑️       | ☑️       | ☑️         |
+| Safari [^1]        | ☑️       | -       | -         |
+| Vivaldi            | ☑️       | ☑️       | ☑️         |
+| Waterfox           | ☑️       | ☑️       | ☑️         |
 
-Supported tools:
+[^1]: The application which is used to run neovim should be allowed full disk access
+as the bookmarks file (`~/Library/Safari/Bookmarks.plist`) is in a restricted
+directory. This can be done in ***System Preferences > Security & Privacy > Full
+Disk Access*** and then click on the checkbox next to your preferred
+application.
+
+### Supported tools
 
 - [buku](https://github.com/jarun/buku) - bookmark manager
-
-_Please take a look at the [**Caveats**](#caveats) section if you're planning to use this plugin with **Safari**._
 
 ## Requirements
 
@@ -236,23 +182,6 @@ the respective plugin function used to open the URL:
 
 * [open-browser.vim](https://github.com/tyru/open-browser.vim) - `openbrowser#open`
 * [vim-external](https://github.com/itchyny/vim-external) - `external#browser`
-
-## Caveats
-
-### Safari
-
-The application which is used to run neovim should be allowed full disk access
-as the bookmarks file (`~/Library/Safari/Bookmarks.plist`) is in a restricted
-directory. This can be done in ***System Preferences > Security & Privacy > Full
-Disk Access*** and then click on the checkbox next to your preferred
-application. Please take a look at the below image for more details:
-
-<details>
-  <summary><i>Allow full disk access to the application running neovim (iTerm2)</i></summary>
-
-<img width="668" alt="Full disk access settings" src="https://user-images.githubusercontent.com/67177269/115988185-16db7e80-a5d6-11eb-9667-f37bb288bfa8.png">
-
-</details>
 
 ## References
 
