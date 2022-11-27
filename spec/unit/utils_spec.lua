@@ -67,12 +67,12 @@ end)
 
 describe("get_os_command_output", function()
   it("returns output on success", function()
-    assert.are.same(utils.get_os_command_output "echo busted", "busted")
+    assert.are.same(utils.run_os_command "echo busted", "busted")
   end)
 
   it("errors on failure", function()
     assert.error_matches(function()
-      utils.get_os_command_output "echo 'hi stderr' 1>&2 && exit 1"
+      utils.run_os_command "echo 'hi stderr' 1>&2 && exit 1"
     end, "^hi stderr$")
   end)
 end)
@@ -130,9 +130,11 @@ describe("debug", function()
   it("should format the message correctly", function()
     config.setup { debug = true }
     utils.debug(nil, "string", { foo = "bar" })
-    assert.stub(vim.api.nvim_out_write).was_called(1)
-    assert.stub(vim.api.nvim_out_write).was_called_with(
-      match.matches '%[browser%-bookmarks%] %[[^%]]+%] %[DEBUG%]: nil string {\n  foo = "bar"\n}\n'
-    )
+    vim.schedule(function()
+      assert.stub(vim.api.nvim_out_write).was_called(1)
+      assert.stub(vim.api.nvim_out_write).was_called_with(
+        match.matches '%[browser%-bookmarks%] %[[^%]]+%] %[DEBUG%]: nil string {\n  foo = "bar"\n}\n'
+      )
+    end)
   end)
 end)

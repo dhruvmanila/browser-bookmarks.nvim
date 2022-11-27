@@ -48,6 +48,12 @@ application.
 ### Supported tools
 
 - [buku](https://github.com/jarun/buku) - bookmark manager
+- [Raindrop.io](https://raindrop.io) [^2] - All-in-one bookmark manager
+
+[^2]: The Raindrop API requires the access token to fetch the bookmarks. To get
+    the access token, go to [App Management
+    Console](https://app.raindrop.io/settings/integrations) and open your
+    application settings. Copy **Test token** and add it when asked for.
 
 ## Requirements
 
@@ -264,6 +270,7 @@ the config value is as follows:
 | Microsoft Edge     | `edge`       |
 | Firefox            | `firefox`    |
 | qutebrowser        | `qutebrowser`|
+| Raindrop.io        | `raindrop`   |
 | Safari             | `safari`     |
 | Vivaldi            | `vivaldi`    |
 | Waterfox           | `waterfox`   |

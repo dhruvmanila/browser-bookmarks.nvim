@@ -11,6 +11,7 @@ M.Browser = {
   EDGE = "edge",
   FIREFOX = "firefox",
   QUTEBROWSER = "qutebrowser",
+  RAINDROP = "raindrop",
   SAFARI = "safari",
   VIVALDI = "vivaldi",
   WATERFOX = "waterfox",

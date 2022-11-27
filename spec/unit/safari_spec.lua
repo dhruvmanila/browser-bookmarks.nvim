@@ -43,7 +43,7 @@ describe("safari", function()
     -- Overriding the function to avoid running the `plutil` command.
     ---@param cmd string
     ---@return string
-    utils.get_os_command_output = function(cmd)
+    utils.run_os_command = function(cmd)
       assert(vim.startswith(cmd, "plutil"), "invalid command: " .. cmd)
       local parts = vim.split(cmd, " ", { plain = true, trimempty = true })
       local filepath = parts[#parts]

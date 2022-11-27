@@ -60,9 +60,8 @@ function safari.collect_bookmarks(config)
     return nil
   end
 
-  local output = utils.get_os_command_output(
-    "plutil -convert xml1 -o - " .. bookmarks_filepath
-  )
+  local output =
+    utils.run_os_command("plutil -convert xml1 -o - " .. bookmarks_filepath)
   local data = plist.parse(output)
   if data == nil then
     return nil

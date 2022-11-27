@@ -234,33 +234,46 @@ function utils.debug(...)
   local parts = {}
   for i = 1, select("#", ...) do
     local arg = select(i, ...)
-    if arg == nil then
-      table.insert(parts, "nil")
-    elseif type(arg) == "string" then
+    if type(arg) == "string" then
       table.insert(parts, arg)
     else
       table.insert(parts, vim.inspect(arg))
     end
   end
 
-  vim.api.nvim_out_write(
-    ("[browser-bookmarks] [%s] [DEBUG]: %s\n"):format(
-      os.date "%Y-%m-%d %H:%M:%S",
-      table.concat(parts, " ")
+  vim.schedule(function()
+    vim.api.nvim_out_write(
+      ("[browser-bookmarks] [%s] [DEBUG]: %s\n"):format(
+        os.date "%Y-%m-%d %H:%M:%S",
+        table.concat(parts, " ")
+      )
     )
-  )
+  end)
+end
+
+-- Send a notification using `vim.notify`.
+---@param msg string
+---@param level integer
+local function notify(msg, level)
+  vim.notify(msg, level, { title = "browser-bookmarks.nvim" })
+end
+
+-- Emit a info message.
+---@param msg string
+function utils.info(msg)
+  notify(msg, vim.log.levels.INFO)
 end
 
 -- Emit a warning message.
 ---@param msg string
 function utils.warn(msg)
-  vim.notify(msg, vim.log.levels.WARN, { title = "browser-bookmarks.nvim" })
+  notify(msg, vim.log.levels.WARN)
 end
 
 -- Timeout value for job execution. The unit is milliseconds.
 local timeout = 5 * 1000
 
--- Return the output of the given command.
+-- Run the given OS command.
 --
 -- An error is raised in the following cases:
 --    - invalid arguments
@@ -270,10 +283,18 @@ local timeout = 5 * 1000
 --
 -- This uses Neovim's |job-control| API to run the cmd.
 --
--- Timeout value is 5 seconds. After that, `jobstop` is used to stop the job.
+-- If `callback` is provided, the cmd runs asynchronously and the function
+-- will return the job id. The callback function is passed a table which
+-- contains the exitcode, stdout and stderr.
+--
+-- Otherwise, the function waits for the cmd to finish and returns the stdout.
+-- Timeout value for this case is 5 seconds. After that, `jobstop` is used to
+-- stop the job.
 ---@param cmd string
+---@param callback nil
 ---@return string
-function utils.get_os_command_output(cmd)
+---@overload fun(cmd: string, callback: fun(result: {exitcode: number, stdout: string, stderr: string}):nil): number
+function utils.run_os_command(cmd, callback)
   local stdout, stderr
 
   -- Channel callback for stdout and stderr.
@@ -300,9 +321,19 @@ function utils.get_os_command_output(cmd)
     stderr_buffered = true,
     on_stdout = on_data,
     on_stderr = on_data,
+    on_exit = function(_, exitcode, _)
+      utils.debug("exitcode:", exitcode)
+      if callback then
+        callback { stdout = stdout, stderr = stderr, exitcode = exitcode }
+      end
+    end,
   })
   if jobid <= 0 then
     error("invalid command: " .. cmd)
+  end
+
+  if callback then
+    return jobid
   end
 
   local exitcode = vim.fn.jobwait({ jobid }, timeout)[1]
@@ -341,6 +372,7 @@ local title = {
   [Browser.EDGE] = "Edge",
   [Browser.FIREFOX] = "Firefox",
   [Browser.QUTEBROWSER] = "qutebrowser",
+  [Browser.RAINDROP] = "Raindrop",
   [Browser.SAFARI] = "Safari",
   [Browser.VIVALDI] = "Vivaldi",
   [Browser.WATERFOX] = "Waterfox",
