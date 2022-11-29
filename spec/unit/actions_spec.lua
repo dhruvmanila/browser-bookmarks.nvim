@@ -45,7 +45,7 @@ describe("actions", function()
       assert.stub(utils.warn).was_called(1)
       assert
         .stub(utils.warn)
-        .was_called_with(match.matches "Failed to open the urls")
+        .was_called_with(match.matches "Failed to open the url")
       utils.warn:revert()
       os.execute:revert()
     end)
