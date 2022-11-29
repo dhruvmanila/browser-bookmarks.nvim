@@ -17,7 +17,7 @@ describe("qutebrowser", function()
       local bookmarks = qutebrowser.collect_bookmarks { os_name = "random" }
 
       assert.is_nil(bookmarks)
-      assert.stub(utils.warn).was_called()
+      assert.stub(utils.warn).was_called(1)
       assert
         .stub(utils.warn)
         .was_called_with(match.matches "Unsupported OS for qutebrowser")
@@ -30,7 +30,7 @@ describe("qutebrowser", function()
       }
 
       assert.is_nil(bookmarks)
-      assert.stub(utils.warn).was_called()
+      assert.stub(utils.warn).was_called(1)
       assert
         .stub(utils.warn)
         .was_called_with(match.matches "No qutebrowser bookmarks file found at")

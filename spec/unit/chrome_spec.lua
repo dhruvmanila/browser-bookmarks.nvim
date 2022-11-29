@@ -20,7 +20,7 @@ describe("chrome", function()
       )
 
       assert.is_nil(bookmarks)
-      assert.stub(utils.warn).was_called()
+      assert.stub(utils.warn).was_called(1)
       assert
         .stub(utils.warn)
         .was_called_with(match.matches "Unsupported OS for chrome")
@@ -33,7 +33,7 @@ describe("chrome", function()
       )
 
       assert.is_nil(bookmarks)
-      assert.stub(utils.warn).was_called()
+      assert.stub(utils.warn).was_called(1)
       assert
         .stub(utils.warn)
         .was_called_with(match.matches "No chrome bookmarks file found at")

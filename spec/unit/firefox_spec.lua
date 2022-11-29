@@ -100,7 +100,7 @@ describe("firefox", function()
         )
 
         assert.is_nil(profile_dir)
-        assert.stub(utils.warn).was_called()
+        assert.stub(utils.warn).was_called(1)
         assert
           .stub(utils.warn)
           .was_called_with(match.matches "Unsupported OS for firefox browser")
@@ -113,7 +113,7 @@ describe("firefox", function()
         }, { selected_browser = "firefox" })
 
         assert.is_nil(profile_dir)
-        assert.stub(utils.warn).was_called()
+        assert.stub(utils.warn).was_called(1)
         assert
           .stub(utils.warn)
           .was_called_with(match.matches "Unable to parse firefox profiles config file")
@@ -160,7 +160,7 @@ describe("firefox", function()
         )
 
         assert.is_nil(profile_dir)
-        assert.stub(utils.warn).was_called()
+        assert.stub(utils.warn).was_called(1)
         assert
           .stub(utils.warn)
           .was_called_with(match.matches "Given firefox profile does not exist")
@@ -173,7 +173,7 @@ describe("firefox", function()
         }, { selected_browser = "firefox" })
 
         assert.is_nil(profile_dir)
-        assert.stub(utils.warn).was_called()
+        assert.stub(utils.warn).was_called(1)
         assert
           .stub(utils.warn)
           .was_called_with(match.matches "Unable to deduce the default firefox profile name")
@@ -192,7 +192,7 @@ describe("firefox", function()
       )
 
       assert.is_nil(bookmarks)
-      assert.stub(utils.warn).was_called()
+      assert.stub(utils.warn).was_called(1)
       assert
         .stub(utils.warn)
         .was_called_with(match.matches "Given firefox profile does not exist")
