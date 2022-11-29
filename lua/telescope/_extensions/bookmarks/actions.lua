@@ -1,5 +1,8 @@
 local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
+local action_utils = require "telescope.actions.utils"
+
+local utils = require "telescope._extensions.bookmarks.utils"
 
 local plugin_actions = {}
 
@@ -16,28 +19,42 @@ local url_plugin_function = {
 ---@return function
 function plugin_actions.smart_url_opener(config)
   return function(prompt_bufnr)
-    local plugin_name = config.url_open_plugin
-    local selection = action_state.get_selected_entry()
+    local urls = {}
+    action_utils.map_selections(prompt_bufnr, function(selection)
+      table.insert(urls, selection.value)
+    end)
+    if vim.tbl_isempty(urls) then
+      table.insert(urls, action_state.get_selected_entry().value)
+    end
     actions.close(prompt_bufnr)
 
+    local plugin_name = config.url_open_plugin
     if plugin_name and plugin_name ~= "" then
       local fname = url_plugin_function[plugin_name]
       if not fname then
         local supported = table.concat(vim.tbl_keys(url_plugin_function), ", ")
-        error(
+        utils.warn(
           string.format(
             "Unsupported plugin opener: %s (%s)",
             plugin_name,
             supported
           )
         )
+        return
       end
 
-      vim.fn[fname](selection.value)
+      for _, url in ipairs(urls) do
+        vim.fn[fname](url)
+      end
     else
-      os.execute(
-        string.format('%s "%s"', config.url_open_command, selection.value)
+      local command = ('%s "%s"'):format(
+        config.url_open_command,
+        table.concat(urls, '" "')
       )
+      local exit_code = os.execute(command)
+      if exit_code ~= 0 then
+        utils.warn("Failed to open the url(s) with command: " .. command)
+      end
     end
   end
 end
