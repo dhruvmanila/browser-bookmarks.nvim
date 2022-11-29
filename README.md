@@ -36,6 +36,7 @@ require('telescope').extensions.bookmarks.bookmarks(
 | Browser            | MacOS   | Linux   | Windows   |
 | ------------------ | :-----: | :-----: | :-------: |
 | Brave              | ☑️       | ☑️       | ☑️         |
+| Brave Beta         | ☑️       | ☑️       | ☑️         |
 | Google Chrome      | ☑️       | ☑️       | ☑️         |
 | Google Chrome Beta | ☑️       | ☑️       | ☑️         |
 | Microsoft Edge     | ☑️       | ☑️       | ☑️         |
@@ -135,6 +136,7 @@ require('telescope').setup {
     bookmarks = {
       -- Available:
       --  * 'brave'
+      --  * 'brave_beta'
       --  * 'buku'
       --  * 'chrome'
       --  * 'chrome_beta'

@@ -26,6 +26,7 @@ local config = {}
 ---Prompt title.
 local title = {
   brave = "Brave",
+  brave_beta = "Brave",
   buku = "Buku",
   chrome = "Chrome",
   chrome_beta = "Chrome",
