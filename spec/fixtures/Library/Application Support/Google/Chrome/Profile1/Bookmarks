@@ -1,0 +1,49 @@
+{
+  "checksum": "",
+  "roots": {
+    "bookmark_bar": {
+      "children": [
+        {
+          "children": [
+            {
+              "name": "Google",
+              "type": "url",
+              "url": "https://google.com/"
+            },
+            {
+              "children": [
+                {
+                  "name": "DuckDuckGo",
+                  "type": "url",
+                  "url": "https://duckduckgo.com/"
+                }
+              ],
+              "name": "nested",
+              "type": "folder"
+            }
+          ],
+          "name": "search",
+          "type": "folder"
+        },
+        {
+          "name": "ISRO",
+          "type": "url",
+          "url": "https://www.isro.gov.in/"
+        }
+      ],
+      "name": "Bookmarks Bar",
+      "type": "folder"
+    },
+    "other": {
+      "children": [],
+      "name": "Other Bookmarks",
+      "type": "folder"
+    },
+    "synced": {
+      "children": [],
+      "name": "Mobile bookmarks",
+      "type": "folder"
+    }
+  },
+  "version": 1
+}

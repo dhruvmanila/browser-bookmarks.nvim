@@ -1,0 +1,12 @@
+{
+  "profile": {
+    "info_cache": {
+      "Default": {
+        "name": "Default"
+      },
+      "Profile1": {
+        "name": "Astronaut"
+      }
+    }
+  }
+}
