@@ -53,6 +53,7 @@ end
 -- It will return `nil` if:
 --   - the OS is not supported by the plugin
 --   - it failed to parse the config file
+--   - given profile name does not exist
 --   - unable to deduce the profile directory for some unknown reason
 --
 -- The profile name will either be the one provided by the user or the default
