@@ -196,6 +196,11 @@ the respective plugin function used to open the URL:
 * [open-browser.vim](https://github.com/tyru/open-browser.vim) - `openbrowser#open`
 * [vim-external](https://github.com/itchyny/vim-external) - `external#browser`
 
+## Contributing
+
+Contributions are always welcome and highly appreciated. Refer to the
+[Contributing Guidelines](./CONTRIBUTING.md).
+
 ## References
 
 * [Browsing Chrome bookmarks with fzf](https://junegunn.kr/2015/04/browsing-chrome-bookmarks-with-fzf/)
