@@ -7,7 +7,7 @@
 --
 -- https://github.com/klen/nvim-test
 
-local nvim_test, ok = pcall(require, "nvim-test")
+local ok, nvim_test = pcall(require, "nvim-test")
 if not ok then
   return
 end
