@@ -243,4 +243,8 @@ function chrome.collect_bookmarks(state, config)
   return parse_bookmarks_data(data)
 end
 
+if _TEST then
+  chrome._get_profile_dir = get_profile_dir
+end
+
 return chrome
