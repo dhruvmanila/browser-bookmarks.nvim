@@ -7,6 +7,7 @@
 ---@field selected_browser string
 ---@field url_open_command string
 ---@field url_open_plugin string
+---@field profile_name string
 ---@field firefox_profile_name string
 ---@field waterfox_profile_name string
 ---@field buku_include_tags boolean

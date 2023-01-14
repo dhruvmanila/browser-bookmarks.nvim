@@ -5,55 +5,43 @@ local utils = require "telescope._extensions.bookmarks.utils"
 ---Default categories of bookmarks to look for.
 local categories = { "bookmark_bar", "synced", "other" }
 
----Path components to the bookmarks file for the respective OS and browser.
----Brave and Google Chrome uses the same underlying format to store bookmarks.
-local bookmarks_filepath = {
+-- Path components to the default config directory for the respective OS
+-- and browser.
+local default_config_dir = {
   Darwin = {
     brave = {
       "Library",
       "Application Support",
       "BraveSoftware",
       "Brave-Browser",
-      "Default",
-      "Bookmarks",
     },
     brave_beta = {
       "Library",
       "Application Support",
       "BraveSoftware",
       "Brave-Browser-Beta",
-      "Default",
-      "Bookmarks",
     },
     chrome = {
       "Library",
       "Application Support",
       "Google",
       "Chrome",
-      "Default",
-      "Bookmarks",
     },
     chrome_beta = {
       "Library",
       "Application Support",
       "Google",
       "Chrome Beta",
-      "Default",
-      "Bookmarks",
     },
     edge = {
       "Library",
       "Application Support",
       "Microsoft Edge",
-      "Default",
-      "Bookmarks",
     },
     vivaldi = {
       "Library",
       "Application Support",
       "Vivaldi",
-      "Default",
-      "Bookmarks",
     },
   },
   Linux = {
@@ -61,39 +49,27 @@ local bookmarks_filepath = {
       ".config",
       "BraveSoftware",
       "Brave-Browser",
-      "Default",
-      "Bookmarks",
     },
     brave_beta = {
       ".config",
       "BraveSoftware",
       "Brave-Browser-Beta",
-      "Default",
-      "Bookmarks",
     },
     chrome = {
       ".config",
       "google-chrome",
-      "Default",
-      "Bookmarks",
     },
     chrome_beta = {
       ".config",
       "google-chrome-beta",
-      "Default",
-      "Bookmarks",
     },
     edge = {
       ".config",
       "microsoft-edge",
-      "Default",
-      "Bookmarks",
     },
     vivaldi = {
       ".config",
       "vivaldi",
-      "Default",
-      "Bookmarks",
     },
   },
   Windows_NT = {
@@ -103,8 +79,6 @@ local bookmarks_filepath = {
       "BraveSoftware",
       "Brave-Browser",
       "User Data",
-      "Default",
-      "Bookmarks",
     },
     brave_beta = {
       "AppData",
@@ -112,8 +86,6 @@ local bookmarks_filepath = {
       "BraveSoftware",
       "Brave-Browser-Beta",
       "User Data",
-      "Default",
-      "Bookmarks",
     },
     chrome = {
       "AppData",
@@ -121,8 +93,6 @@ local bookmarks_filepath = {
       "Google",
       "Chrome",
       "User Data",
-      "Default",
-      "Bookmarks",
     },
     chrome_beta = {
       "AppData",
@@ -130,8 +100,6 @@ local bookmarks_filepath = {
       "Google",
       "Chrome Beta",
       "User Data",
-      "Default",
-      "Bookmarks",
     },
     edge = {
       "AppData",
@@ -139,19 +107,75 @@ local bookmarks_filepath = {
       "Microsoft",
       "Edge",
       "User Data",
-      "Default",
-      "Bookmarks",
     },
     vivaldi = {
       "AppData",
       "Local",
       "Vivaldi",
       "User Data",
-      "Default",
-      "Bookmarks",
     },
   },
 }
+
+-- Returns the absolute path to the profile directory for chromium based
+-- browsers.
+--
+-- It will return `nil` if:
+--   - the OS is not supported by the plugin
+--   - the "Local State" file is not found in the config directory
+--   - given profile name does not exist
+--
+-- The profile name will either be the one provided by the user or the default
+-- one. The user can define the profile name using `profile_name` option.
+---@param state TelescopeBookmarksState
+---@param config TelescopeBookmarksConfig
+---@return string|nil
+local function get_profile_dir(state, config)
+  local components = (default_config_dir[state.os_name] or {})[config.selected_browser]
+  if not components then
+    utils.warn(
+      ("Unsupported OS for %s browser: %s"):format(
+        config.selected_browser,
+        state.os_name
+      )
+    )
+    return nil
+  end
+
+  local config_dir = utils.join_path(state.os_homedir, components)
+  local user_profile = config.profile_name
+  if not user_profile then
+    return utils.join_path(config_dir, "Default")
+  end
+
+  local state_file = utils.join_path(config_dir, "Local State")
+  local file = io.open(state_file, "r")
+  if not file then
+    utils.warn(
+      ("No state file found for %s at: %s"):format(
+        config.selected_browser,
+        state_file
+      )
+    )
+    return nil
+  end
+
+  local content = file:read "*a"
+  file:close()
+  local data = vim.json.decode(content)
+  for profile_dir, profile_info in pairs(data.profile.info_cache) do
+    if profile_info.name == user_profile then
+      return utils.join_path(config_dir, profile_dir)
+    end
+  end
+
+  utils.warn(
+    ("Given %s profile does not exist: %s"):format(
+      config.selected_browser,
+      user_profile
+    )
+  )
+end
 
 ---Parse the bookmarks data to a lua table.
 ---@param data table
@@ -187,18 +211,12 @@ end
 ---@param config TelescopeBookmarksConfig
 ---@return Bookmark[]|nil
 function chrome.collect_bookmarks(state, config)
-  local components = (bookmarks_filepath[state.os_name] or {})[config.selected_browser]
-  if not components then
-    utils.warn(
-      ("Unsupported OS for %s: %s"):format(
-        config.selected_browser,
-        state.os_name
-      )
-    )
-    return nil
+  local profile_dir = get_profile_dir(state, config)
+  if profile_dir == nil then
+    return
   end
 
-  local filepath = utils.join_path(state.os_homedir, components)
+  local filepath = utils.join_path(profile_dir, "Bookmarks")
   local file = io.open(filepath, "r")
   if not file then
     utils.warn(
