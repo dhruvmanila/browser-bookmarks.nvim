@@ -130,6 +130,12 @@ selections feature in Telescope.
 
 Extension options:
 
+> **Note**
+>
+> These are the default values for all the available options. You don't need to
+> set them in your config. Just pick the ones whose value you would want to
+> change and add it to your config.
+
 ```lua
 require('telescope').setup {
   extensions = {
@@ -158,11 +164,17 @@ require('telescope').setup {
       -- Show the full path to the bookmark instead of just the bookmark name
       full_path = true,
 
-      -- Provide a custom profile name for Firefox browser
-      firefox_profile_name = nil,
-
-      -- Provide a custom profile name for Waterfox browser
-      waterfox_profile_name = nil,
+      -- Provide a custom profile name for the selected browser
+      -- Supported browsers:
+      --  * 'brave'
+      --  * 'brave_beta'
+      --  * 'chrome'
+      --  * 'chrome_beta'
+      --  * 'edge'
+      --  * 'firefox'
+      --  * 'vivaldi'
+      --  * 'waterfox'
+      profile_name = nil,
 
       -- Add a column which contains the tags for each bookmark for buku
       buku_include_tags = false,
@@ -174,9 +186,8 @@ require('telescope').setup {
 }
 ```
 
-For Firefox/Waterfox users, the default profile will be used if
-`firefox_profile_name`/`waterfox_profile_name` is not provided. This is obtained
-by parsing the profiles config file present in the default config directory.
+For browsers which supports specifying profiles, the default profile will be
+used if `profile_name` is not provided.
 
 If the user has provided `url_open_plugin` then it will be used, otherwise
 default to using `url_open_command`. Supported plugins for `url_open_plugin` and
