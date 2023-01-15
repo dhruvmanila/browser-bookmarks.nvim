@@ -23,31 +23,48 @@ local state = {
 ---@type TelescopeBookmarksConfig
 local config = {}
 
----Prompt title.
-local title = {
-  brave = "Brave",
-  brave_beta = "Brave",
-  buku = "Buku",
-  chrome = "Chrome",
-  chrome_beta = "Chrome",
-  edge = "Edge",
-  firefox = "Firefox",
-  qutebrowser = "qutebrowser",
-  safari = "Safari",
-  vivaldi = "Vivaldi",
-  waterfox = "Waterfox",
+---@enum Browser
+local Browser = {
+  BRAVE = "brave",
+  BRAVE_BETA = "brave_beta",
+  BUKU = "buku",
+  CHROME = "chrome",
+  CHROME_BETA = "chrome_beta",
+  EDGE = "edge",
+  FIREFOX = "firefox",
+  QUTEBROWSER = "qutebrowser",
+  SAFARI = "safari",
+  VIVALDI = "vivaldi",
+  WATERFOX = "waterfox",
 }
 
--- An array of browser name which supports specifying profile name.
+-- A mapping from browser to the title to be displayed on the search bar.
+---@type table<Browser, string>
+local title = {
+  [Browser.BRAVE] = "Brave",
+  [Browser.BRAVE_BETA] = "Brave",
+  [Browser.BUKU] = "Buku",
+  [Browser.CHROME] = "Chrome",
+  [Browser.CHROME_BETA] = "Chrome",
+  [Browser.EDGE] = "Edge",
+  [Browser.FIREFOX] = "Firefox",
+  [Browser.QUTEBROWSER] = "qutebrowser",
+  [Browser.SAFARI] = "Safari",
+  [Browser.VIVALDI] = "Vivaldi",
+  [Browser.WATERFOX] = "Waterfox",
+}
+
+-- An array of browser which supports specifying profile name.
+---@type Browser[]
 local profile_browsers = {
-  "brave",
-  "brave_beta",
-  "chrome",
-  "chrome_beta",
-  "edge",
-  "firefox",
-  "vivaldi",
-  "waterfox",
+  Browser.BRAVE,
+  Browser.BRAVE_BETA,
+  Browser.CHROME,
+  Browser.CHROME_BETA,
+  Browser.EDGE,
+  Browser.FIREFOX,
+  Browser.VIVALDI,
+  Browser.WATERFOX,
 }
 
 -- Set the configuration state.
