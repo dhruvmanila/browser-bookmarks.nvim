@@ -144,7 +144,7 @@ describe("firefox", function()
           { os_name = "Darwin", os_homedir = "default_profile" },
           {
             selected_browser = "firefox",
-            firefox_profile_name = "dev-edition-default",
+            profile_name = "dev-edition-default",
           }
         )
 
@@ -156,7 +156,7 @@ describe("firefox", function()
       it("should warn if user given profile does not exist", function()
         local profile_dir = firefox._get_profile_dir(
           { os_name = "Darwin", os_homedir = "default_profile" },
-          { selected_browser = "firefox", firefox_profile_name = "random" }
+          { selected_browser = "firefox", profile_name = "random" }
         )
 
         assert.is_nil(profile_dir)
@@ -188,7 +188,7 @@ describe("firefox", function()
     it("should return nil if unable to get profile directory", function()
       local bookmarks = firefox.collect_bookmarks(
         { os_name = "Darwin", os_homedir = "spec/fixtures" },
-        { selected_browser = "firefox", firefox_profile_name = "random" }
+        { selected_browser = "firefox", profile_name = "random" }
       )
 
       assert.is_nil(bookmarks)

@@ -87,19 +87,17 @@ local function get_profile_dir(state, config)
     return nil
   end
 
-  local user_profile = config[config.selected_browser .. "_profile_name"]
-
   local profile_info
   if vim.tbl_count(profiles) == 1 then
     -- Use the only profile available
     _, profile_info = next(profiles)
-  elseif user_profile ~= nil then
-    profile_info = vim.tbl_get(profiles, user_profile)
+  elseif config.profile_name ~= nil then
+    profile_info = vim.tbl_get(profiles, config.profile_name)
     if profile_info == nil then
       utils.warn(
         ("Given %s profile does not exist: %s"):format(
           config.selected_browser,
-          user_profile
+          config.profile_name
         )
       )
       return nil
@@ -122,8 +120,8 @@ local function get_profile_dir(state, config)
     utils.warn(
       (
         "Unable to deduce the default %s profile name. "
-        .. "Please provide one with `%s_profile_name` option."
-      ):format(config.selected_browser, config.selected_browser)
+        .. "Please provide one with `profile_name` option."
+      ):format(config.selected_browser)
     )
     return nil
   end
