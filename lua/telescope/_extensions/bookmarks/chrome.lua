@@ -143,8 +143,7 @@ local function get_profile_dir(state, config)
   end
 
   local config_dir = utils.join_path(state.os_homedir, components)
-  local user_profile = config.profile_name
-  if not user_profile then
+  if config.profile_name == nil then
     return utils.join_path(config_dir, "Default")
   end
 
@@ -164,7 +163,7 @@ local function get_profile_dir(state, config)
   file:close()
   local data = vim.json.decode(content)
   for profile_dir, profile_info in pairs(data.profile.info_cache) do
-    if profile_info.name == user_profile then
+    if profile_info.name == config.profile_name then
       return utils.join_path(config_dir, profile_dir)
     end
   end
@@ -172,7 +171,7 @@ local function get_profile_dir(state, config)
   utils.warn(
     ("Given %s profile does not exist: %s"):format(
       config.selected_browser,
-      user_profile
+      config.profile_name
     )
   )
 end
