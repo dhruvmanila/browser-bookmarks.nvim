@@ -1,6 +1,7 @@
 local chrome = {}
 
 local utils = require "telescope._extensions.bookmarks.utils"
+local xdg = require "telescope._extensions.bookmarks.xdg"
 
 ---Default categories of bookmarks to look for.
 local categories = { "bookmark_bar", "synced", "other" }
@@ -9,126 +10,31 @@ local categories = { "bookmark_bar", "synced", "other" }
 -- and browser.
 local default_config_dir = {
   Darwin = {
-    brave = {
-      "Library",
-      "Application Support",
-      "BraveSoftware",
-      "Brave-Browser",
-    },
-    brave_beta = {
-      "Library",
-      "Application Support",
-      "BraveSoftware",
-      "Brave-Browser-Beta",
-    },
-    chrome = {
-      "Library",
-      "Application Support",
-      "Google",
-      "Chrome",
-    },
-    chrome_beta = {
-      "Library",
-      "Application Support",
-      "Google",
-      "Chrome Beta",
-    },
-    chromium = {
-      "Library",
-      "Application Support",
-      "Chromium",
-    },
-    edge = {
-      "Library",
-      "Application Support",
-      "Microsoft Edge",
-    },
-    vivaldi = {
-      "Library",
-      "Application Support",
-      "Vivaldi",
-    },
+    brave = { "BraveSoftware", "Brave-Browser" },
+    brave_beta = { "BraveSoftware", "Brave-Browser-Beta" },
+    chrome = { "Google", "Chrome" },
+    chrome_beta = { "Google", "Chrome Beta" },
+    chromium = { "Chromium" },
+    edge = { "Microsoft Edge" },
+    vivaldi = { "Vivaldi" },
   },
   Linux = {
-    brave = {
-      ".config",
-      "BraveSoftware",
-      "Brave-Browser",
-    },
-    brave_beta = {
-      ".config",
-      "BraveSoftware",
-      "Brave-Browser-Beta",
-    },
-    chrome = {
-      ".config",
-      "google-chrome",
-    },
-    chrome_beta = {
-      ".config",
-      "google-chrome-beta",
-    },
-    chromium = {
-      ".config",
-      "chromium",
-    },
-    edge = {
-      ".config",
-      "microsoft-edge",
-    },
-    vivaldi = {
-      ".config",
-      "vivaldi",
-    },
+    brave = { "BraveSoftware", "Brave-Browser" },
+    brave_beta = { "BraveSoftware", "Brave-Browser-Beta" },
+    chrome = { "google-chrome" },
+    chrome_beta = { "google-chrome-beta" },
+    chromium = { "chromium" },
+    edge = { "microsoft-edge" },
+    vivaldi = { "vivaldi" },
   },
   Windows_NT = {
-    brave = {
-      "AppData",
-      "Local",
-      "BraveSoftware",
-      "Brave-Browser",
-      "User Data",
-    },
-    brave_beta = {
-      "AppData",
-      "Local",
-      "BraveSoftware",
-      "Brave-Browser-Beta",
-      "User Data",
-    },
-    chrome = {
-      "AppData",
-      "Local",
-      "Google",
-      "Chrome",
-      "User Data",
-    },
-    chrome_beta = {
-      "AppData",
-      "Local",
-      "Google",
-      "Chrome Beta",
-      "User Data",
-    },
-    chromium = {
-      "AppData",
-      "Local",
-      "Chromium",
-      "User Data",
-    },
-    edge = {
-      "AppData",
-      "Local",
-      "Microsoft",
-      "Edge",
-      "User Data",
-    },
-    vivaldi = {
-      "AppData",
-      "Local",
-      "Vivaldi",
-      "User Data",
-    },
+    brave = { "BraveSoftware", "Brave-Browser", "User Data" },
+    brave_beta = { "BraveSoftware", "Brave-Browser-Beta", "User Data" },
+    chrome = { "Google", "Chrome", "User Data" },
+    chrome_beta = { "Google", "Chrome Beta", "User Data" },
+    chromium = { "Chromium", "User Data" },
+    edge = { "Microsoft", "Edge", "User Data" },
+    vivaldi = { "Vivaldi", "User Data" },
   },
 }
 
@@ -157,7 +63,7 @@ local function get_profile_dir(state, config)
     return nil
   end
 
-  local config_dir = utils.join_path(state.os_homedir, components)
+  local config_dir = utils.join_path(xdg.config_dir(state), components)
   if config.profile_name == nil then
     return utils.join_path(config_dir, "Default")
   end

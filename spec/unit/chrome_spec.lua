@@ -1,13 +1,20 @@
 local chrome = require "telescope._extensions.bookmarks.chrome"
 local utils = require "telescope._extensions.bookmarks.utils"
+local xdg = require "telescope._extensions.bookmarks.xdg"
 
 describe("chrome", function()
+  local xdg_config_home
+
   before_each(function()
     stub(utils, "warn")
+    xdg_config_home = vim.env.XDG_CONFIG_HOME
+    vim.env.XDG_CONFIG_HOME = nil
   end)
 
   after_each(function()
     utils.warn:revert()
+    xdg.clear_cache()
+    vim.env.XDG_CONFIG_HOME = xdg_config_home
   end)
 
   describe("get_profile_dir", function()
