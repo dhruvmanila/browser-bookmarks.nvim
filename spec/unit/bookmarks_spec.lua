@@ -10,8 +10,7 @@ describe("bookmarks", function()
         selected_browser = "brave",
         url_open_command = "open",
         url_open_plugin = nil,
-        firefox_profile_name = nil,
-        waterfox_profile_name = nil,
+        profile_name = nil,
         buku_include_tags = false,
       })
     end)
@@ -26,8 +25,7 @@ describe("bookmarks", function()
         selected_browser = "firefox",
         url_open_command = "xdg-open",
         url_open_plugin = "vim_external",
-        firefox_profile_name = "default-release",
-        waterfox_profile_name = "default",
+        profile_name = "default",
         buku_include_tags = true,
       }
       assert.are.same(bookmarks._config, {})
@@ -38,6 +36,15 @@ describe("bookmarks", function()
 
   insulate("entrypoint", function()
     local bookmarks = require "telescope._extensions.bookmarks"
+    local utils = require "telescope._extensions.bookmarks.utils"
+
+    before_each(function()
+      stub(utils, "warn")
+    end)
+
+    after_each(function()
+      utils.warn:revert()
+    end)
 
     it("should error if browser not supported", function()
       assert.error_matches(function()
@@ -45,5 +52,19 @@ describe("bookmarks", function()
         bookmarks.exports.bookmarks()
       end, "Unsupported browser")
     end)
+
+    it(
+      "should warn if browser not supported to specify profile name",
+      function()
+        bookmarks.setup { selected_browser = "safari", profile_name = "default" }
+        local bookmarks = bookmarks.exports.bookmarks()
+
+        assert.is_nil(bookmarks)
+        assert.stub(utils.warn).was_called(1)
+        assert
+          .stub(utils.warn)
+          .was_called_with(match.matches "Unsupported browser for 'profile_name'")
+      end
+    )
   end)
 end)

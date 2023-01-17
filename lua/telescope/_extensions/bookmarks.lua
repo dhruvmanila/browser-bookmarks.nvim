@@ -85,23 +85,6 @@ local function bookmarks(opts)
   opts = opts or {}
   utils.debug("opts:", opts)
 
-  -- The deprecation notification needs to be put here instead of the setup
-  -- function. This is because if the user loads up the extension when Neovim
-  -- starts, the notification will behave in an unexpected manner.
-  for _, key in ipairs { "firefox_profile_name", "waterfox_profile_name" } do
-    if config[key] ~= nil then
-      vim.notify_once(
-        (
-          "'%s' is deprecated, use 'profile_name' instead. "
-          .. "This config key will be removed in v2.0.0"
-        ):format(key),
-        vim.log.levels.WARN,
-        { title = "telescope-bookmarks.nvim" }
-      )
-      set_config("profile_name", config[key], nil)
-    end
-  end
-
   local selected_browser = config.selected_browser
   if not title[selected_browser] then
     local supported = table.concat(vim.tbl_keys(title), ", ")
@@ -195,10 +178,6 @@ return telescope.register_extension {
     set_config("url_open_plugin", ext_config.url_open_plugin, nil)
     set_config("profile_name", ext_config.profile_name, nil)
     set_config("buku_include_tags", ext_config.buku_include_tags, false)
-
-    -- TODO(dhruvmanila): Deprecated config keys, remove in v2.0.0
-    set_config("firefox_profile_name", ext_config.firefox_profile_name, nil)
-    set_config("waterfox_profile_name", ext_config.waterfox_profile_name, nil)
 
     utils.debug("state:", state)
     utils.debug("config:", config)
