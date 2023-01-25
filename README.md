@@ -128,73 +128,110 @@ selections feature in Telescope.
 
 ## Configuration
 
-Extension options:
-
-> **Note**
->
-> These are the default values for all the available options. You don't need to
-> set them in your config. Just pick the ones whose value you would want to
-> change and add it to your config.
+The extension options should be provided to override the default values. They're
+provided in the bookmarks table like so:
 
 ```lua
 require('telescope').setup {
   extensions = {
     bookmarks = {
-      -- Available:
-      --  * 'brave'
-      --  * 'brave_beta'
-      --  * 'buku'
-      --  * 'chrome'
-      --  * 'chrome_beta'
-      --  * 'edge'
-      --  * 'firefox'
-      --  * 'qutebrowser'
-      --  * 'safari'
-      --  * 'vivaldi'
-      --  * 'waterfox'
-      selected_browser = 'brave',
-
-      -- Either provide a shell command to open the URL
-      url_open_command = 'open',
-
-      -- Or provide the plugin name which is already installed
-      -- Available: 'vim_external', 'open_browser'
-      url_open_plugin = nil,
-
-      -- Show the full path to the bookmark instead of just the bookmark name
-      full_path = true,
-
-      -- Provide a custom profile name for the selected browser
-      -- Supported browsers:
-      --  * 'brave'
-      --  * 'brave_beta'
-      --  * 'chrome'
-      --  * 'chrome_beta'
-      --  * 'edge'
-      --  * 'firefox'
-      --  * 'vivaldi'
-      --  * 'waterfox'
-      profile_name = nil,
-
-      -- Add a column which contains the tags for each bookmark for buku
-      buku_include_tags = false,
-
-      -- Provide debug messages
-      debug = false,
+      -- Provide the options here to override the default values.
+      -- ...
     },
-  }
+  },
 }
 ```
 
-For browsers which supports specifying profiles, the default profile will be
-used if `profile_name` is not provided.
+### `selected_browser` (string, default: "brave")
 
-If the user has provided `url_open_plugin` then it will be used, otherwise
-default to using `url_open_command`. Supported plugins for `url_open_plugin` and
-the respective plugin function used to open the URL:
+The selected browser to collect the bookmarks from. An error is raised if the
+provided browser name is unsupported. The list of supported browser along with
+the config value is as follows:
 
-* [open-browser.vim](https://github.com/tyru/open-browser.vim) - `openbrowser#open`
-* [vim-external](https://github.com/itchyny/vim-external) - `external#browser`
+| Browser / Tool     | Config value |
+| ------------------ | :----------: |
+| buku               | `buku`       |
+| Brave              | `brave`      |
+| Brave Beta         | `brave_beta` |
+| Google Chrome      | `chrome`     |
+| Google Chrome Beta | `chrome_beta`|
+| Microsoft Edge     | `edge`       |
+| Firefox            | `firefox`    |
+| qutebrowser        | `qutebrowser`|
+| Safari             | `safari`     |
+| Vivaldi            | `vivaldi`    |
+| Waterfox           | `waterfox`   |
+
+### `profile_name` (string, default: nil)
+
+This option is only applicable for the browsers which allow switching between
+profiles and the extension supports it. The default profile will be used if the
+value is `nil` otherwise the extension will try to collect the bookmarks for the
+given profile.
+
+If the given profile does not exist or the extension is unable to get the
+profile related information, an appropriate warning message will be provided.
+
+Following browsers are supported for the config option:
+* Brave
+* Brave Beta
+* Google Chrome
+* Google Chrome Beta
+* Microsoft Edge
+* Firefox
+* Vivaldi
+* Waterfox
+
+For the non-supported browsers, a warning will be provided and the extension
+will exit without opening the finder.
+
+### `full_path` (boolean, default: true)
+
+By default, the entire path to the bookmark is shown starting from the root
+folder upto the bookmark name. If this is `false`, then only the bookmark name
+will be shown in the finder. For example, if the bookmark path is
+`foo/bar/name`, setting the config value to `false` would show only the `name`
+part.
+
+### `url_open_command` (string, default: "open")
+
+The command name used to open the selected bookmarks in the default browser.
+The default value is based on macOS and should be overriden based on the user's
+operating system. For example, on Linux one might use `xdg-open`.
+
+The URL(s) for the selected bookmarks are passed as arguments to the command
+after quoting them. For multiple selections, each URL is passed as a separate
+argument separated by a space.
+
+```
+<command> "url1" "url2"
+```
+
+A warning is raised if the provided command failed to open the URL(s). This is
+determined by its exit code where a non-zero exit code is assumed to be a
+failure.
+
+### `url_open_plugin` (string, default: nil)
+
+The extension can use any existing plugin to open the selected bookmarks. This
+is useful when the same config is used across machines with different operating
+system. If this option is provided, then it takes precedence over
+`url_open_command`.
+
+Following plugins are supported along with the config value:
+* [open-browser.vim](https://github.com/tyru/open-browser.vim) - `open_browser`
+* [vim-external](https://github.com/itchyny/vim-external) - `external_browser`
+
+### `buku_include_tags` (boolean, default: false)
+
+This config option is specific to the buku bookmark manager. If it's `true`,
+then an additional column is added which includes the tags for every bookmark.
+This column is highlighted using the `Special` highlight group.
+
+### `debug` (boolean, default: false)
+
+If `true`, provide debug messages which includes, but not limited to, the config
+options, state values, telescope options, etc.
 
 ## Contributing
 
