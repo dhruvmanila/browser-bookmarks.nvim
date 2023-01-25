@@ -33,6 +33,11 @@ local default_config_dir = {
       "Google",
       "Chrome Beta",
     },
+    chromium = {
+      "Library",
+      "Application Support",
+      "Chromium",
+    },
     edge = {
       "Library",
       "Application Support",
@@ -62,6 +67,10 @@ local default_config_dir = {
     chrome_beta = {
       ".config",
       "google-chrome-beta",
+    },
+    chromium = {
+      ".config",
+      "chromium",
     },
     edge = {
       ".config",
@@ -99,6 +108,12 @@ local default_config_dir = {
       "Local",
       "Google",
       "Chrome Beta",
+      "User Data",
+    },
+    chromium = {
+      "AppData",
+      "Local",
+      "Chromium",
       "User Data",
     },
     edge = {

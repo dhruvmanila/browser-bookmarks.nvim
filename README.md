@@ -37,6 +37,7 @@ require('telescope').extensions.bookmarks.bookmarks(
 | ------------------ | :-----: | :-----: | :-------: |
 | Brave              | ☑️       | ☑️       | ☑️         |
 | Brave Beta         | ☑️       | ☑️       | ☑️         |
+| Chromium           | ☑️       | ☑️       | ☑️         |
 | Google Chrome      | ☑️       | ☑️       | ☑️         |
 | Google Chrome Beta | ☑️       | ☑️       | ☑️         |
 | Microsoft Edge     | ☑️       | ☑️       | ☑️         |
@@ -153,6 +154,7 @@ the config value is as follows:
 | buku               | `buku`       |
 | Brave              | `brave`      |
 | Brave Beta         | `brave_beta` |
+| Chromium           | `chromium`   |
 | Google Chrome      | `chrome`     |
 | Google Chrome Beta | `chrome_beta`|
 | Microsoft Edge     | `edge`       |
@@ -175,6 +177,7 @@ profile related information, an appropriate warning message will be provided.
 Following browsers are supported for the config option:
 * Brave
 * Brave Beta
+* Chromium
 * Google Chrome
 * Google Chrome Beta
 * Microsoft Edge
