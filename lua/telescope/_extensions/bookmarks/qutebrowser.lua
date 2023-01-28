@@ -2,30 +2,24 @@ local qutebrowser = {}
 
 local utils = require "telescope._extensions.bookmarks.utils"
 
-local bookmarks_filepath = {
-  Darwin = { ".qutebrowser", "bookmarks", "urls" },
-  Linux = { ".config", "qutebrowser", "bookmarks", "urls" },
-  Windows_NT = {
-    "AppData",
-    "Roaming",
-    "qutebrowser",
-    "config",
-    "bookmarks",
-    "urls",
-  },
+local default_config_dir = {
+  Darwin = { ".qutebrowser" },
+  Linux = { ".config", "qutebrowser" },
+  Windows_NT = { "AppData", "Roaming", "qutebrowser", "config" },
 }
 
 ---Collect all the bookmarks for qutebrowser.
 ---@param state TelescopeBookmarksState
 ---@return Bookmark[]|nil
 function qutebrowser.collect_bookmarks(state)
-  local components = bookmarks_filepath[state.os_name]
+  local components = default_config_dir[state.os_name]
   if not components then
     utils.warn("Unsupported OS for qutebrowser: " .. state.os_name)
     return nil
   end
 
-  local filepath = utils.join_path(state.os_homedir, components)
+  local filepath =
+    utils.join_path(state.os_homedir, components, "bookmarks", "urls")
   local file = io.open(filepath, "r")
   if not file then
     utils.warn("No qutebrowser bookmarks file found at: " .. filepath)
