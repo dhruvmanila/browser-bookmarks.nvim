@@ -90,9 +90,12 @@ local function bookmarks(opts)
 
   local selected_browser = config.selected_browser
   if not title[selected_browser] then
-    local supported = table.concat(vim.tbl_keys(title), ", ")
     error(
-      string.format("Unsupported browser: %s (%s)", selected_browser, supported)
+      string.format(
+        "Unsupported browser: %s (supported: %s)",
+        selected_browser,
+        table.concat(vim.tbl_keys(title), ", ")
+      )
     )
   end
 
