@@ -4,6 +4,226 @@ local telescope_utils = require "telescope.utils"
 
 local path_sep = require("plenary.path").path.sep
 
+local default_config_dir = {
+  Darwin = {
+    brave = {
+      "Library",
+      "Application Support",
+      "BraveSoftware",
+      "Brave-Browser",
+    },
+    brave_beta = {
+      "Library",
+      "Application Support",
+      "BraveSoftware",
+      "Brave-Browser-Beta",
+    },
+    chrome = {
+      "Library",
+      "Application Support",
+      "Google",
+      "Chrome",
+    },
+    chrome_beta = {
+      "Library",
+      "Application Support",
+      "Google",
+      "Chrome Beta",
+    },
+    chromium = {
+      "Library",
+      "Application Support",
+      "Chromium",
+    },
+    edge = {
+      "Library",
+      "Application Support",
+      "Microsoft Edge",
+    },
+    firefox = {
+      "Library",
+      "Application Support",
+      "Firefox",
+    },
+    qutebrowser = {
+      ".qutebrowser",
+    },
+    safari = {
+      "Library",
+      "Safari",
+    },
+    vivaldi = {
+      "Library",
+      "Application Support",
+      "Vivaldi",
+    },
+    waterfox = {
+      "Library",
+      "Application Support",
+      "Waterfox",
+    },
+  },
+  Linux = {
+    brave = {
+      ".config",
+      "BraveSoftware",
+      "Brave-Browser",
+    },
+    brave_beta = {
+      ".config",
+      "BraveSoftware",
+      "Brave-Browser-Beta",
+    },
+    chrome = {
+      ".config",
+      "google-chrome",
+    },
+    chrome_beta = {
+      ".config",
+      "google-chrome-beta",
+    },
+    chromium = {
+      ".config",
+      "chromium",
+    },
+    edge = {
+      ".config",
+      "microsoft-edge",
+    },
+    firefox = {
+      ".mozilla",
+      "firefox",
+    },
+    qutebrowser = {
+      ".config",
+      "qutebrowser",
+    },
+    vivaldi = {
+      ".config",
+      "vivaldi",
+    },
+    waterfox = {
+      ".waterfox",
+    },
+  },
+  Windows_NT = {
+    brave = {
+      "AppData",
+      "Local",
+      "BraveSoftware",
+      "Brave-Browser",
+      "User Data",
+    },
+    brave_beta = {
+      "AppData",
+      "Local",
+      "BraveSoftware",
+      "Brave-Browser-Beta",
+      "User Data",
+    },
+    chrome = {
+      "AppData",
+      "Local",
+      "Google",
+      "Chrome",
+      "User Data",
+    },
+    chrome_beta = {
+      "AppData",
+      "Local",
+      "Google",
+      "Chrome Beta",
+      "User Data",
+    },
+    chromium = {
+      "AppData",
+      "Local",
+      "Chromium",
+      "User Data",
+    },
+    edge = {
+      "AppData",
+      "Local",
+      "Microsoft",
+      "Edge",
+      "User Data",
+    },
+    firefox = {
+      "AppData",
+      "Roaming",
+      "Mozilla",
+      "Firefox",
+    },
+    qutebrowser = {
+      "AppData",
+      "Roaming",
+      "qutebrowser",
+      "config",
+    },
+    vivaldi = {
+      "AppData",
+      "Local",
+      "Vivaldi",
+      "User Data",
+    },
+    waterfox = {
+      "AppData",
+      "Roaming",
+      "Waterfox",
+    },
+  },
+}
+
+-- Returns true if the given path exists, false otherwise.
+---@param path string
+---@return boolean
+function utils.path_exists(path)
+  local stat = vim.loop.fs_stat(path) or {}
+  return not vim.tbl_isempty(stat)
+end
+
+-- Return the absolute path to the config directory for the respective OS and
+-- browser.
+--
+-- It first checks if the user provided the path in the configuration, else
+-- uses the default path.
+--
+-- It returns nil if:
+--    - the OS or browser is not supported
+--    - user provided config path does not exists
+---@param state TelescopeBookmarksState
+---@param config TelescopeBookmarksConfig
+---@return string|nil
+function utils.get_config_dir(state, config)
+  local config_dir = config.config_dir
+  if config_dir ~= nil then
+    if not utils.path_exists(config_dir) then
+      utils.warn(
+        (
+          "No such directory for %s browser: %s "
+          .. "(make sure to provide the absolute path which includes "
+          .. "the home directory as well)"
+        ):format(config.selected_browser, config_dir)
+      )
+      return nil
+    end
+    return config_dir
+  end
+  local components = (default_config_dir[state.os_name] or {})[config.selected_browser]
+  if components == nil then
+    -- This assumes that the check for browser support was already done before
+    -- calling this function, thus the message for unsupported OS.
+    utils.warn(
+      ("Unsupported OS for %s browser: %s"):format(
+        config.selected_browser,
+        state.os_name
+      )
+    )
+    return nil
+  end
+  return utils.join_path(state.os_homedir, components)
+end
+
 ---Emit a debug message. The given arguments are passed through `vim.inspect`
 ---function and then shown.
 ---@vararg any

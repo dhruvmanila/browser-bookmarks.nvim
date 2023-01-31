@@ -53,7 +53,8 @@ describe("firefox", function()
     utils.warn:revert()
   end)
 
-  -- Insulate this block to avoid `ini.load` being overridden in other blocks.
+  -- Insulate this block to avoid `ini.load` and `utils.path_exists` being
+  -- overridden in other blocks.
   insulate("helpers", function()
     local match = require "luassert.match"
     local ini = require "telescope._extensions.bookmarks.parser.ini"
@@ -93,6 +94,10 @@ describe("firefox", function()
     end)
 
     describe("get_profile_dir", function()
+      utils.path_exists = function(path)
+        return true
+      end
+
       it("should warn if OS not supported", function()
         local profile_dir = firefox._get_profile_dir(
           { os_name = "random" },

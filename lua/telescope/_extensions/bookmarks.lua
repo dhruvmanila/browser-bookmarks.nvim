@@ -183,6 +183,7 @@ return telescope.register_extension {
     set_config("url_open_command", ext_config.url_open_command, "open")
     set_config("url_open_plugin", ext_config.url_open_plugin, nil)
     set_config("profile_name", ext_config.profile_name, nil)
+    set_config("config_dir", ext_config.config_dir, nil)
     set_config("buku_include_tags", ext_config.buku_include_tags, false)
 
     utils.debug("state:", state)

@@ -5,138 +5,10 @@ local utils = require "telescope._extensions.bookmarks.utils"
 ---Default categories of bookmarks to look for.
 local categories = { "bookmark_bar", "synced", "other" }
 
--- Path components to the default config directory for the respective OS
--- and browser.
-local default_config_dir = {
-  Darwin = {
-    brave = {
-      "Library",
-      "Application Support",
-      "BraveSoftware",
-      "Brave-Browser",
-    },
-    brave_beta = {
-      "Library",
-      "Application Support",
-      "BraveSoftware",
-      "Brave-Browser-Beta",
-    },
-    chrome = {
-      "Library",
-      "Application Support",
-      "Google",
-      "Chrome",
-    },
-    chrome_beta = {
-      "Library",
-      "Application Support",
-      "Google",
-      "Chrome Beta",
-    },
-    chromium = {
-      "Library",
-      "Application Support",
-      "Chromium",
-    },
-    edge = {
-      "Library",
-      "Application Support",
-      "Microsoft Edge",
-    },
-    vivaldi = {
-      "Library",
-      "Application Support",
-      "Vivaldi",
-    },
-  },
-  Linux = {
-    brave = {
-      ".config",
-      "BraveSoftware",
-      "Brave-Browser",
-    },
-    brave_beta = {
-      ".config",
-      "BraveSoftware",
-      "Brave-Browser-Beta",
-    },
-    chrome = {
-      ".config",
-      "google-chrome",
-    },
-    chrome_beta = {
-      ".config",
-      "google-chrome-beta",
-    },
-    chromium = {
-      ".config",
-      "chromium",
-    },
-    edge = {
-      ".config",
-      "microsoft-edge",
-    },
-    vivaldi = {
-      ".config",
-      "vivaldi",
-    },
-  },
-  Windows_NT = {
-    brave = {
-      "AppData",
-      "Local",
-      "BraveSoftware",
-      "Brave-Browser",
-      "User Data",
-    },
-    brave_beta = {
-      "AppData",
-      "Local",
-      "BraveSoftware",
-      "Brave-Browser-Beta",
-      "User Data",
-    },
-    chrome = {
-      "AppData",
-      "Local",
-      "Google",
-      "Chrome",
-      "User Data",
-    },
-    chrome_beta = {
-      "AppData",
-      "Local",
-      "Google",
-      "Chrome Beta",
-      "User Data",
-    },
-    chromium = {
-      "AppData",
-      "Local",
-      "Chromium",
-      "User Data",
-    },
-    edge = {
-      "AppData",
-      "Local",
-      "Microsoft",
-      "Edge",
-      "User Data",
-    },
-    vivaldi = {
-      "AppData",
-      "Local",
-      "Vivaldi",
-      "User Data",
-    },
-  },
-}
-
 -- Returns the absolute path to the profile directory for chromium based
 -- browsers.
 --
 -- It will return `nil` if:
---   - the OS is not supported by the plugin
 --   - the "Local State" file is not found in the config directory
 --   - given profile name does not exist
 --
@@ -146,18 +18,11 @@ local default_config_dir = {
 ---@param config TelescopeBookmarksConfig
 ---@return string|nil
 local function get_profile_dir(state, config)
-  local components = (default_config_dir[state.os_name] or {})[config.selected_browser]
-  if not components then
-    utils.warn(
-      ("Unsupported OS for %s browser: %s"):format(
-        config.selected_browser,
-        state.os_name
-      )
-    )
+  local config_dir = utils.get_config_dir(state, config)
+  if config_dir == nil then
     return nil
   end
 
-  local config_dir = utils.join_path(state.os_homedir, components)
   if config.profile_name == nil then
     return utils.join_path(config_dir, "Default")
   end
@@ -227,7 +92,7 @@ end
 function chrome.collect_bookmarks(state, config)
   local profile_dir = get_profile_dir(state, config)
   if profile_dir == nil then
-    return
+    return nil
   end
 
   local filepath = utils.join_path(profile_dir, "Bookmarks")

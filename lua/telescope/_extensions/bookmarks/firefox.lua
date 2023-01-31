@@ -62,19 +62,21 @@ end
 ---@param config TelescopeBookmarksConfig
 ---@return string|nil
 local function get_profile_dir(state, config)
-  local components = (default_config_dir[state.os_name] or {})[config.selected_browser]
-  if not components then
+  local config_dir = utils.get_config_dir(state, config)
+  if config_dir == nil then
+    return nil
+  end
+
+  local profiles_file = utils.join_path(config_dir, "profiles.ini")
+  if not utils.path_exists(profiles_file) then
     utils.warn(
-      ("Unsupported OS for %s browser: %s"):format(
+      ("Expected a profiles config file for %s at %s"):format(
         config.selected_browser,
-        state.os_name
+        profiles_file
       )
     )
     return nil
   end
-
-  local config_dir = utils.join_path(state.os_homedir, components)
-  local profiles_file = utils.join_path(config_dir, "profiles.ini")
 
   local profiles = collect_profiles(profiles_file)
   if not profiles then

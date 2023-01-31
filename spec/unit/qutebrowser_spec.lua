@@ -14,7 +14,10 @@ describe("qutebrowser", function()
     end)
 
     it("should warn if OS not supported", function()
-      local bookmarks = qutebrowser.collect_bookmarks { os_name = "random" }
+      local bookmarks = qutebrowser.collect_bookmarks(
+        { os_name = "random" },
+        { selected_browser = "qutebrowser" }
+      )
 
       assert.is_nil(bookmarks)
       assert.stub(utils.warn).was_called(1)
@@ -24,10 +27,10 @@ describe("qutebrowser", function()
     end)
 
     it("should warn if file is absent", function()
-      local bookmarks = qutebrowser.collect_bookmarks {
+      local bookmarks = qutebrowser.collect_bookmarks({
         os_name = "Darwin",
         os_homedir = ".",
-      }
+      }, { selected_browser = "qutebrowser" })
 
       assert.is_nil(bookmarks)
       assert.stub(utils.warn).was_called(1)
@@ -37,10 +40,10 @@ describe("qutebrowser", function()
     end)
 
     it("should parse bookmarks file", function()
-      local bookmarks = qutebrowser.collect_bookmarks {
+      local bookmarks = qutebrowser.collect_bookmarks({
         os_name = "Darwin",
         os_homedir = "spec/fixtures",
-      }
+      }, { selected_browser = "qutebrowser" })
 
       assert.are.same(bookmarks, {
         {
