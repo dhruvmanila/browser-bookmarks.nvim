@@ -210,9 +210,10 @@ determining the custom path.
 | Waterfox           | `~/Library/Application Support/Waterfox`                         | `~/.waterfox`                                | `~/AppData/Roaming/Waterfox`                                 |
 
 The structure of the directory is dependent on the browser. This is used to find
-either the bookmarks file or other config files specific to the browser. If the
-user provided a custom path, it should match with the default config path. If it
-doesn't a warning will be provided.
+either the bookmarks file or other config files specific to the browser. **If
+the user provided a custom path, the structure inside that directory should
+match with the default config directory.** If there's some kind of mismatch, a
+warning will be provided.
 
 This option helps in case the browser was installed using a non-default install
 method. For example, a browser might be installed using a package manager and
