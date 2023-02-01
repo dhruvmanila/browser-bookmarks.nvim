@@ -6,6 +6,9 @@
       },
       "Profile1": {
         "name": "Astronaut"
+      },
+      "Empty": {
+        "name": "Empty"
       }
     }
   }

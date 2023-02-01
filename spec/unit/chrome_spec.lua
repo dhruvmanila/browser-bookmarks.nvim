@@ -99,6 +99,19 @@ describe("chrome", function()
         .stub(utils.warn)
         .was_called_with(match.matches "No chrome bookmarks file found at")
     end)
+
+    it("should warn if file is empty", function()
+      local bookmarks = chrome.collect_bookmarks(
+        { os_name = "Darwin", os_homedir = "spec/fixtures" },
+        { selected_browser = "chrome", profile_name = "Empty" }
+      )
+
+      assert.is_nil(bookmarks)
+      assert.stub(utils.warn).was_called(1)
+      assert
+        .stub(utils.warn)
+        .was_called_with(match.matches "No content found in chrome bookmarks file at")
+    end)
   end)
 
   describe("parse_bookmarks_data", function()

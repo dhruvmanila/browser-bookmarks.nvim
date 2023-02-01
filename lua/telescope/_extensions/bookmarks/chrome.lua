@@ -244,7 +244,7 @@ function chrome.collect_bookmarks(state, config)
 
   local content = file:read "*a"
   file:close()
-  if not content then
+  if content == nil or content == "" then
     utils.warn(
       ("No content found in %s bookmarks file at: %s"):format(
         config.selected_browser,
