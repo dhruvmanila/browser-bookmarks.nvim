@@ -8,22 +8,6 @@ local firefox = {}
 local utils = require "telescope._extensions.bookmarks.utils"
 local ini = require "telescope._extensions.bookmarks.parser.ini"
 
--- Path components to the default Firefox config directory for the respective OS.
-local default_config_dir = {
-  Darwin = {
-    firefox = { "Library", "Application Support", "Firefox" },
-    waterfox = { "Library", "Application Support", "Waterfox" },
-  },
-  Linux = {
-    firefox = { ".mozilla", "firefox" },
-    waterfox = { ".waterfox" },
-  },
-  Windows_NT = {
-    firefox = { "AppData", "Roaming", "Mozilla", "Firefox" },
-    waterfox = { "AppData", "Roaming", "Waterfox" },
-  },
-}
-
 -- Names to be excluded from the full bookmark name.
 local exclude_names = { "menu", "toolbar" }
 
