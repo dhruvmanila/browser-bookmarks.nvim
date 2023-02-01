@@ -218,6 +218,10 @@ This option helps in case the browser was installed using a non-default install
 method. For example, a browser might be installed using a package manager and
 the data is stored in a directory specific to that package manager.
 
+**Note:** For `buku`, this option doesn't apply as it has a custom logic to
+get the bookmarks filepath. This logic is the same as that in the official
+implementation.
+
 ### `full_path` (boolean, default: true)
 
 By default, the entire path to the bookmark is shown starting from the root
