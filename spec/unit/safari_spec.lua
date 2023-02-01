@@ -5,11 +5,16 @@ local helpers = require "spec.helpers"
 
 describe("safari", function()
   describe("collect_bookmarks", function()
-    local match = require "luassert.match"
-
-    it("should warn if OS not supported", function()
+    before_each(function()
       stub(utils, "warn")
+    end)
 
+    after_each(function()
+      utils.warn:revert()
+    end)
+
+    it("should return nil if get_config_dir fails", function()
+      -- Unsupported OS
       local bookmarks = safari.collect_bookmarks(
         { os_name = "Linux" },
         { selected_browser = "safari" }
@@ -17,9 +22,19 @@ describe("safari", function()
 
       assert.is_nil(bookmarks)
       assert.stub(utils.warn).was_called(1)
+    end)
+
+    it("should warn if bookmarks file not found", function()
+      local bookmarks = safari.collect_bookmarks(
+        { os_name = "Darwin" },
+        { selected_browser = "safari", config_dir = "spec/fixtures" }
+      )
+
+      assert.is_nil(bookmarks)
+      assert.stub(utils.warn).was_called(1)
       assert
         .stub(utils.warn)
-        .was_called_with(match.matches "Unsupported OS for safari")
+        .was_called_with(match.matches "Expected bookmarks file for Safari at")
     end)
   end)
 
