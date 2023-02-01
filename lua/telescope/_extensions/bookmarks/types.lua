@@ -9,6 +9,7 @@
 ---@field url_open_plugin string
 ---@field profile_name string
 ---@field buku_include_tags boolean
+---@field config_dir string|nil
 
 ---@class Bookmark
 ---@field name string

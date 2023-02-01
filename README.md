@@ -154,9 +154,9 @@ the config value is as follows:
 | buku               | `buku`       |
 | Brave              | `brave`      |
 | Brave Beta         | `brave_beta` |
-| Chromium           | `chromium`   |
 | Google Chrome      | `chrome`     |
 | Google Chrome Beta | `chrome_beta`|
+| Chromium           | `chromium`   |
 | Microsoft Edge     | `edge`       |
 | Firefox            | `firefox`    |
 | qutebrowser        | `qutebrowser`|
@@ -177,9 +177,9 @@ profile related information, an appropriate warning message will be provided.
 Following browsers are supported for the config option:
 * Brave
 * Brave Beta
-* Chromium
 * Google Chrome
 * Google Chrome Beta
+* Chromium
 * Microsoft Edge
 * Firefox
 * Vivaldi
@@ -187,6 +187,41 @@ Following browsers are supported for the config option:
 
 For the non-supported browsers, a warning will be provided and the extension
 will exit without opening the finder.
+
+### `config_dir` (string, default: nil)
+
+This is the absolute path to the config directory where the selected browser's
+data is stored on the respective operating system. If `nil`, the default path
+will be used as specified in the table below. It can be used as a reference in
+determining the custom path.
+
+| Browser            | MacOS                                                            | Linux                                        | Windows                                                      |
+| ------------------ | ---------------------------------------------------------------- | -------------------------------------------- | ------------------------------------------------------------ |
+| Brave              | `~/Library/Application Support/BraveSoftware/Brave-Browser`      | `~/.config/BraveSoftware/Brave-Browser`      | `~/AppData/Local/BraveSoftware/Brave-Browser/User Data`      |
+| Brave Beta         | `~/Library/Application Support/BraveSoftware/Brave-Browser-Beta` | `~/.config/BraveSoftware/Brave-Browser-Beta` | `~/AppData/Local/BraveSoftware/Brave-Browser-Beta/User Data` |
+| Google Chrome      | `~/Library/Application Support/Google/Chrome`                    | `~/.config/google-chrome`                    | `~/AppData/Local/Google/Chrome/User Data`                    |
+| Google Chrome Beta | `~/Library/Application Support/Google/Chrome Beta`               | `~/.config/google-chrome-beta`               | `~/AppData/Local/Google/Chrome Beta/User Data`               |
+| Chromium           | `~/Library/Application Support/Chromium`                         | `~/.config/chromium`                         | `~/AppData/Local/Chromium/User Data`                         |
+| Microsoft Edge     | `~/Library/Application Support/Microsoft Edge`                   | `~/.config/microsoft-edge`                   | `~/AppData/Local/Microsoft/Edge/User Data`                   |
+| Firefox            | `~/Library/Application Support/Firefox`                          | `~/.mozilla/firefox`                         | `~/AppData/Roaming/Mozilla/Firefox`                          |
+| qutebrowser        | `~/.qutebrowser`                                                 | `~/.config/qutebrowser`                      | `~/AppData/Roaming/qutebrowser/config`                       |
+| Safari             | `~/Library/Safari`                                               | -                                            | -                                                            |
+| Vivaldi            | `~/Library/Application Support/Vivaldi`                          | `~/.config/vivaldi`                          | `~/AppData/Local/Vivaldi/User Data`                          |
+| Waterfox           | `~/Library/Application Support/Waterfox`                         | `~/.waterfox`                                | `~/AppData/Roaming/Waterfox`                                 |
+
+The structure of the directory is dependent on the browser. This is used to find
+either the bookmarks file or other config files specific to the browser. **If
+the user provided a custom path, the structure inside that directory should
+match with the default config directory.** If there's some kind of mismatch, a
+warning will be provided.
+
+This option helps in case the browser was installed using a non-default install
+method. For example, a browser might be installed using a package manager and
+the data is stored in a directory specific to that package manager.
+
+**Note:** For `buku`, this option doesn't apply as it has a custom logic to
+get the bookmarks filepath. This logic is the same as that in the official
+implementation.
 
 ### `full_path` (boolean, default: true)
 

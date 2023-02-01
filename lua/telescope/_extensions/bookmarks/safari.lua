@@ -3,12 +3,6 @@ local safari = {}
 local utils = require "telescope._extensions.bookmarks.utils"
 local plist = require "telescope._extensions.bookmarks.parser.plist"
 
----Path components to the bookmarks file for the respective OS.
----Safari browser is only supported in MacOS.
-local bookmarks_filepath = {
-  Darwin = { "Library", "Safari", "Bookmarks.plist" },
-}
-
 ---Names to be excluded from the full bookmark name.
 local exclude_names = {
   "BookmarksBar",
@@ -18,7 +12,7 @@ local exclude_names = {
 
 ---Parse the bookmarks data in a lua table.
 ---@param data table
----@return table
+---@return Bookmark[]|nil
 local function parse_bookmarks_data(data)
   local items = {}
 
@@ -52,15 +46,19 @@ end
 ---Collect all the bookmarks for the Safari browser.
 ---NOTE: Only MacOS is supported for Safari bookmarks.
 ---@param state TelescopeBookmarksState
+---@param config TelescopeBookmarksConfig
 ---@return Bookmark[]|nil
-function safari.collect_bookmarks(state)
-  local components = bookmarks_filepath[state.os_name]
-  if not components then
-    utils.warn("Unsupported OS for Safari: " .. state.os_name)
+function safari.collect_bookmarks(state, config)
+  local config_dir = utils.get_config_dir(state, config)
+  if config_dir == nil then
     return nil
   end
 
-  local filepath = utils.join_path(state.os_homedir, components)
+  local bookmarks_filepath = utils.join_path(config_dir, "Bookmarks.plist")
+  if not utils.path_exists(bookmarks_filepath) then
+    utils.warn("Expected bookmarks file for Safari at: " .. bookmarks_filepath)
+    return nil
+  end
 
   local output = utils.get_os_command_output {
     "plutil",
@@ -68,7 +66,7 @@ function safari.collect_bookmarks(state)
     "xml1",
     "-o",
     "-",
-    filepath,
+    bookmarks_filepath,
   }
   output = table.concat(output, "\n")
 

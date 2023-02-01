@@ -53,7 +53,8 @@ describe("firefox", function()
     utils.warn:revert()
   end)
 
-  -- Insulate this block to avoid `ini.load` being overridden in other blocks.
+  -- Insulate this block to avoid `ini.load` and `utils.path_exists` being
+  -- overridden in other blocks.
   insulate("helpers", function()
     local match = require "luassert.match"
     local ini = require "telescope._extensions.bookmarks.parser.ini"
@@ -93,7 +94,8 @@ describe("firefox", function()
     end)
 
     describe("get_profile_dir", function()
-      it("should warn if OS not supported", function()
+      it("should return nil if get_config_dir fails", function()
+        -- Unsupported OS
         local profile_dir = firefox._get_profile_dir(
           { os_name = "random" },
           { selected_browser = "firefox" }
@@ -101,10 +103,26 @@ describe("firefox", function()
 
         assert.is_nil(profile_dir)
         assert.stub(utils.warn).was_called(1)
+      end)
+
+      it("should warn if profiles file not found", function()
+        local bookmarks = firefox.collect_bookmarks(
+          { os_name = "Darwin" },
+          { selected_browser = "firefox", config_dir = "spec/fixtures" }
+        )
+
+        assert.is_nil(bookmarks)
+        assert.stub(utils.warn).was_called(1)
         assert
           .stub(utils.warn)
-          .was_called_with(match.matches "Unsupported OS for firefox browser")
+          .was_called_with(match.matches "Expected a profiles config file for firefox at")
       end)
+    end)
+
+    describe("get_profile_dir", function()
+      utils.path_exists = function(path)
+        return true
+      end
 
       it("should warn if failed to parse profiles.ini", function()
         local profile_dir = firefox._get_profile_dir({

@@ -8,22 +8,6 @@ local firefox = {}
 local utils = require "telescope._extensions.bookmarks.utils"
 local ini = require "telescope._extensions.bookmarks.parser.ini"
 
--- Path components to the default Firefox config directory for the respective OS.
-local default_config_dir = {
-  Darwin = {
-    firefox = { "Library", "Application Support", "Firefox" },
-    waterfox = { "Library", "Application Support", "Waterfox" },
-  },
-  Linux = {
-    firefox = { ".mozilla", "firefox" },
-    waterfox = { ".waterfox" },
-  },
-  Windows_NT = {
-    firefox = { "AppData", "Roaming", "Mozilla", "Firefox" },
-    waterfox = { "AppData", "Roaming", "Waterfox" },
-  },
-}
-
 -- Names to be excluded from the full bookmark name.
 local exclude_names = { "menu", "toolbar" }
 
@@ -62,19 +46,21 @@ end
 ---@param config TelescopeBookmarksConfig
 ---@return string|nil
 local function get_profile_dir(state, config)
-  local components = (default_config_dir[state.os_name] or {})[config.selected_browser]
-  if not components then
+  local config_dir = utils.get_config_dir(state, config)
+  if config_dir == nil then
+    return nil
+  end
+
+  local profiles_file = utils.join_path(config_dir, "profiles.ini")
+  if not utils.path_exists(profiles_file) then
     utils.warn(
-      ("Unsupported OS for %s browser: %s"):format(
+      ("Expected a profiles config file for %s at %s"):format(
         config.selected_browser,
-        state.os_name
+        profiles_file
       )
     )
     return nil
   end
-
-  local config_dir = utils.join_path(state.os_homedir, components)
-  local profiles_file = utils.join_path(config_dir, "profiles.ini")
 
   local profiles = collect_profiles(profiles_file)
   if not profiles then

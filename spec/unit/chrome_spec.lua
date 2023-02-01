@@ -11,7 +11,8 @@ describe("chrome", function()
   end)
 
   describe("get_profile_dir", function()
-    it("should warn if OS not supported", function()
+    it("should return nil if get_config_dir fails", function()
+      -- Unsupported OS
       local profile_dir = chrome._get_profile_dir(
         { os_name = "random" },
         { selected_browser = "chrome" }
@@ -19,9 +20,6 @@ describe("chrome", function()
 
       assert.is_nil(profile_dir)
       assert.stub(utils.warn).was_called(1)
-      assert
-        .stub(utils.warn)
-        .was_called_with(match.matches "Unsupported OS for chrome")
     end)
 
     it("should warn if state file not found", function()
