@@ -1,8 +1,5 @@
 local utils = {}
 
-local Job = require "plenary.job"
-local path_sep = require("plenary.path").path.sep
-
 local Browser = require("browser_bookmarks.enum").Browser
 local config = require("browser_bookmarks.config").values
 
@@ -244,7 +241,7 @@ function utils.debug(...)
   end
 
   vim.api.nvim_out_write(
-    ("[telescope-bookmarks] [%s] [DEBUG]: %s\n"):format(
+    ("[browser-bookmarks] [%s] [DEBUG]: %s\n"):format(
       os.date "%Y-%m-%d %H:%M:%S",
       table.concat(parts, " ")
     )
@@ -257,32 +254,65 @@ function utils.warn(msg)
   vim.notify(msg, vim.log.levels.WARN, { title = "browser-bookmarks.nvim" })
 end
 
--- Return the output of the given command. If the command fails, it'll raise
--- an error using the stderr output.
----@param cmd string[]
+-- Wait until the timeout value for job execution. The value is in milliseconds.
+local timeout = 5 * 100
+
+-- Return the output of the given command.
+--
+-- An error is raised in the cases as mentioned for `jobstart()` and `jobwait()`.
+---@param cmd string
 ---@return string
 function utils.get_os_command_output(cmd)
-  local command = table.remove(cmd, 1)
-  local stderr = {}
-  local stdout, code = Job:new({
-    command = command,
-    args = cmd,
-    on_stderr = function(_, data)
-      table.insert(stderr, data)
-    end,
-  }):sync()
-  if code > 0 then
-    error(table.concat(stderr, "\n"))
+  local stdout, stderr
+
+  -- Channel callback for stdout and stderr.
+  ---@param data string[]
+  ---@param event 'stdout'|'stderr'
+  local function on_data(_, data, event)
+    -- Remove the trailing newline which in the table is an empty string
+    -- as the last element.
+    data = table.concat(vim.list_slice(data, 1, #data - 1), "\n")
+    utils.debug(event .. ":", data)
+    if event == "stdout" then
+      stdout = data
+    elseif event == "stderr" then
+      stderr = data
+    end
   end
-  return table.concat(stdout, "\n")
+
+  utils.debug("executing cmd:", cmd)
+  local jobid = vim.fn.jobstart(cmd, {
+    stdout_buffered = true,
+    stderr_buffered = true,
+    on_stdout = on_data,
+    on_stderr = on_data,
+  })
+  if jobid <= 0 then
+    error("invalid command: " .. cmd)
+  end
+
+  local exitcode = vim.fn.jobwait({ jobid }, timeout)[1]
+  if exitcode == -1 then
+    -- Make sure to stop the job after timeout.
+    vim.fn.jobstop(jobid)
+    error(("timeout (%ds) while executing '%s'"):format(timeout / 1000, cmd))
+  elseif exitcode > 0 then
+    error(stderr)
+  end
+
+  return stdout
 end
+
+-- The character used by the operating system to separate pathname components.
+-- This is '/' for POSIX and '\\' for Windows.
+local sep = package.config:sub(1, 1)
 
 ---Return a path string made up of the given mix of strings or tables in the
 ---order they are provided.
 ---@param ... string|string[]
 ---@return string
 function utils.join_path(...)
-  return table.concat(vim.tbl_flatten { ... }, path_sep)
+  return table.concat(vim.tbl_flatten { ... }, sep)
 end
 
 -- A mapping from browser to the title to be displayed on the search bar.
