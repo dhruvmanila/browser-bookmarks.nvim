@@ -1,5 +1,5 @@
 ---plist parser (https://codea.io/talk/discussion/1269/code-plist-parser)
----version 1.0.2
+---version 1.0.3
 ---
 ---based on an XML parser by Roberto Ierusalimschy at:
 ---lua-users.org/wiki/LuaXml
@@ -9,21 +9,28 @@
 ---match the structure of the .plist file
 ---
 ---Usage:
----```lua
----local plist_str = <string-ified plist file>
----local plist_table = plist.parse(plist_str)
----```
+---   ```lua
+---   local plist_str = "<string-ified plist file>"
+---   local plist_table = plist.parse(plist_str)
+---   ```
 ---
 ---CHANGELOG:
----25/04/2021:
----  Fix pattern for `string.find` in the `plist_parse` function.
----  An optional '?/!' is required at the start of the line.
----  Pattern: "<([%w:]+)(.-)>"  ->  "<[?!]?([%w:]+)(.-)>"
+---1.0.1 - 25/04/2021:
+---  - Fix pattern for `string.find` in the `plist_parse` function.
+---    An optional '?/!' is required at the start of the line.
+---    Pattern: "<([%w:]+)(.-)>"  ->  "<[?!]?([%w:]+)(.-)>"
 ---
----18/02/2023:
+---1.0.2 - 18/02/2023:
 ---  - Return the first element from `plp.dictionary` and `plp.array` function
 ---    inside the `plist.parse` function.
 ---  - Add type hint for `plist.parse` function.
+---
+---1.0.3 - 19/02/2023:
+---  - Hotfix for the last change. When a function is returning multiple elements,
+---    indexing doesn't work as it's not a table. The solution is to use multiple
+---    assignment and return the relevant element.
+---  - Export the documentation using the exported module table.
+local M = {}
 
 local plp = {}
 
@@ -129,7 +136,7 @@ end
 ---@alias PlistCollectionT PlistBaseT[] | table<string, PlistBaseT | PlistCollectionT>
 ---@param s? string
 ---@return PlistCollectionT?
-local function parse(s)
+function M.parse(s)
   if type(s) == "nil" or s == "" then
     return nil
   end
@@ -144,13 +151,15 @@ local function parse(s)
 
   _, i, _, label, empty = plp.next_tag(s, i)
 
+  local data
   if empty == "/" then
-    return {}
+    data = {}
   elseif label == "dict" then
-    return plp.dictionary(s, i + 1)[1]
+    data, _, _ = plp.dictionary(s, i + 1)
   elseif label == "array" then
-    return plp.array(s, i + 1)[1]
+    data, _, _ = plp.array(s, i + 1)
   end
+  return data
 end
 
-return { parse = parse }
+return M
