@@ -1,5 +1,5 @@
 ---plist parser (https://codea.io/talk/discussion/1269/code-plist-parser)
----version 1.01
+---version 1.0.2
 ---
 ---based on an XML parser by Roberto Ierusalimschy at:
 ---lua-users.org/wiki/LuaXml
@@ -19,6 +19,11 @@
 ---  Fix pattern for `string.find` in the `plist_parse` function.
 ---  An optional '?/!' is required at the start of the line.
 ---  Pattern: "<([%w:]+)(.-)>"  ->  "<[?!]?([%w:]+)(.-)>"
+---
+---18/02/2023:
+---  - Return the first element from `plp.dictionary` and `plp.array` function
+---    inside the `plist.parse` function.
+---  - Add type hint for `plist.parse` function.
 
 local plp = {}
 
@@ -120,6 +125,10 @@ function plp.dictionary(s, i)
   end
 end
 
+---@alias PlistBaseT number|string|boolean
+---@alias PlistCollectionT PlistBaseT[] | table<string, PlistBaseT | PlistCollectionT>
+---@param s? string
+---@return PlistCollectionT?
 local function parse(s)
   if type(s) == "nil" or s == "" then
     return nil
@@ -138,9 +147,9 @@ local function parse(s)
   if empty == "/" then
     return {}
   elseif label == "dict" then
-    return plp.dictionary(s, i + 1)
+    return plp.dictionary(s, i + 1)[1]
   elseif label == "array" then
-    return plp.array(s, i + 1)
+    return plp.array(s, i + 1)[1]
   end
 end
 
