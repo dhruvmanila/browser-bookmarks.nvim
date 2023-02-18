@@ -1,172 +1,174 @@
 local utils = {}
 
-local telescope_utils = require "telescope.utils"
-
+local Job = require "plenary.job"
 local path_sep = require("plenary.path").path.sep
+
+local Browser = require("browser_bookmarks.enum").Browser
+local config = require("browser_bookmarks.config").values
 
 local default_config_dir = {
   Darwin = {
-    brave = {
+    [Browser.BRAVE] = {
       "Library",
       "Application Support",
       "BraveSoftware",
       "Brave-Browser",
     },
-    brave_beta = {
+    [Browser.BRAVE_BETA] = {
       "Library",
       "Application Support",
       "BraveSoftware",
       "Brave-Browser-Beta",
     },
-    chrome = {
+    [Browser.CHROME] = {
       "Library",
       "Application Support",
       "Google",
       "Chrome",
     },
-    chrome_beta = {
+    [Browser.CHROME_BETA] = {
       "Library",
       "Application Support",
       "Google",
       "Chrome Beta",
     },
-    chromium = {
+    [Browser.CHROMIUM] = {
       "Library",
       "Application Support",
       "Chromium",
     },
-    edge = {
+    [Browser.EDGE] = {
       "Library",
       "Application Support",
       "Microsoft Edge",
     },
-    firefox = {
+    [Browser.FIREFOX] = {
       "Library",
       "Application Support",
       "Firefox",
     },
-    qutebrowser = {
+    [Browser.QUTEBROWSER] = {
       ".qutebrowser",
     },
-    safari = {
+    [Browser.SAFARI] = {
       "Library",
       "Safari",
     },
-    vivaldi = {
+    [Browser.VIVALDI] = {
       "Library",
       "Application Support",
       "Vivaldi",
     },
-    waterfox = {
+    [Browser.WATERFOX] = {
       "Library",
       "Application Support",
       "Waterfox",
     },
   },
   Linux = {
-    brave = {
+    [Browser.BRAVE] = {
       ".config",
       "BraveSoftware",
       "Brave-Browser",
     },
-    brave_beta = {
+    [Browser.BRAVE_BETA] = {
       ".config",
       "BraveSoftware",
       "Brave-Browser-Beta",
     },
-    chrome = {
+    [Browser.CHROME] = {
       ".config",
       "google-chrome",
     },
-    chrome_beta = {
+    [Browser.CHROME_BETA] = {
       ".config",
       "google-chrome-beta",
     },
-    chromium = {
+    [Browser.CHROMIUM] = {
       ".config",
       "chromium",
     },
-    edge = {
+    [Browser.EDGE] = {
       ".config",
       "microsoft-edge",
     },
-    firefox = {
+    [Browser.FIREFOX] = {
       ".mozilla",
       "firefox",
     },
-    qutebrowser = {
+    [Browser.QUTEBROWSER] = {
       ".config",
       "qutebrowser",
     },
-    vivaldi = {
+    [Browser.VIVALDI] = {
       ".config",
       "vivaldi",
     },
-    waterfox = {
+    [Browser.WATERFOX] = {
       ".waterfox",
     },
   },
   Windows_NT = {
-    brave = {
+    [Browser.BRAVE] = {
       "AppData",
       "Local",
       "BraveSoftware",
       "Brave-Browser",
       "User Data",
     },
-    brave_beta = {
+    [Browser.BRAVE_BETA] = {
       "AppData",
       "Local",
       "BraveSoftware",
       "Brave-Browser-Beta",
       "User Data",
     },
-    chrome = {
+    [Browser.CHROME] = {
       "AppData",
       "Local",
       "Google",
       "Chrome",
       "User Data",
     },
-    chrome_beta = {
+    [Browser.CHROME_BETA] = {
       "AppData",
       "Local",
       "Google",
       "Chrome Beta",
       "User Data",
     },
-    chromium = {
+    [Browser.CHROMIUM] = {
       "AppData",
       "Local",
       "Chromium",
       "User Data",
     },
-    edge = {
+    [Browser.EDGE] = {
       "AppData",
       "Local",
       "Microsoft",
       "Edge",
       "User Data",
     },
-    firefox = {
+    [Browser.FIREFOX] = {
       "AppData",
       "Roaming",
       "Mozilla",
       "Firefox",
     },
-    qutebrowser = {
+    [Browser.QUTEBROWSER] = {
       "AppData",
       "Roaming",
       "qutebrowser",
       "config",
     },
-    vivaldi = {
+    [Browser.VIVALDI] = {
       "AppData",
       "Local",
       "Vivaldi",
       "User Data",
     },
-    waterfox = {
+    [Browser.WATERFOX] = {
       "AppData",
       "Roaming",
       "Waterfox",
@@ -191,10 +193,9 @@ end
 -- It returns nil if:
 --    - the OS or browser is not supported
 --    - user provided config path does not exists
----@param state TelescopeBookmarksState
----@param config TelescopeBookmarksConfig
----@return string|nil
-function utils.get_config_dir(state, config)
+---@param selected_browser Browser
+---@return string?
+function utils.get_config_dir(selected_browser)
   local config_dir = config.config_dir
   if config_dir ~= nil then
     if not utils.path_exists(config_dir) then
@@ -203,32 +204,30 @@ function utils.get_config_dir(state, config)
           "No such directory for %s browser: %s "
           .. "(make sure to provide the absolute path which includes "
           .. "the home directory as well)"
-        ):format(config.selected_browser, config_dir)
+        ):format(selected_browser, config_dir)
       )
       return nil
     end
     return config_dir
   end
-  local components = (default_config_dir[state.os_name] or {})[config.selected_browser]
+  local os_name = vim.loop.os_uname().sysname
+  local components = (default_config_dir[os_name] or {})[selected_browser]
   if components == nil then
     -- This assumes that the check for browser support was already done before
     -- calling this function, thus the message for unsupported OS.
     utils.warn(
-      ("Unsupported OS for %s browser: %s"):format(
-        config.selected_browser,
-        state.os_name
-      )
+      ("Unsupported OS for %s browser: %s"):format(selected_browser, os_name)
     )
     return nil
   end
-  return utils.join_path(state.os_homedir, components)
+  return utils.join_path(vim.loop.os_homedir(), components)
 end
 
 ---Emit a debug message. The given arguments are passed through `vim.inspect`
 ---function and then shown.
 ---@vararg any
 function utils.debug(...)
-  if not _TELESCOPE_BOOKMARKS_DEBUG then
+  if not config.debug then
     return
   end
 
@@ -255,19 +254,27 @@ end
 ---Emit a warning message.
 ---@param msg string
 function utils.warn(msg)
-  vim.notify(msg, vim.log.levels.WARN, { title = "telescope-bookmarks.nvim" })
+  vim.notify(msg, vim.log.levels.WARN, { title = "browser-bookmarks.nvim" })
 end
 
----Wrapper around telescope utility function `get_os_command_output` to raise
----an error if there are any, otherwise return the output as it is.
----@param command table
----@return table
-function utils.get_os_command_output(command)
-  local output, code, err = telescope_utils.get_os_command_output(command)
+-- Return the output of the given command. If the command fails, it'll raise
+-- an error using the stderr output.
+---@param cmd string[]
+---@return string
+function utils.get_os_command_output(cmd)
+  local command = table.remove(cmd, 1)
+  local stderr = {}
+  local stdout, code = Job:new({
+    command = command,
+    args = cmd,
+    on_stderr = function(_, data)
+      table.insert(stderr, data)
+    end,
+  }):sync()
   if code > 0 then
-    error(table.concat(err, "\n"))
+    error(table.concat(stderr, "\n"))
   end
-  return output
+  return table.concat(stdout, "\n")
 end
 
 ---Return a path string made up of the given mix of strings or tables in the
@@ -276,6 +283,32 @@ end
 ---@return string
 function utils.join_path(...)
   return table.concat(vim.tbl_flatten { ... }, path_sep)
+end
+
+-- A mapping from browser to the title to be displayed on the search bar.
+---@type table<Browser, string>
+local title = {
+  [Browser.BRAVE] = "Brave",
+  [Browser.BRAVE_BETA] = "Brave",
+  [Browser.BUKU] = "Buku",
+  [Browser.CHROME] = "Chrome",
+  [Browser.CHROME_BETA] = "Chrome",
+  [Browser.CHROMIUM] = "Chromium",
+  [Browser.EDGE] = "Edge",
+  [Browser.FIREFOX] = "Firefox",
+  [Browser.QUTEBROWSER] = "qutebrowser",
+  [Browser.SAFARI] = "Safari",
+  [Browser.VIVALDI] = "Vivaldi",
+  [Browser.WATERFOX] = "Waterfox",
+}
+
+-- Construct and return the prompt for the given browser. If no browser name
+-- is provided, the value will be picked up from the config table.
+---@param selected_browser? Browser
+---@return string
+function utils.construct_prompt(selected_browser)
+  selected_browser = selected_browser or config.selected_browser
+  return "Select " .. title[selected_browser] .. " Bookmarks"
 end
 
 return utils

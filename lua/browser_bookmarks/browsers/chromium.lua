@@ -1,8 +1,8 @@
-local chrome = {}
+local chromium = {}
 
-local utils = require "telescope._extensions.bookmarks.utils"
+local utils = require "browser_bookmarks.utils"
 
----Default categories of bookmarks to look for.
+-- Default categories of bookmarks to look for.
 local categories = { "bookmark_bar", "synced", "other" }
 
 -- Returns the absolute path to the profile directory for chromium based
@@ -14,11 +14,10 @@ local categories = { "bookmark_bar", "synced", "other" }
 --
 -- The profile name will either be the one provided by the user or the default
 -- one. The user can define the profile name using `profile_name` option.
----@param state TelescopeBookmarksState
----@param config TelescopeBookmarksConfig
----@return string|nil
-local function get_profile_dir(state, config)
-  local config_dir = utils.get_config_dir(state, config)
+---@param config BrowserBookmarksConfig
+---@return string?
+local function get_profile_dir(config)
+  local config_dir = utils.get_config_dir(config.selected_browser)
   if config_dir == nil then
     return nil
   end
@@ -42,6 +41,8 @@ local function get_profile_dir(state, config)
   local content = file:read "*a"
   file:close()
   local data = vim.json.decode(content)
+  ---@cast data table
+
   for profile_dir, profile_info in pairs(data.profile.info_cache) do
     if profile_info.name == config.profile_name then
       return utils.join_path(config_dir, profile_dir)
@@ -56,9 +57,9 @@ local function get_profile_dir(state, config)
   )
 end
 
----Parse the bookmarks data to a lua table.
+-- Parse the bookmarks data to a lua table.
 ---@param data table
----@return table
+---@return Bookmark[]?
 local function parse_bookmarks_data(data)
   local items = {}
 
@@ -85,12 +86,11 @@ local function parse_bookmarks_data(data)
   return items
 end
 
----Collect all the bookmarks for Chromium based browsers.
----@param state TelescopeBookmarksState
----@param config TelescopeBookmarksConfig
----@return Bookmark[]|nil
-function chrome.collect_bookmarks(state, config)
-  local profile_dir = get_profile_dir(state, config)
+-- Collect all the bookmarks for Chromium based browsers.
+---@param config BrowserBookmarksConfig
+---@return Bookmark[]?
+function chromium.collect_bookmarks(config)
+  local profile_dir = get_profile_dir(config)
   if profile_dir == nil then
     return nil
   end
@@ -118,12 +118,14 @@ function chrome.collect_bookmarks(state, config)
     )
     return nil
   end
+
   local data = vim.json.decode(content)
+  ---@cast data table
   return parse_bookmarks_data(data)
 end
 
 if _TEST then
-  chrome._get_profile_dir = get_profile_dir
+  chromium._get_profile_dir = get_profile_dir
 end
 
-return chrome
+return chromium

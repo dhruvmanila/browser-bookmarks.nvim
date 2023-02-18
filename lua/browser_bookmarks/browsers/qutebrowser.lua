@@ -1,13 +1,12 @@
 local qutebrowser = {}
 
-local utils = require "telescope._extensions.bookmarks.utils"
+local utils = require "browser_bookmarks.utils"
 
----Collect all the bookmarks for qutebrowser.
----@param state TelescopeBookmarksState
----@param config TelescopeBookmarksConfig
----@return Bookmark[]|nil
-function qutebrowser.collect_bookmarks(state, config)
-  local config_dir = utils.get_config_dir(state, config)
+-- Collect all the bookmarks for qutebrowser.
+---@param config BrowserBookmarksConfig
+---@return Bookmark[]?
+function qutebrowser.collect_bookmarks(config)
+  local config_dir = utils.get_config_dir(config.selected_browser)
   if config_dir == nil then
     return nil
   end

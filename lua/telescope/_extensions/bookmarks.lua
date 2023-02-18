@@ -1,125 +1,52 @@
 local has_telescope, telescope = pcall(require, "telescope")
 
 if not has_telescope then
-  error "This plugin requires telescope.nvim (https://github.com/nvim-telescope/telescope.nvim)"
+  error "Telescope interface requires telescope.nvim (https://github.com/nvim-telescope/telescope.nvim)"
 end
 
+local action_state = require "telescope.actions.state"
+local action_utils = require "telescope.actions.utils"
+local entry_display = require "telescope.pickers.entry_display"
 local finders = require "telescope.finders"
 local pickers = require "telescope.pickers"
+local telescope_actions = require "telescope.actions"
 local telescope_config = require("telescope.config").values
-local actions = require "telescope.actions"
-local entry_display = require "telescope.pickers.entry_display"
 
-local utils = require "telescope._extensions.bookmarks.utils"
-local smart_url_opener =
-  require("telescope._extensions.bookmarks.actions").smart_url_opener
+local actions = require "browser_bookmarks.actions"
+local browser_bookmarks = require "browser_bookmarks"
+local config = require("browser_bookmarks.config").values
+local utils = require "browser_bookmarks.utils"
 
----@type TelescopeBookmarksState
-local state = {
-  os_name = vim.loop.os_uname().sysname,
-  os_homedir = vim.loop.os_homedir(),
-}
-
----@type TelescopeBookmarksConfig
-local config = {}
-
----@enum Browser
-local Browser = {
-  BRAVE = "brave",
-  BRAVE_BETA = "brave_beta",
-  BUKU = "buku",
-  CHROME = "chrome",
-  CHROME_BETA = "chrome_beta",
-  CHROMIUM = "chromium",
-  EDGE = "edge",
-  FIREFOX = "firefox",
-  QUTEBROWSER = "qutebrowser",
-  SAFARI = "safari",
-  VIVALDI = "vivaldi",
-  WATERFOX = "waterfox",
-}
-
--- A mapping from browser to the title to be displayed on the search bar.
----@type table<Browser, string>
-local title = {
-  [Browser.BRAVE] = "Brave",
-  [Browser.BRAVE_BETA] = "Brave",
-  [Browser.BUKU] = "Buku",
-  [Browser.CHROME] = "Chrome",
-  [Browser.CHROME_BETA] = "Chrome",
-  [Browser.CHROMIUM] = "Chromium",
-  [Browser.EDGE] = "Edge",
-  [Browser.FIREFOX] = "Firefox",
-  [Browser.QUTEBROWSER] = "qutebrowser",
-  [Browser.SAFARI] = "Safari",
-  [Browser.VIVALDI] = "Vivaldi",
-  [Browser.WATERFOX] = "Waterfox",
-}
-
--- An array of browser which supports specifying profile name.
----@type Browser[]
-local profile_browsers = {
-  Browser.BRAVE,
-  Browser.BRAVE_BETA,
-  Browser.CHROME,
-  Browser.CHROME_BETA,
-  Browser.CHROMIUM,
-  Browser.EDGE,
-  Browser.FIREFOX,
-  Browser.VIVALDI,
-  Browser.WATERFOX,
-}
-
--- Set the configuration state.
----@param opt_name string
----@param value any
----@param default any
-local function set_config(opt_name, value, default)
-  if value == nil then
-    config[opt_name] = default
-  else
-    config[opt_name] = value
+-- Smart URL opener with multi-selection support.
+--
+-- If `config.url_open_plugin` is given, then open it using the plugin function
+-- otherwise open it using `config.url_open_command`.
+---@param prompt_bufnr number
+local function smart_url_opener(prompt_bufnr)
+  local urls = {}
+  action_utils.map_selections(prompt_bufnr, function(selection)
+    table.insert(urls, selection.value)
+  end)
+  if vim.tbl_isempty(urls) then
+    table.insert(urls, action_state.get_selected_entry().value)
   end
+  telescope_actions.close(prompt_bufnr)
+  actions.open_urls(urls)
 end
 
 ---Main entrypoint for Telescope.
 ---@param opts table
 local function bookmarks(opts)
   opts = opts or {}
-  utils.debug("opts:", opts)
+  utils.debug("telescope opts:", opts)
 
-  local selected_browser = config.selected_browser
-  if not title[selected_browser] then
-    error(
-      string.format(
-        "Unsupported browser: %s (supported: %s)",
-        selected_browser,
-        table.concat(vim.tbl_keys(title), ", ")
-      )
-    )
-  end
-
-  if config.profile_name ~= nil then
-    if not vim.tbl_contains(profile_browsers, selected_browser) then
-      utils.warn(
-        ("Unsupported browser for 'profile_name': %s (supported: %s)"):format(
-          selected_browser,
-          table.concat(profile_browsers, ", ")
-        )
-      )
-      return nil
-    end
-  end
-
-  local browser =
-    require("telescope._extensions.bookmarks." .. selected_browser)
-  local results = browser.collect_bookmarks(state, config)
+  local results = browser_bookmarks.collect()
   if not results then
     return nil
   end
   if vim.tbl_isempty(results) then
     return utils.warn(
-      ("No bookmarks available for %s browser"):format(selected_browser)
+      ("No bookmarks available for %s browser"):format(config.selected_browser)
     )
   end
 
@@ -148,7 +75,7 @@ local function bookmarks(opts)
 
   pickers
     .new(opts, {
-      prompt_title = "Search " .. title[selected_browser] .. " Bookmarks",
+      prompt_title = utils.construct_prompt(config.selected_browser),
       finder = finders.new_table {
         results = results,
         entry_maker = function(entry)
@@ -165,7 +92,7 @@ local function bookmarks(opts)
       previewer = false,
       sorter = telescope_config.generic_sorter(opts),
       attach_mappings = function()
-        actions.select_default:replace(smart_url_opener(config))
+        telescope_actions.select_default:replace(smart_url_opener)
         return true
       end,
     })
@@ -174,23 +101,9 @@ end
 
 return telescope.register_extension {
   setup = function(ext_config)
-    if ext_config.debug then
-      _G._TELESCOPE_BOOKMARKS_DEBUG = true
-    end
-
-    set_config("full_path", ext_config.full_path, true)
-    set_config("selected_browser", ext_config.selected_browser, "brave")
-    set_config("url_open_command", ext_config.url_open_command, "open")
-    set_config("url_open_plugin", ext_config.url_open_plugin, nil)
-    set_config("profile_name", ext_config.profile_name, nil)
-    set_config("config_dir", ext_config.config_dir, nil)
-    set_config("buku_include_tags", ext_config.buku_include_tags, false)
-
-    utils.debug("state:", state)
-    utils.debug("config:", config)
+    browser_bookmarks.setup(ext_config)
   end,
   exports = {
     bookmarks = bookmarks,
   },
-  _config = _TEST and config,
 }

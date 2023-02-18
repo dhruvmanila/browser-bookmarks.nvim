@@ -2,10 +2,16 @@ local ini = {}
 
 -- Deserialize the INI data from path into a lua table.
 --
--- NOTE: This is a very basic parser which parses only sections and key-value
--- pairs.
+-- This is a very basic parser which parses only sections and key-value
+-- pairs. The headers are parsed as it is, thus allowing hierarchy using
+-- any separator.
+--
+-- Performs the following translation in decoding:
+--    number - integer
+--    true   - true
+--    false  - false
 ---@param path string
----@return table
+---@return table<string, table<string, integer|string|boolean>>
 function ini.load(path)
   local result = {}
   local current_section

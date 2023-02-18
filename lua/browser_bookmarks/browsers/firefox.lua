@@ -5,18 +5,18 @@ end
 
 local firefox = {}
 
-local utils = require "telescope._extensions.bookmarks.utils"
-local ini = require "telescope._extensions.bookmarks.parser.ini"
+local utils = require "browser_bookmarks.utils"
+local ini = require "browser_bookmarks.parser.ini"
 
 -- Names to be excluded from the full bookmark name.
 local exclude_names = { "menu", "toolbar" }
 
----Return the profile information available in the given profiles config file.
----
----The return value will be a mapping of profile name to the information
----available, `nil` if unable to parse the config file.
+-- Return the profile information available in the given profiles config file.
+--
+-- The return value will be a mapping of profile name to the information
+-- available, `nil` if unable to parse the config file.
 ---@param profiles_file string
----@return table<string, table>|nil
+---@return table<string, table>?
 local function collect_profiles(profiles_file)
   local profiles_config = ini.load(profiles_file)
   if vim.tbl_isempty(profiles_config) then
@@ -42,11 +42,10 @@ end
 --
 -- The profile name will either be the one provided by the user or the default
 -- one. The user can define the profile name using `firefox_profile_name` option.
----@param state TelescopeBookmarksState
----@param config TelescopeBookmarksConfig
----@return string|nil
-local function get_profile_dir(state, config)
-  local config_dir = utils.get_config_dir(state, config)
+---@param config BrowserBookmarksConfig
+---@return string?
+local function get_profile_dir(config)
+  local config_dir = utils.get_config_dir(config.selected_browser)
   if config_dir == nil then
     return nil
   end
@@ -120,11 +119,10 @@ local function get_profile_dir(state, config)
 end
 
 -- Collect all the bookmarks for the Firefox browser.
----@param state TelescopeBookmarksState
----@param config TelescopeBookmarksConfig
----@return Bookmark[]|nil
-function firefox.collect_bookmarks(state, config)
-  local profile_dir = get_profile_dir(state, config)
+---@param config BrowserBookmarksConfig
+---@return Bookmark[]?
+function firefox.collect_bookmarks(config)
+  local profile_dir = get_profile_dir(config)
   if profile_dir == nil then
     return nil
   end

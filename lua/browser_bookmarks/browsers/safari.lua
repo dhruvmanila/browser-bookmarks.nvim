@@ -1,16 +1,16 @@
 local safari = {}
 
-local utils = require "telescope._extensions.bookmarks.utils"
-local plist = require "telescope._extensions.bookmarks.parser.plist"
+local utils = require "browser_bookmarks.utils"
+local plist = require "browser_bookmarks.parser.plist"
 
----Names to be excluded from the full bookmark name.
+-- Names to be excluded from the full bookmark name.
 local exclude_names = {
   "BookmarksBar",
   "BookmarksMenu",
   "com.apple.ReadingList",
 }
 
----Parse the bookmarks data in a lua table.
+-- Parse the bookmarks data in a lua table.
 ---@param data table
 ---@return Bookmark[]|nil
 local function parse_bookmarks_data(data)
@@ -43,13 +43,13 @@ local function parse_bookmarks_data(data)
   return items
 end
 
----Collect all the bookmarks for the Safari browser.
----NOTE: Only MacOS is supported for Safari bookmarks.
----@param state TelescopeBookmarksState
----@param config TelescopeBookmarksConfig
----@return Bookmark[]|nil
-function safari.collect_bookmarks(state, config)
-  local config_dir = utils.get_config_dir(state, config)
+-- Collect all the bookmarks for the Safari browser.
+--
+-- NOTE: Only MacOS is supported for Safari bookmarks.
+---@param config BrowserBookmarksConfig
+---@return Bookmark[]?
+function safari.collect_bookmarks(config)
+  local config_dir = utils.get_config_dir(config.selected_browser)
   if config_dir == nil then
     return nil
   end
@@ -68,9 +68,11 @@ function safari.collect_bookmarks(state, config)
     "-",
     bookmarks_filepath,
   }
-  output = table.concat(output, "\n")
 
   local data = plist.parse(output)
+  if data == nil then
+    return nil
+  end
   return parse_bookmarks_data(data)
 end
 

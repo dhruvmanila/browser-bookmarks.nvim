@@ -5,34 +5,36 @@ end
 
 local buku = {}
 
-local utils = require "telescope._extensions.bookmarks.utils"
+local utils = require "browser_bookmarks.utils"
 
----Determine the directory path where the dbfile is stored.
----@see https://github.com/jarun/buku/blob/master/buku BukuDb.get_default_dbdir
----@param state TelescopeBookmarksState
+-- Determine the directory path where the dbfile is stored.
+--
+-- The logic of this function is same as that of the original implementation.
+--
+-- See: https://github.com/jarun/buku/blob/master/buku BukuDb.get_default_dbdir
 ---@return string
-local function get_default_dbdir(state)
+local function get_default_dbdir()
   local data_home = os.getenv "XDG_DATA_HOME"
   if not data_home then
-    if state.os_name == "Windows_NT" then
+    if vim.loop.os_uname().sysname == "Windows_NT" then
       data_home = os.getenv "APPDATA"
       if not data_home then
         return vim.loop.cwd()
       end
     else
-      data_home = utils.join_path(state.os_homedir, ".local", "share")
+      data_home = utils.join_path(vim.loop.os_homedir(), ".local", "share")
     end
   end
   return utils.join_path(data_home, "buku")
 end
 
----Collect all the bookmarks for Buku.
----@see https://github.com/jarun/buku
----@param state TelescopeBookmarksState
----@param config TelescopeBookmarksConfig
----@return Bookmark[]|nil
-function buku.collect_bookmarks(state, config)
-  local dbdir = get_default_dbdir(state)
+-- Collect all the bookmarks for Buku.
+--
+-- See: https://github.com/jarun/buku
+---@param config BrowserBookmarksConfig
+---@return Bookmark[]?
+function buku.collect_bookmarks(config)
+  local dbdir = get_default_dbdir()
 
   local db = sqlite.new(utils.join_path(dbdir, "bookmarks.db")):open()
   local keys = { "url", "metadata" }
