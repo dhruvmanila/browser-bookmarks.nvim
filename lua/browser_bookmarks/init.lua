@@ -6,6 +6,8 @@ local browsers = require "browser_bookmarks.browsers"
 local config = require "browser_bookmarks.config"
 local utils = require "browser_bookmarks.utils"
 
+local os_name = vim.loop.os_uname().sysname
+
 -- Collect all the bookmarks for either the given browser or the selected
 -- browser in the config table.
 --
@@ -74,6 +76,9 @@ function M.setup(opts)
     complete = function(arglead)
       arglead = arglead and (".*" .. arglead .. ".*")
       return vim.tbl_filter(function(browser)
+        if os_name ~= "Darwin" and browser == Browser.SAFARI then
+          return false
+        end
         return browser:match(arglead)
       end, vim.tbl_values(Browser))
     end,
