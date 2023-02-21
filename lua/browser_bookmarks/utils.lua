@@ -177,8 +177,8 @@ local default_config_dir = {
 ---@param path string
 ---@return boolean
 function utils.path_exists(path)
-  local stat = vim.loop.fs_stat(path) or {}
-  return not vim.tbl_isempty(stat)
+  local _, err = vim.loop.fs_stat(path)
+  return err == nil
 end
 
 -- Return the absolute path to the config directory for the respective OS and
