@@ -44,7 +44,8 @@ local function set_config(opt_name, value, default)
   end
 end
 
----@param opts BrowserBookmarksConfig
+-- Setup the configuration for the plugin.
+---@param opts? BrowserBookmarksConfig
 function config.setup(opts)
   opts = opts or {}
   for key, default in pairs(defaults) do

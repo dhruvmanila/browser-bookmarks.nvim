@@ -22,20 +22,6 @@ local chromium_based_browsers = {
   Browser.VIVALDI,
 }
 
--- An array of browser which supports specifying profile name.
----@type Browser[]
-local profile_browsers = {
-  Browser.BRAVE,
-  Browser.BRAVE_BETA,
-  Browser.CHROME,
-  Browser.CHROME_BETA,
-  Browser.CHROMIUM,
-  Browser.EDGE,
-  Browser.FIREFOX,
-  Browser.VIVALDI,
-  Browser.WATERFOX,
-}
-
 ---@type table<Browser, BrowserInterface>
 local M = setmetatable({}, {
   ---@param _ table

@@ -220,8 +220,8 @@ function utils.get_config_dir(selected_browser)
   return utils.join_path(vim.loop.os_homedir(), components)
 end
 
----Emit a debug message. The given arguments are passed through `vim.inspect`
----function and then shown.
+-- Emit a debug message. The given arguments are passed through `vim.inspect`
+-- function and then shown.
 ---@vararg any
 function utils.debug(...)
   if not config.debug then
@@ -248,18 +248,26 @@ function utils.debug(...)
   )
 end
 
----Emit a warning message.
+-- Emit a warning message.
 ---@param msg string
 function utils.warn(msg)
   vim.notify(msg, vim.log.levels.WARN, { title = "browser-bookmarks.nvim" })
 end
 
--- Wait until the timeout value for job execution. The value is in milliseconds.
-local timeout = 5 * 100
+-- Timeout value for job execution. The unit is milliseconds.
+local timeout = 5 * 1000
 
 -- Return the output of the given command.
 --
--- An error is raised in the cases as mentioned for `jobstart()` and `jobwait()`.
+-- An error is raised in the following cases:
+--    - invalid arguments
+--    - cmd[0] is not executable
+--    - execution timed out
+--    - cmd exited with non-zero exit code
+--
+-- This uses Neovim's |job-control| API to run the cmd.
+--
+-- Timeout value is 5 seconds. After that, `jobstop` is used to stop the job.
 ---@param cmd string
 ---@return string
 function utils.get_os_command_output(cmd)
@@ -307,8 +315,8 @@ end
 -- This is '/' for POSIX and '\\' for Windows.
 local sep = package.config:sub(1, 1)
 
----Return a path string made up of the given mix of strings or tables in the
----order they are provided.
+-- Return a path string made up of the given mix of strings or tables in the
+-- order they are provided.
 ---@param ... string|string[]
 ---@return string
 function utils.join_path(...)
