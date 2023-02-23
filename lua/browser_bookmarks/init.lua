@@ -46,7 +46,7 @@ function M.select(selected_browser)
     ---@return string
     format_item = function(item)
       local name = (config.values.full_path and item.path or item.name) or ""
-      if item.tags then
+      if config.values.buku_include_tags then
         name = ("%s (%s)"):format(name, item.tags)
       end
       return ("%s (%s)"):format(name, item.url)
@@ -66,7 +66,7 @@ function M.select(selected_browser)
   )
 end
 
----@param opts BrowserBookmarksConfig
+---@param opts? BrowserBookmarksConfig
 function M.setup(opts)
   config.setup(opts)
 

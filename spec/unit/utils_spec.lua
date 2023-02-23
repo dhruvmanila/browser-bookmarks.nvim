@@ -1,4 +1,5 @@
 local Browser = require("browser_bookmarks.enum").Browser
+local config = require "browser_bookmarks.config"
 local utils = require "browser_bookmarks.utils"
 
 local helpers = require "spec.helpers"
@@ -13,9 +14,7 @@ describe("path_exists", function()
   end)
 end)
 
-insulate("get_config_dir", function()
-  local config = require "browser_bookmarks.config"
-
+describe("get_config_dir", function()
   before_each(function()
     stub(utils, "warn")
   end)
@@ -98,6 +97,42 @@ describe("join_path", function()
     assert.are.equal(
       utils.join_path { "path", "to", { "nested", "foo" } },
       table.concat({ "path", "to", "nested", "foo" }, sep)
+    )
+  end)
+end)
+
+describe("construct_prompt", function()
+  it("should use the provided browser", function()
+    assert.are.same(utils.construct_prompt "chrome", "Select Chrome Bookmarks")
+  end)
+
+  it("should use the config browser", function()
+    assert.are.same(utils.construct_prompt(), "Select Brave Bookmarks")
+  end)
+end)
+
+describe("debug", function()
+  before_each(function()
+    stub(vim.api, "nvim_out_write")
+  end)
+
+  after_each(function()
+    vim.api.nvim_out_write:revert()
+    config.setup()
+  end)
+
+  it("should not print if false", function()
+    config.setup { debug = false }
+    utils.debug "hello world"
+    assert.stub(vim.api.nvim_out_write).was_called(0)
+  end)
+
+  it("should format the message correctly", function()
+    config.setup { debug = true }
+    utils.debug(nil, "string", { foo = "bar" })
+    assert.stub(vim.api.nvim_out_write).was_called(1)
+    assert.stub(vim.api.nvim_out_write).was_called_with(
+      match.matches '%[browser%-bookmarks%] %[[^%]]+%] %[DEBUG%]: nil string {\n  foo = "bar"\n}\n'
     )
   end)
 end)
