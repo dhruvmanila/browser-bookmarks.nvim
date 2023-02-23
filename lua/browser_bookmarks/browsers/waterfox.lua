@@ -7,7 +7,7 @@ local firefox = require "browser_bookmarks.browsers.firefox"
 
 local waterfox = {}
 
----Collect all the bookmarks for the Waterfox browser.
+-- Collect all the bookmarks for the Waterfox browser.
 ---@param config BrowserBookmarksConfig
 ---@return Bookmark[]?
 function waterfox.collect_bookmarks(config)

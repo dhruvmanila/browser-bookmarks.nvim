@@ -1,5 +1,7 @@
-local safari = require "telescope._extensions.bookmarks.safari"
-local utils = require "telescope._extensions.bookmarks.utils"
+---@diagnostic disable: duplicate-set-field
+local config = require "browser_bookmarks.config"
+local safari = require "browser_bookmarks.browsers.safari"
+local utils = require "browser_bookmarks.utils"
 
 local helpers = require "spec.helpers"
 
@@ -11,24 +13,23 @@ describe("safari", function()
 
     after_each(function()
       utils.warn:revert()
+      -- Reset the config
+      config.setup()
     end)
 
     it("should return nil if get_config_dir fails", function()
       -- Unsupported OS
-      local bookmarks = safari.collect_bookmarks(
-        { os_name = "Linux" },
-        { selected_browser = "safari" }
-      )
+      helpers.set_state { os_name = "Linux" }
+      local bookmarks = safari.collect_bookmarks { selected_browser = "safari" }
 
       assert.is_nil(bookmarks)
       assert.stub(utils.warn).was_called(1)
     end)
 
     it("should warn if bookmarks file not found", function()
-      local bookmarks = safari.collect_bookmarks(
-        { os_name = "Darwin" },
-        { selected_browser = "safari", config_dir = "spec/fixtures" }
-      )
+      helpers.set_state { os_name = "Darwin" }
+      config.setup { config_dir = "spec/fixtures" }
+      local bookmarks = safari.collect_bookmarks { selected_browser = "safari" }
 
       assert.is_nil(bookmarks)
       assert.stub(utils.warn).was_called(1)
@@ -40,24 +41,22 @@ describe("safari", function()
 
   insulate("parse_bookmarks_data", function()
     -- Overriding the function to avoid running the `plutil` command.
-    utils.get_os_command_output = function(command)
-      assert(
-        command[1] == "plutil",
-        ("invalid command: %s"):format(vim.inspect(command))
-      )
-      local filepath = command[#command]
-      return { helpers.readfile(filepath:gsub("plist$", "xml")) }
+    ---@param cmd string
+    ---@return string
+    utils.get_os_command_output = function(cmd)
+      assert(vim.startswith(cmd, "plutil"), "invalid command: " .. cmd)
+      local parts = vim.split(cmd, " ", { plain = true, trimempty = true })
+      local filepath = parts[#parts]
+      return helpers.readfile(filepath:gsub("plist$", "xml"))
     end
 
-    utils.path_exists = function(path)
+    utils.path_exists = function()
       return true
     end
 
     it("should parse bookmarks file", function()
-      local bookmarks = safari.collect_bookmarks(
-        { os_name = "Darwin", os_homedir = "spec/fixtures" },
-        { selected_browser = "safari" }
-      )
+      helpers.set_state { os_name = "Darwin", os_homedir = "spec/fixtures" }
+      local bookmarks = safari.collect_bookmarks { selected_browser = "safari" }
 
       assert.are.same(bookmarks, {
         {

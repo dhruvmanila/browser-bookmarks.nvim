@@ -1,9 +1,9 @@
 return {
   modules = {
-    -- the main module
-    ["bookmarks"] = "lua/telescope/_extensions/bookmarks.lua",
-    -- and everything namespaced underneath it
-    ["bookmarks.*"] = "lua/telescope/_extensions",
+    ["browser_bookmarks.*"] = "lua",
+    ["browser_bookmarks.browsers.*"] = "lua",
+    ["browser_bookmarks.parser.*"] = "lua",
+    ["telescope._extensions.bookmarks"] = "lua/telescope/_extensions/bookmarks.lua",
   },
 
   -- This is set to get the true coverage of the entire project.

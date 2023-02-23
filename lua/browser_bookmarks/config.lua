@@ -2,15 +2,24 @@ local config = {}
 
 -- Config table.
 --
--- The table is empty until the `setup` function is called. Once the `setup`
--- function is called, this table gets updated in place. This means that
--- every module which is having a reference to this table will always view
--- the updated values.
+-- This is initialized with the default values.
+--
+-- Do NOT keep a reference to this table in other module as the table
+-- is not updated in-place.
 --
 -- Usage:
 --
 --    ```lua
+--    local config = require("browser_bookmarks.config")
+--
+--    -- Access the table from the module
+--    config.values.selected_browser
+--
+--    -- And not by keeping a reference around
 --    local config = require("browser_bookmarks.config").values
+--
+--    -- This might not give the actual value of the table
+--    config.selected_browser
 --    ```
 --
 -- NOTE: Make sure to not mutate the table directly. Only use the `setup`
@@ -31,26 +40,23 @@ local defaults = {
   debug = false,
 }
 
--- Set the configuration value.
----@generic T
----@param opt_name string
----@param value T
----@param default T
-local function set_config(opt_name, value, default)
-  if value == nil then
-    config.values[opt_name] = default
-  else
-    config.values[opt_name] = value
-  end
-end
-
 -- Setup the configuration for the plugin.
+--
+-- This resets the config to the default values, updating the ones provided
+-- in the `opts` table.
+--
+-- To set/reset the config table to the default values, simply call the
+-- function without providing any arguments.
 ---@param opts? BrowserBookmarksConfig
 function config.setup(opts)
-  opts = opts or {}
-  for key, default in pairs(defaults) do
-    set_config(key, opts[key], default)
-  end
+  config.values = vim.tbl_extend("force", {}, defaults, opts or {})
+end
+
+-- Setup with the default values.
+config.setup()
+
+if _TEST then
+  config._defaults = defaults
 end
 
 return config

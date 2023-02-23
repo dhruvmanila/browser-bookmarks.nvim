@@ -1,4 +1,7 @@
-local utils = require "telescope._extensions.bookmarks.utils"
+---@diagnostic disable: duplicate-set-field
+local utils = require "browser_bookmarks.utils"
+
+local helpers = require "spec.helpers"
 
 local test_profiles = {
   -- There was some parse error, so an empty table was returned.
@@ -56,9 +59,9 @@ describe("firefox", function()
   -- Insulate this block to avoid `ini.load` and `utils.path_exists` being
   -- overridden in other blocks.
   insulate("helpers", function()
-    local match = require "luassert.match"
-    local ini = require "telescope._extensions.bookmarks.parser.ini"
-    local firefox = require "telescope._extensions.bookmarks.firefox"
+    local config = require "browser_bookmarks.config"
+    local ini = require "browser_bookmarks.parser.ini"
+    local firefox = require "browser_bookmarks.browsers.firefox"
 
     -- Override the original function to load the data directly from the
     -- "profiles" table defined above. The first part of the path is used as
@@ -94,24 +97,27 @@ describe("firefox", function()
     end)
 
     describe("get_profile_dir", function()
+      after_each(function()
+        config.setup()
+      end)
+
       it("should return nil if get_config_dir fails", function()
         -- Unsupported OS
-        local profile_dir = firefox._get_profile_dir(
-          { os_name = "random" },
-          { selected_browser = "firefox" }
-        )
+        helpers.set_state { os_name = "random" }
+        local profile_dir =
+          firefox._get_profile_dir { selected_browser = "firefox" }
 
         assert.is_nil(profile_dir)
         assert.stub(utils.warn).was_called(1)
       end)
 
       it("should warn if profiles file not found", function()
-        local bookmarks = firefox.collect_bookmarks(
-          { os_name = "Darwin" },
-          { selected_browser = "firefox", config_dir = "spec/fixtures" }
-        )
+        helpers.set_state { os_name = "Darwin" }
+        config.setup { config_dir = "spec/fixtures" }
+        local profile_dir =
+          firefox._get_profile_dir { selected_browser = "firefox" }
 
-        assert.is_nil(bookmarks)
+        assert.is_nil(profile_dir)
         assert.stub(utils.warn).was_called(1)
         assert
           .stub(utils.warn)
@@ -120,15 +126,14 @@ describe("firefox", function()
     end)
 
     describe("get_profile_dir", function()
-      utils.path_exists = function(path)
+      utils.path_exists = function()
         return true
       end
 
       it("should warn if failed to parse profiles.ini", function()
-        local profile_dir = firefox._get_profile_dir({
-          os_name = "Darwin",
-          os_homedir = "parse_failure",
-        }, { selected_browser = "firefox" })
+        helpers.set_state { os_name = "Darwin", os_homedir = "parse_failure" }
+        local profile_dir =
+          firefox._get_profile_dir { selected_browser = "firefox" }
 
         assert.is_nil(profile_dir)
         assert.stub(utils.warn).was_called(1)
@@ -138,33 +143,29 @@ describe("firefox", function()
       end)
 
       it("should pick the only profile available", function()
-        local profile_dir = firefox._get_profile_dir({
-          os_name = "Darwin",
-          os_homedir = "one_profile",
-        }, { selected_browser = "firefox" })
+        helpers.set_state { os_name = "Darwin", os_homedir = "one_profile" }
+        local profile_dir =
+          firefox._get_profile_dir { selected_browser = "firefox" }
 
         assert.is_not_nil(profile_dir)
         assert.is_true(vim.endswith(profile_dir, "Profiles/one-profile"))
       end)
 
       it("should return default profile directory", function()
-        local profile_dir = firefox._get_profile_dir({
-          os_name = "Darwin",
-          os_homedir = "default_profile",
-        }, { selected_browser = "firefox" })
+        helpers.set_state { os_name = "Darwin", os_homedir = "default_profile" }
+        local profile_dir =
+          firefox._get_profile_dir { selected_browser = "firefox" }
 
         assert.is_not_nil(profile_dir)
         assert.is_true(vim.endswith(profile_dir, "Profiles/default-release"))
       end)
 
       it("should return user given profile directory", function()
-        local profile_dir = firefox._get_profile_dir(
-          { os_name = "Darwin", os_homedir = "default_profile" },
-          {
-            selected_browser = "firefox",
-            profile_name = "dev-edition-default",
-          }
-        )
+        helpers.set_state { os_name = "Darwin", os_homedir = "default_profile" }
+        local profile_dir = firefox._get_profile_dir {
+          selected_browser = "firefox",
+          profile_name = "dev-edition-default",
+        }
 
         assert.is_not_nil(profile_dir)
         -- Also testing if the `IsRelative` key is being considered or not.
@@ -172,10 +173,11 @@ describe("firefox", function()
       end)
 
       it("should warn if user given profile does not exist", function()
-        local profile_dir = firefox._get_profile_dir(
-          { os_name = "Darwin", os_homedir = "default_profile" },
-          { selected_browser = "firefox", profile_name = "random" }
-        )
+        helpers.set_state { os_name = "Darwin", os_homedir = "default_profile" }
+        local profile_dir = firefox._get_profile_dir {
+          selected_browser = "firefox",
+          profile_name = "random",
+        }
 
         assert.is_nil(profile_dir)
         assert.stub(utils.warn).was_called(1)
@@ -185,10 +187,12 @@ describe("firefox", function()
       end)
 
       it("should warn if unable to deduce default profile", function()
-        local profile_dir = firefox._get_profile_dir({
+        helpers.set_state {
           os_name = "Darwin",
           os_homedir = "no_default_profile",
-        }, { selected_browser = "firefox" })
+        }
+        local profile_dir =
+          firefox._get_profile_dir { selected_browser = "firefox" }
 
         assert.is_nil(profile_dir)
         assert.stub(utils.warn).was_called(1)
@@ -200,14 +204,15 @@ describe("firefox", function()
   end)
 
   describe("collect_bookmarks", function()
-    local match = require "luassert.match"
-    local firefox = require "telescope._extensions.bookmarks.firefox"
+    local firefox = require "browser_bookmarks.browsers.firefox"
+
+    helpers.set_state { os_name = "Darwin", os_homedir = "spec/fixtures" }
 
     it("should return nil if unable to get profile directory", function()
-      local bookmarks = firefox.collect_bookmarks(
-        { os_name = "Darwin", os_homedir = "spec/fixtures" },
-        { selected_browser = "firefox", profile_name = "random" }
-      )
+      local bookmarks = firefox.collect_bookmarks {
+        selected_browser = "firefox",
+        profile_name = "random",
+      }
 
       assert.is_nil(bookmarks)
       assert.stub(utils.warn).was_called(1)
@@ -217,10 +222,8 @@ describe("firefox", function()
     end)
 
     it("should parse bookmarks data", function()
-      local bookmarks = firefox.collect_bookmarks({
-        os_name = "Darwin",
-        os_homedir = "spec/fixtures",
-      }, { selected_browser = "firefox" })
+      local bookmarks =
+        firefox.collect_bookmarks { selected_browser = "firefox" }
 
       assert.are.same(bookmarks, {
         {
@@ -242,13 +245,10 @@ describe("firefox", function()
     end)
 
     it("should parse bookmarks data for given firefox profile", function()
-      local bookmarks = firefox.collect_bookmarks(
-        { os_name = "Darwin", os_homedir = "spec/fixtures" },
-        {
-          selected_browser = "firefox",
-          firefox_profile_name = "dev-edition-default",
-        }
-      )
+      local bookmarks = firefox.collect_bookmarks {
+        selected_browser = "firefox",
+        firefox_profile_name = "dev-edition-default",
+      }
 
       assert.are.same(bookmarks, {
         {

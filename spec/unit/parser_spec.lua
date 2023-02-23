@@ -1,5 +1,5 @@
-local ini = require "telescope._extensions.bookmarks.parser.ini"
-local plist = require "telescope._extensions.bookmarks.parser.plist"
+local ini = require "browser_bookmarks.parser.ini"
+local plist = require "browser_bookmarks.parser.plist"
 
 local helpers = require "spec.helpers"
 

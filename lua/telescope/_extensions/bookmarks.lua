@@ -14,7 +14,7 @@ local telescope_config = require("telescope.config").values
 
 local actions = require "browser_bookmarks.actions"
 local browser_bookmarks = require "browser_bookmarks"
-local config = require("browser_bookmarks.config").values
+local config = require "browser_bookmarks.config"
 local utils = require "browser_bookmarks.utils"
 
 -- Smart URL opener with multi-selection support.
@@ -46,13 +46,15 @@ local function bookmarks(opts)
   end
   if vim.tbl_isempty(results) then
     return utils.warn(
-      ("No bookmarks available for %s browser"):format(config.selected_browser)
+      ("No bookmarks available for %s browser"):format(
+        config.values.selected_browser
+      )
     )
   end
 
   local displayer = entry_display.create {
     separator = " ",
-    items = config.buku_include_tags and {
+    items = config.values.buku_include_tags and {
       { width = 0.3 },
       { width = 0.2 },
       { remaining = true },
@@ -67,7 +69,7 @@ local function bookmarks(opts)
       entry.name,
       { entry.value, "Comment" },
     }
-    if config.buku_include_tags then
+    if config.values.buku_include_tags then
       table.insert(display_columns, 2, { entry.tags, "Special" })
     end
     return displayer(display_columns)
@@ -75,11 +77,12 @@ local function bookmarks(opts)
 
   pickers
     .new(opts, {
-      prompt_title = utils.construct_prompt(config.selected_browser),
+      prompt_title = utils.construct_prompt(config.values.selected_browser),
       finder = finders.new_table {
         results = results,
         entry_maker = function(entry)
-          local name = (config.full_path and entry.path or entry.name) or ""
+          local name = (config.values.full_path and entry.path or entry.name)
+            or ""
           return {
             display = make_display,
             name = name,

@@ -6,6 +6,7 @@ end
 local buku = {}
 
 local utils = require "browser_bookmarks.utils"
+local state = require "browser_bookmarks.state"
 
 -- Determine the directory path where the dbfile is stored.
 --
@@ -16,13 +17,13 @@ local utils = require "browser_bookmarks.utils"
 local function get_default_dbdir()
   local data_home = os.getenv "XDG_DATA_HOME"
   if not data_home then
-    if vim.loop.os_uname().sysname == "Windows_NT" then
+    if state.os_name == "Windows_NT" then
       data_home = os.getenv "APPDATA"
       if not data_home then
-        return vim.loop.cwd()
+        return state.cwd
       end
     else
-      data_home = utils.join_path(vim.loop.os_homedir(), ".local", "share")
+      data_home = utils.join_path(state.os_homedir, ".local", "share")
     end
   end
   return utils.join_path(data_home, "buku")

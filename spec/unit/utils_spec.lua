@@ -1,4 +1,7 @@
-local utils = require "telescope._extensions.bookmarks.utils"
+local Browser = require("browser_bookmarks.enum").Browser
+local utils = require "browser_bookmarks.utils"
+
+local helpers = require "spec.helpers"
 
 describe("path_exists", function()
   it("returns true if exists", function()
@@ -10,20 +13,22 @@ describe("path_exists", function()
   end)
 end)
 
-describe("get_config_dir", function()
+insulate("get_config_dir", function()
+  local config = require "browser_bookmarks.config"
+
   before_each(function()
     stub(utils, "warn")
   end)
 
   after_each(function()
     utils.warn:revert()
+    -- Reset the config table.
+    config.setup()
   end)
 
   it("warns if given config_dir does not exists", function()
-    local config_dir = utils.get_config_dir(
-      {},
-      { config_dir = "foo/bar", selected_browser = "brave" }
-    )
+    config.setup { config_dir = "foo/bar" }
+    local config_dir = utils.get_config_dir "brave"
 
     assert.is_nil(config_dir)
     assert.stub(utils.warn).was_called(1)
@@ -33,20 +38,17 @@ describe("get_config_dir", function()
   end)
 
   it("returns the config_dir if exists", function()
-    local config_dir = utils.get_config_dir(
-      {},
-      { config_dir = "spec/fixtures" }
-    )
+    config.setup { config_dir = "spec/fixtures" }
+    -- Passing any browser works as we've provided the config directory path.
+    local config_dir = utils.get_config_dir(Browser.BRAVE)
 
     assert.is_not_nil(config_dir)
     assert.is_same(config_dir, "spec/fixtures")
   end)
 
   it("warns if OS not supported", function()
-    local profile_dir = utils.get_config_dir(
-      { os_name = "random" },
-      { selected_browser = "brave" }
-    )
+    helpers.set_state { os_name = "random" }
+    local profile_dir = utils.get_config_dir(Browser.BRAVE)
 
     assert.is_nil(profile_dir)
     assert.stub(utils.warn).was_called(1)
@@ -56,10 +58,8 @@ describe("get_config_dir", function()
   end)
 
   it("returns the default config dir", function()
-    local config_dir = utils.get_config_dir(
-      { os_name = "Linux", os_homedir = "spec/fixtures" },
-      { selected_browser = "chromium" }
-    )
+    helpers.set_state { os_name = "Linux", os_homedir = "spec/fixtures" }
+    local config_dir = utils.get_config_dir(Browser.CHROMIUM)
 
     assert.is_not_nil(config_dir)
     assert.is_same(config_dir, "spec/fixtures/.config/chromium")
@@ -68,21 +68,18 @@ end)
 
 describe("get_os_command_output", function()
   it("returns output on success", function()
-    assert.are.same(
-      utils.get_os_command_output { "echo", "busted" },
-      { "busted" }
-    )
+    assert.are.same(utils.get_os_command_output "echo busted", "busted")
   end)
 
   it("errors on failure", function()
     assert.error_matches(function()
-      utils.get_os_command_output { "false" }
-    end, "")
+      utils.get_os_command_output "echo 'hi stderr' 1>&2 && exit 1"
+    end, "^hi stderr$")
   end)
 end)
 
 describe("join_path", function()
-  local sep = require("plenary.path").path.sep
+  local sep = package.config:sub(1, 1)
 
   it("can handle nil", function()
     assert.are.equal(utils.join_path(), "")

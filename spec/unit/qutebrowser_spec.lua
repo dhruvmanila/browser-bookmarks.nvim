@@ -1,5 +1,7 @@
-local qutebrowser = require "telescope._extensions.bookmarks.qutebrowser"
-local utils = require "telescope._extensions.bookmarks.utils"
+local qutebrowser = require "browser_bookmarks.browsers.qutebrowser"
+local utils = require "browser_bookmarks.utils"
+
+local helpers = require "spec.helpers"
 
 describe("qutebrowser", function()
   describe("collect_bookmarks", function()
@@ -15,20 +17,18 @@ describe("qutebrowser", function()
 
     it("should return nil if get_config_dir fails", function()
       -- Unsupported OS
-      local bookmarks = qutebrowser.collect_bookmarks(
-        { os_name = "random" },
-        { selected_browser = "qutebrowser" }
-      )
+      helpers.set_state { os_name = "random" }
+      local bookmarks =
+        qutebrowser.collect_bookmarks { selected_browser = "qutebrowser" }
 
       assert.is_nil(bookmarks)
       assert.stub(utils.warn).was_called(1)
     end)
 
     it("should warn if file is absent", function()
-      local bookmarks = qutebrowser.collect_bookmarks({
-        os_name = "Darwin",
-        os_homedir = ".",
-      }, { selected_browser = "qutebrowser" })
+      helpers.set_state { os_name = "Darwin", os_homedir = "." }
+      local bookmarks =
+        qutebrowser.collect_bookmarks { selected_browser = "qutebrowser" }
 
       assert.is_nil(bookmarks)
       assert.stub(utils.warn).was_called(1)
@@ -38,10 +38,9 @@ describe("qutebrowser", function()
     end)
 
     it("should parse bookmarks file", function()
-      local bookmarks = qutebrowser.collect_bookmarks({
-        os_name = "Darwin",
-        os_homedir = "spec/fixtures",
-      }, { selected_browser = "qutebrowser" })
+      helpers.set_state { os_name = "Darwin", os_homedir = "spec/fixtures" }
+      local bookmarks =
+        qutebrowser.collect_bookmarks { selected_browser = "qutebrowser" }
 
       assert.are.same(bookmarks, {
         {

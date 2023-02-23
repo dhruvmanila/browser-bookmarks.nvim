@@ -1,7 +1,8 @@
 local utils = {}
 
 local Browser = require("browser_bookmarks.enum").Browser
-local config = require("browser_bookmarks.config").values
+local config = require "browser_bookmarks.config"
+local state = require "browser_bookmarks.state"
 
 local default_config_dir = {
   Darwin = {
@@ -193,7 +194,7 @@ end
 ---@param selected_browser Browser
 ---@return string?
 function utils.get_config_dir(selected_browser)
-  local config_dir = config.config_dir
+  local config_dir = config.values.config_dir
   if config_dir ~= nil then
     if not utils.path_exists(config_dir) then
       utils.warn(
@@ -207,24 +208,26 @@ function utils.get_config_dir(selected_browser)
     end
     return config_dir
   end
-  local os_name = vim.loop.os_uname().sysname
-  local components = (default_config_dir[os_name] or {})[selected_browser]
+  local components = (default_config_dir[state.os_name] or {})[selected_browser]
   if components == nil then
     -- This assumes that the check for browser support was already done before
     -- calling this function, thus the message for unsupported OS.
     utils.warn(
-      ("Unsupported OS for %s browser: %s"):format(selected_browser, os_name)
+      ("Unsupported OS for %s browser: %s"):format(
+        selected_browser,
+        state.os_name
+      )
     )
     return nil
   end
-  return utils.join_path(vim.loop.os_homedir(), components)
+  return utils.join_path(state.os_homedir, components)
 end
 
 -- Emit a debug message. The given arguments are passed through `vim.inspect`
 -- function and then shown.
 ---@vararg any
 function utils.debug(...)
-  if not config.debug then
+  if not config.values.debug then
     return
   end
 
@@ -345,7 +348,7 @@ local title = {
 ---@param selected_browser? Browser
 ---@return string
 function utils.construct_prompt(selected_browser)
-  selected_browser = selected_browser or config.selected_browser
+  selected_browser = selected_browser or config.values.selected_browser
   return "Select " .. title[selected_browser] .. " Bookmarks"
 end
 
