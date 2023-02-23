@@ -24,10 +24,10 @@ local chromium_based_browsers = {
 
 ---@type table<Browser, BrowserInterface>
 local M = setmetatable({}, {
-  ---@param _ table
+  ---@param self table
   ---@param selected_browser string
   ---@return BrowserInterface
-  __index = function(_, selected_browser)
+  __index = function(self, selected_browser)
     if not vim.tbl_contains(supported_browsers, selected_browser) then
       error(
         string.format(
@@ -38,12 +38,18 @@ local M = setmetatable({}, {
       )
     end
 
-    -- Entrypoint for all chromium based browsers is "chromium.lua".
+    -- Entrypoint for all chromium based browsers is "chromium.lua". But,
+    -- the module should be stored with the original name.
+    local browser = selected_browser
     if vim.tbl_contains(chromium_based_browsers, selected_browser) then
-      selected_browser = Browser.CHROMIUM
+      browser = Browser.CHROMIUM
     end
 
-    return require("browser_bookmarks.browsers." .. selected_browser)
+    local mod = require("browser_bookmarks.browsers." .. browser)
+    ---@cast mod BrowserInterface
+    rawset(self, selected_browser, mod)
+
+    return mod
   end,
 })
 
