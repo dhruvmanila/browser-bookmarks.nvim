@@ -22,6 +22,27 @@ local chromium_based_browsers = {
   Browser.VIVALDI,
 }
 
+-- An array of browsers which are dependent on `sqlite.lua` as the bookmarks
+-- are stored in a local database file.
+---@type Browser[]
+local sqlite_dependency_browsers = {
+  Browser.BUKU,
+  Browser.FIREFOX,
+  Browser.WATERFOX,
+}
+
+-- Check if the `sqlite.lua` dependency is installed, raise an error if not.
+---@param selected_browser Browser
+local function check_sqlite_dependency(selected_browser)
+  local ok = pcall(require, "sqlite")
+  if not ok then
+    error(
+      selected_browser
+        .. " depends on sqlite.lua (https://github.com/kkharji/sqlite.lua)"
+    )
+  end
+end
+
 ---@type table<Browser, BrowserInterface>
 local M = setmetatable({}, {
   ---@param self table
@@ -43,6 +64,14 @@ local M = setmetatable({}, {
     local browser = selected_browser
     if vim.tbl_contains(chromium_based_browsers, selected_browser) then
       browser = Browser.CHROMIUM
+    end
+
+    if vim.tbl_contains(sqlite_dependency_browsers, selected_browser) then
+      check_sqlite_dependency(selected_browser)
+      -- Firefox and Waterfox have the same backend.
+      if selected_browser == Browser.WATERFOX then
+        browser = Browser.FIREFOX
+      end
     end
 
     local mod = require("browser_bookmarks.browsers." .. browser)

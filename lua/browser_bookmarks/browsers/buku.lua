@@ -1,9 +1,6 @@
-local ok, sqlite = pcall(require, "sqlite")
-if not ok then
-  error "Buku depends on sqlite.lua (https://github.com/kkharji/sqlite.lua)"
-end
-
 local buku = {}
+
+local sqlite = require "sqlite"
 
 local utils = require "browser_bookmarks.utils"
 local state = require "browser_bookmarks.state"

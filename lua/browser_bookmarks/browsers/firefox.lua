@@ -1,9 +1,6 @@
-local ok, sqlite = pcall(require, "sqlite")
-if not ok then
-  error "Firefox depends on sqlite.lua (https://github.com/kkharji/sqlite.lua)"
-end
-
 local firefox = {}
+
+local sqlite = require "sqlite"
 
 local utils = require "browser_bookmarks.utils"
 local ini = require "browser_bookmarks.parser.ini"
