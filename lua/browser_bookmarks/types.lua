@@ -9,7 +9,7 @@
 ---@field debug boolean
 
 ---@class Bookmark
----@field name string
----@field path string
----@field url string
----@field tags? string
+---@field name string Bookmark name
+---@field path string Full path from root to the name separated by '/'
+---@field url string Bookmark URL
+---@field tags? string Comma separated tags (only for buku)

@@ -1,35 +1,27 @@
 <div align="center">
 
-# telescope-bookmarks.nvim
+# browser-bookmarks.nvim
 
-[![test](https://github.com/dhruvmanila/telescope-bookmarks.nvim/actions/workflows/test.yml/badge.svg)](https://github.com/dhruvmanila/telescope-bookmarks.nvim/actions/workflows/test.yml)
-[![codecov](https://codecov.io/gh/dhruvmanila/telescope-bookmarks.nvim/branch/main/graph/badge.svg)](https://codecov.io/gh/dhruvmanila/telescope-bookmarks.nvim)
-[![GitHub release](https://img.shields.io/github/v/release/dhruvmanila/telescope-bookmarks.nvim)](https://github.com/dhruvmanila/telescope-bookmarks.nvim/releases/latest)
+[![test](https://github.com/dhruvmanila/browser-bookmarks.nvim/actions/workflows/test.yml/badge.svg)](https://github.com/dhruvmanila/browser-bookmarks.nvim/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/dhruvmanila/browser-bookmarks.nvim/branch/main/graph/badge.svg)](https://codecov.io/gh/dhruvmanila/browser-bookmarks.nvim)
+[![GitHub release](https://img.shields.io/github/v/release/dhruvmanila/browser-bookmarks.nvim)](https://github.com/dhruvmanila/browser-bookmarks.nvim/releases/latest)
 [![License](https://img.shields.io/badge/license-MIT-brightgreen)](/LICENSE)
 
-A _Neovim Telescope extension_ to open your browser bookmarks right from the editor!
-
-![telescope-bookmarks.nvim](https://user-images.githubusercontent.com/67177269/115862442-c89d7280-a451-11eb-94c5-501095f88ed7.png)
+A _Neovim plugin_ to open your browser bookmarks right from the editor!
 
 </div>
 
-<details>
-<summary><em>Screenshot configuration</em></summary>
+### Using `vim.ui.select` and [`telescope-ui-select.nvim`](https://github.com/nvim-telescope/telescope-ui-select.nvim):
 
-```lua
-require('telescope').extensions.bookmarks.bookmarks(
-  require('telescope.themes').get_dropdown {
-    layout_config = {
-      width = 0.8,
-      height = 0.8,
-    },
-    previewer = false,
-  }
-)
-```
+![vim-ui-select](https://user-images.githubusercontent.com/67177269/224382480-a107ca94-ca75-4da1-ae2a-e12d0a4118df.png)
 
-</details>
+### Using `vim.ui.select` and [`fzf-lua`](https://github.com/ibhagwan/fzf-lua):
 
+![fzf-lua](https://user-images.githubusercontent.com/67177269/224391505-15f4094f-2f71-4c55-98cb-5cedcbdb2c23.png)
+
+### Using telescope integration:
+
+![telescope-integration](https://user-images.githubusercontent.com/67177269/224382374-2afc6307-d311-4cac-8d08-f37769bc6e6e.png)
 
 ### Supported browsers
 
@@ -59,20 +51,17 @@ application.
 
 ## Requirements
 
-[![Requires Neovim](https://img.shields.io/badge/requires-neovim%200.7%2B-green?logo=neovim)](https://github.com/neovim/neovim)
-
-* [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim)
+* [Neovim](https://github.com/neovim/neovim) >= 0.7
 * [sqlite.lua](https://github.com/kkharji/sqlite.lua) (only for Firefox,
   Waterfox browser and buku)
-
-Neovim version requirement is the same as that of
-[telescope.nvim](https://github.com/nvim-telescope/telescope.nvim#getting-started).
+* [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) (only for
+  telescope integration)
 
 ## Installation
 
 The project follows semantic versioning, so it's recommended to specify the
 tag when installing. The latest released version can be found
-[here](https://github.com/dhruvmanila/telescope-bookmarks.nvim/releases/latest).
+[here](https://github.com/dhruvmanila/browser-bookmarks.nvim/releases/latest).
 
 The plugin managers mentioned below supports wildcard (`*`) in the tag key which
 points to the latest git tag. You can specify a specific version if you'd prefer
@@ -82,11 +71,11 @@ to inspect the changes before updating.
 
 ```lua
 use {
-  'dhruvmanila/telescope-bookmarks.nvim',
+  'dhruvmanila/browser-bookmarks.nvim',
   tag = '*',
-  -- Uncomment if the selected browser is Firefox, Waterfox or buku
   -- requires = {
   --   'kkharji/sqlite.lua',
+  --   'nvim-telescope/telescope.nvim',
   -- }
 }
 ```
@@ -94,17 +83,156 @@ use {
 ### Using [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```vim
-Plug 'dhruvmanila/telescope-bookmarks.nvim', { 'tag': '*' }
-" Uncomment if the selected browser is Firefox, Waterfox or buku
+Plug 'dhruvmanila/browser-bookmarks.nvim', { 'tag': '*' }
 " Plug 'kkharji/sqlite.lua'
+" Plug 'nvim-telescope/telescope.nvim'
+```
+
+## Setup
+
+> **Note**:
+>
+> Setup function is not required to be invoked if using the telescope
+> integration. Refer to the [telescope extension](#telescope-extension) section.
+
+The plugin must be ***explicitly*** enabled by using the `setup` function:
+
+```lua
+require('browser-bookmarks').setup()
+```
+
+The `setup` function accepts an `opts` table which can be used to override the
+[default configuration values](#configuration):
+
+```lua
+require('browser-bookmarks').setup({
+  -- override default configuration values
+  selected_browser = 'firefox',
+})
 ```
 
 ## Usage
+
+The setup function will define a command through which the plugin can be
+invoked. This uses the `vim.ui.select` interface to select a bookmark and open
+it in the default browser.
+
+The command accepts an optional argument which would be the browser name. If not
+provided, the plugin will use the default browser or the configured one during
+the plugin setup.
+
+```lua
+-- No argument, uses the default browser
+BrowserBookmarks
+
+-- Uses the Safari browser
+BrowserBookmarks safari
+
+-- Autocomplete is available
+BrowserBookmarks <TAB>
+```
+
+The browser name is the same as the one accepted by the `selected_browser`
+config option. Refer to the [config section](#selected_browser-string-default-brave).
+
+When you press <kbd>Enter</kbd> on a selected bookmark, it will open the URL
+using either the `url_open_plugin` or `url_open_command` option in your default
+browser.
+
+The keymap can be defined to invoke the fuzzy finder through the command or
+API function like so:
+
+```lua
+vim.keymap.set('n', '<leader>fb', require('browser-bookmarks').select, {
+  desc = 'Fuzzy search browser bookmarks',
+})
+```
+
+### API
+
+Additionally, the plugin exposes a simple API:
+
+```lua
+---@class Bookmark
+---@field name string Bookmark name
+---@field path string Full path from root to the name separated by '/'
+---@field url string Bookmark URL
+---@field tags? string Comma separated tags (only for buku)
+
+-- Collect all the bookmarks for either the given browser or the selected
+-- browser in the config table.
+--
+-- An error will be raised if the selected browser is unsupported.
+-- A warning notification will be sent using `vim.notify` if there's any
+-- kind of problem while collecting the bookmarks.
+--
+---@param selected_browser? Browser
+---@return Bookmark[]?
+function M.collect(selected_browser) end
+
+-- Select a bookmark using `vim.ui.select` and open it in the default browser.
+--
+-- If the `selected_browser` parameter is not given, the value is taken from
+-- the config table. The `kind` option value in `vim.ui.select` is
+-- "browser-bookmarks".
+--
+-- Error / warning is given in the same way as the `collect` function.
+--
+---@param selected_browser? Browser
+function M.select(selected_browser) end
+```
+
+The command `BrowserBookmarks` uses the `select` API function.
+
+<details>
+<summary><b>Example:</b></summary>
+
+```lua
+local Browser = require("browser_bookmarks.enum").Browser
+local browser_bookmarks = require("browser_bookmarks")
+
+browser_bookmarks.collect(Browser.BRAVE)
+-- {
+--   {
+--     name = "GitHub",
+--     path = "GitHub",
+--     url = "https://github.com/"
+--   },
+--   {
+--     name = "Google",
+--     path = "search/Google",
+--     url = "https://www.google.com/"
+--   },
+--   {
+--     name = "DuckDuckGo",
+--     path = "search/nested/DuckDuckGo",
+--     url = "https://duckduckgo.com/"
+--   }
+-- }
+```
+
+</details>
+
+## Telescope Extension
 
 To get started, simply load the extension:
 
 ```lua
 require('telescope').load_extension('bookmarks')
+```
+
+To override the default values, provide the options in the extension table
+in the `require("telescope").setup` call like so:
+
+```lua
+require('telescope').setup {
+  extensions = {
+    bookmarks = {
+      -- Provide the options here to override the default values.
+      -- ...
+    },
+  },
+}
 ```
 
 You can open the picker either from the command-line or calling the lua
@@ -122,26 +250,10 @@ Telescope can lazily load the extension when needed, but that can only be
 called using the lua function. The command-line argument will not work as the
 extension is not yet loaded.
 
-When you press <kbd>Enter</kbd> on a selected bookmark, it will open the URL
-using either the `url_open_plugin` or `url_open_command` option in your default
-browser. Multiple bookmarks can be opened at the same time using multi
-selections feature in Telescope.
+Multiple bookmarks can be opened at the same time using multi selections feature
+in Telescope.
 
 ## Configuration
-
-The extension options should be provided to override the default values. They're
-provided in the bookmarks table like so:
-
-```lua
-require('telescope').setup {
-  extensions = {
-    bookmarks = {
-      -- Provide the options here to override the default values.
-      -- ...
-    },
-  },
-}
-```
 
 ### `selected_browser` (string, default: "brave")
 
@@ -167,12 +279,12 @@ the config value is as follows:
 ### `profile_name` (string, default: nil)
 
 This option is only applicable for the browsers which allow switching between
-profiles and the extension supports it. The default profile will be used if the
-value is `nil` otherwise the extension will try to collect the bookmarks for the
+profiles and the plugin supports it. The default profile will be used if the
+value is `nil` otherwise the plugin will try to collect the bookmarks for the
 given profile.
 
-If the given profile does not exist or the extension is unable to get the
-profile related information, an appropriate warning message will be provided.
+If the given profile does not exist or the plugin is unable to get the profile
+related information, an appropriate warning message will be provided.
 
 Following browsers are supported for the config option:
 * Brave
@@ -185,8 +297,7 @@ Following browsers are supported for the config option:
 * Vivaldi
 * Waterfox
 
-For the non-supported browsers, a warning will be provided and the extension
-will exit without opening the finder.
+The config option is ignored for all the non-supported browsers.
 
 ### `config_dir` (string, default: nil)
 
@@ -220,7 +331,7 @@ method. For example, a browser might be installed using a package manager and
 the data is stored in a directory specific to that package manager.
 
 **Note:** For `buku`, this option doesn't apply as it has a custom logic to
-get the bookmarks filepath. This logic is the same as that in the official
+get the bookmarks filepath. This logic is same as that in the official
 implementation.
 
 ### `full_path` (boolean, default: true)
@@ -251,7 +362,7 @@ failure.
 
 ### `url_open_plugin` (string, default: nil)
 
-The extension can use any existing plugin to open the selected bookmarks. This
+The plugin can use any existing plugin to open the selected bookmarks. This
 is useful when the same config is used across machines with different operating
 system. If this option is provided, then it takes precedence over
 `url_open_command`.
@@ -263,13 +374,75 @@ Following plugins are supported along with the config value:
 ### `buku_include_tags` (boolean, default: false)
 
 This config option is specific to the buku bookmark manager. If it's `true`,
-then an additional column is added which includes the tags for every bookmark.
-This column is highlighted using the `Special` highlight group.
+the tags for every bookmark is added.
+
+For telescope integration, an additional column is added which includes the tags
+for every bookmark. This column is highlighted using the `Special` highlight
+group.
 
 ### `debug` (boolean, default: false)
 
 If `true`, provide debug messages which includes, but not limited to, the config
 options, state values, telescope options, etc.
+
+## Tips
+
+### Using kind option to customize vim.ui.select implementer:
+
+The `kind` value for `vim.ui.select` is **browser-bookmarks** which could be
+used to customize the chosen implementation. For example, using
+[telescope-ui-select.nvim](https://github.com/nvim-telescope/telescope-ui-select.nvim):
+
+![telescope-ui-select](https://user-images.githubusercontent.com/67177269/224384378-67728250-ce9e-4bca-aed3-798485367494.png)
+
+<details>
+<summary>Screenshot configuration</summary>
+
+```lua
+require('telescope').setup {
+  extensions = {
+    ['ui-select'] = {
+      require('telescope.themes').get_dropdown {
+        layout_config = {
+          width = 0.8,
+          height = 0.8,
+        }
+      },
+      specific_opts = {
+        ['browser-bookmarks'] = {
+          make_displayer = function()
+            return entry_display.create {
+              separator = ' ',
+              items = {
+                { width = 0.5 },
+                { remaining = true },
+              },
+              -- Use this instead if `buku_include_tags` is true:
+              -- items = {
+              --   { width = 0.3 },
+              --   { width = 0.2 },
+              --   { remaining = true },
+              -- },
+            }
+          end,
+          make_display = function(displayer)
+            return function(entry)
+              return displayer {
+                entry.value.text.name,
+                -- Uncomment if `buku_include_tags` is true:
+                -- { entry.value.text.tags, 'Special' },
+                { entry.value.text.url, 'Comment' },
+              }
+            end
+          end,
+        },
+      },
+    },
+  },
+}
+```
+
+</details>
 
 ## Contributing
 
