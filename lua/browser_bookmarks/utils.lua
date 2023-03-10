@@ -349,7 +349,7 @@ local title = {
 ---@return string
 function utils.construct_prompt(selected_browser)
   selected_browser = selected_browser or config.values.selected_browser
-  return "Select " .. title[selected_browser] .. " Bookmarks"
+  return "Search " .. title[selected_browser] .. " Bookmarks"
 end
 
 return utils

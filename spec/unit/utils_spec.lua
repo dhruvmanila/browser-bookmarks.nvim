@@ -103,11 +103,11 @@ end)
 
 describe("construct_prompt", function()
   it("should use the provided browser", function()
-    assert.are.same(utils.construct_prompt "chrome", "Select Chrome Bookmarks")
+    assert.are.same(utils.construct_prompt "chrome", "Search Chrome Bookmarks")
   end)
 
   it("should use the config browser", function()
-    assert.are.same(utils.construct_prompt(), "Select Brave Bookmarks")
+    assert.are.same(utils.construct_prompt(), "Search Brave Bookmarks")
   end)
 end)
 

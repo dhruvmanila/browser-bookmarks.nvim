@@ -60,7 +60,7 @@ describe("browser_bookmarks", function()
         },
       })
       assert.are.same(args.opts.kind, "browser-bookmarks")
-      assert.are.same(args.opts.prompt, "Select Brave Bookmarks")
+      assert.are.same(args.opts.prompt, "Search Brave Bookmarks")
       assert.stub(actions.open_urls).was_called(1)
       assert.stub(actions.open_urls).was_called_with { "https://brave.com/" }
     end)
