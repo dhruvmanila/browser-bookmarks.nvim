@@ -449,6 +449,10 @@ require('telescope').setup {
 Contributions are always welcome and highly appreciated. Refer to the
 [Contributing Guidelines](./CONTRIBUTING.md).
 
+## Videos
+
+* [5 Terrific Neovim Telescope Extensions for 2022 🔭](https://youtu.be/indguFY7wJ0?t=86)
+
 ## References
 
 * [Browsing Chrome bookmarks with fzf](https://junegunn.kr/2015/04/browsing-chrome-bookmarks-with-fzf/)
