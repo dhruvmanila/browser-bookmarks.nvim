@@ -1,4 +1,4 @@
-# Contributing to telescope-bookmarks.nvim
+# Contributing to browser-bookmarks.nvim
 
 Thank you for investing your time in contributing to this project! 🎉
 
@@ -7,65 +7,75 @@ Thank you for investing your time in contributing to this project! 🎉
 ```sh
 .
 ├── lua
+│   ├── browser_bookmarks
+│   │   ├── browsers
+│   │   │   ├── ...
+│   │   │   └── init.lua  # [2]
+│   │   ├── parser
+│   │   │   └── ...
+│   │   ├── ...
+│   │   └── init.lua  # [1]
 │   └── telescope
 │       └── _extensions
-│           ├── bookmarks
-│           │   ├── parser
-│           │   │   └── ...
-│           │   └── ...
-│           └── bookmarks.lua
+│           └── bookmarks.lua  # [3]
 └── spec
     ├── fixtures
     │   └── ...
     ├── unit
     │   └── ...
-    ├── conftest.lua
+    ├── conftest.lua  # [4]
     └── helpers.lua
 ```
 
-For information on telescope.nvim extension folder structure, please refer to the
-[wiki](https://github.com/nvim-telescope/telescope.nvim/wiki/Extensions#extension-folder-structure).
+1. Entrypoint for the plugin. This is where the public API resides along with
+   the `setup` function.
+2. Entrypoint for the browsers module. This module contains implementation of
+   the `BrowserInterface` for all the supported browsers. Other checks such as
+   dependency, browser support are done here.
+3. Entrypoint for the telescope extension. For information on telescope.nvim
+   extension folder structure, please refer to the
+   [wiki](https://github.com/nvim-telescope/telescope.nvim/wiki/Extensions#extension-folder-structure).
+4. Test configuration. This is automatically read by `busted`.
 
-### Browser module interface
+### Module: `browsers`
 
-The `bookmarks.lua` file is the entrypoint for the extension. For every browser,
-there's a file with the same name as that of the config value which is imported
-when the extension is invoked. This is done so that dependencies specific to the
-browser is only required if the user selected that browser.
-
-Taking Google Chrome as an example, there's a `chrome.lua` file and the same
-name (removing the extension) is used for the `selected_browser` config option.
-This makes it easier to import the browser module:
+Browsers module is the entrypoint in accessing the browser specific
+implementation. This is done by directly indexing the module:
 
 ```lua
-require("telescope._extensions.bookmarks." .. config.selected_browser)
+require("browser_bookmarks.browsers")[config.selected_browser]
 ```
+
+Chromium based browsers uses the same implementation which is present in
+`chromium.lua` file. The entrypoint makes sure to route such browsers to
+reuse existing implementation.
+
+Dependency check for specific browsers is performed in this module. For example,
+buku, Firefox and Waterfox depends on `sqlite.lua`, so if the selected browser
+is one of them, the check is performed.
+
+### Browser module interface
 
 Every browser module satisfies an interface by exporting a single function with
 a fixed signature. It returns a list of Bookmarks or `nil` if failed to extract
 the bookmarks. Please refer to the
-[`types.lua`](./lua/telescope/_extensions/bookmarks/types.lua) module for more
-information on the custom types.
+[`types.lua`](./lua/browser_bookmarks/types.lua) module for more information on
+the custom types.
 
 ```lua
 local browser = {}
 
----@param state TelescopeBookmarksState
----@param config TelescopeBookmarksConfig
+---@param config BrowserBookmarksState
 ---@return Bookmark[]|nil
-function browser.collect_bookmarks(state, config)
+function browser.collect_bookmarks(config)
   return nil
 end
 ```
 
-For all the chromium based browser, the respective browser module still needs to
-be defined but, it should directly use the `chrome.lua` module internally. Take
-a look at `brave.lua` module as an example.
-
 ## Getting started
 
 You can look at the currently open
-[issues](https://github.com/dhruvmanila/telescope-bookmarks.nvim/issues) to see
+[issues](https://github.com/dhruvmanila/browser-bookmarks.nvim/issues) to see
 if there's a feature which you would like to work on or a reported bug to fix.
 
 ### Development
