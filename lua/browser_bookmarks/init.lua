@@ -1,10 +1,8 @@
 local M = {}
 
-local Browser = require("browser_bookmarks.enum").Browser
 local actions = require "browser_bookmarks.actions"
 local browsers = require "browser_bookmarks.browsers"
 local config = require "browser_bookmarks.config"
-local state = require "browser_bookmarks.state"
 local utils = require "browser_bookmarks.utils"
 
 -- Collect all the bookmarks for either the given browser or the selected
@@ -66,29 +64,10 @@ function M.select(selected_browser)
   )
 end
 
+-- Setup function for the plugin.
 ---@param opts? BrowserBookmarksConfig
 function M.setup(opts)
   config.setup(opts)
-
-  vim.api.nvim_create_user_command("BrowserBookmarks", function(info)
-    local selected_browser
-    if info.args ~= "" then
-      selected_browser = info.args
-    end
-    M.select(selected_browser)
-  end, {
-    nargs = "?",
-    complete = function(arglead)
-      arglead = arglead and (".*" .. arglead .. ".*")
-      return vim.tbl_filter(function(browser)
-        if state.os_name ~= "Darwin" and browser == Browser.SAFARI then
-          return false
-        end
-        return browser:match(arglead)
-      end, vim.tbl_values(Browser))
-    end,
-    desc = "Select bookmark(s) for a browser",
-  })
 end
 
 return M

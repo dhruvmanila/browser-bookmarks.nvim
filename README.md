@@ -90,19 +90,10 @@ Plug 'dhruvmanila/browser-bookmarks.nvim', { 'tag': '*' }
 
 ## Setup
 
-> **Note**:
->
-> Setup function is not required to be invoked if using the telescope
-> integration. Refer to the [telescope extension](#telescope-extension) section.
-
-The plugin must be ***explicitly*** enabled by using the `setup` function:
-
-```lua
-require('browser-bookmarks').setup()
-```
-
-The `setup` function accepts an `opts` table which can be used to override the
-[default configuration values](#configuration):
+> **Note**: Setup function is only required to be invoked to override the
+> [default configuration values](#configuration). Otherwise, the setup is done
+> automatically to use the default configuration values and define the
+> `BrowserBookmarks` command.
 
 ```lua
 require('browser-bookmarks').setup({
@@ -113,7 +104,7 @@ require('browser-bookmarks').setup({
 
 ## Usage
 
-The setup function will define a command through which the plugin can be
+The command `BrowserBookmarks` is defined through which the plugin can be
 invoked. This uses the `vim.ui.select` interface to select a bookmark and open
 it in the default browser.
 
@@ -185,7 +176,7 @@ function M.select(selected_browser) end
 The command `BrowserBookmarks` uses the `select` API function.
 
 <details>
-<summary><b>Example:</b></summary>
+<summary><b>Example usage for the API:</b></summary>
 
 ```lua
 local Browser = require("browser_bookmarks.enum").Browser
