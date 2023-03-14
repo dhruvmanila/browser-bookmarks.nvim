@@ -17,7 +17,7 @@ fmt:
 test: .deps/sqlite.lua .deps/telescope.nvim .deps/plenary.nvim
 	vusted
 	luacov
-	tail -n26 luacov.report.out
+	tail -n25 luacov.report.out
 
 .PHONY: clean
 clean:

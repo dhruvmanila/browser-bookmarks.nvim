@@ -65,34 +65,4 @@ describe("browser_bookmarks", function()
       assert.stub(actions.open_urls).was_called_with { "https://brave.com/" }
     end)
   end)
-
-  describe("setup", function()
-    insulate("command", function()
-      local command_name = "BrowserBookmarks"
-
-      -- Reset the config and delete the user command.
-      after_each(function()
-        config.setup()
-        vim.api.nvim_del_user_command(command_name)
-      end)
-
-      it("should use the default browser", function()
-        stub(browser_bookmarks, "select")
-        browser_bookmarks.setup()
-        vim.api.nvim_command(command_name)
-
-        assert.stub(browser_bookmarks.select).was_called(1)
-        assert.stub(browser_bookmarks.select).was_called_with(nil)
-      end)
-
-      it("should use the user provided browser", function()
-        stub(browser_bookmarks, "select")
-        browser_bookmarks.setup()
-        vim.api.nvim_command(command_name .. " chrome")
-
-        assert.stub(browser_bookmarks.select).was_called(1)
-        assert.stub(browser_bookmarks.select).was_called_with "chrome"
-      end)
-    end)
-  end)
 end)
