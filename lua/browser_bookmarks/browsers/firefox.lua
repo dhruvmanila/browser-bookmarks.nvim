@@ -2,8 +2,8 @@ local firefox = {}
 
 local sqlite = require "sqlite"
 
-local utils = require "browser_bookmarks.utils"
 local ini = require "browser_bookmarks.parser.ini"
+local utils = require "browser_bookmarks.utils"
 
 -- Names to be excluded from the full bookmark name.
 local exclude_names = { "menu", "toolbar" }

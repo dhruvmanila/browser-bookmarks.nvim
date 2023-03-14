@@ -1,7 +1,7 @@
 local safari = {}
 
-local utils = require "browser_bookmarks.utils"
 local plist = require "browser_bookmarks.parser.plist"
+local utils = require "browser_bookmarks.utils"
 
 -- Names to be excluded from the full bookmark name.
 local exclude_names = {

@@ -1,7 +1,7 @@
 local M = {}
 
-local utils = require "browser_bookmarks.utils"
 local config = require "browser_bookmarks.config"
+local utils = require "browser_bookmarks.utils"
 
 local url_plugin_function = {
   open_browser = "openbrowser#open",

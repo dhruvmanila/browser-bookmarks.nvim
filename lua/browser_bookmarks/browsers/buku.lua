@@ -2,8 +2,8 @@ local buku = {}
 
 local sqlite = require "sqlite"
 
-local utils = require "browser_bookmarks.utils"
 local state = require "browser_bookmarks.state"
+local utils = require "browser_bookmarks.utils"
 
 -- Determine the directory path where the dbfile is stored.
 --
