@@ -9,8 +9,6 @@
 
 A _Neovim plugin_ to open your browser bookmarks right from the editor!
 
-</div>
-
 ### Using `vim.ui.select` and [`telescope-ui-select.nvim`](https://github.com/nvim-telescope/telescope-ui-select.nvim):
 
 ![vim-ui-select](https://user-images.githubusercontent.com/67177269/224382480-a107ca94-ca75-4da1-ae2a-e12d0a4118df.png)
@@ -22,6 +20,8 @@ A _Neovim plugin_ to open your browser bookmarks right from the editor!
 ### Using telescope integration:
 
 ![telescope-integration](https://user-images.githubusercontent.com/67177269/224382374-2afc6307-d311-4cac-8d08-f37769bc6e6e.png)
+
+</div>
 
 ### Supported browsers
 
