@@ -124,7 +124,7 @@ BrowserBookmarks <TAB>
 ```
 
 The browser name is the same as the one accepted by the `selected_browser`
-config option. Refer to the [config section](#selected_browser-string-default-brave).
+config option. Refer to the [config section](#selected_browser).
 
 When you press <kbd>Enter</kbd> on a selected bookmark, it will open the URL
 using either the `url_open_plugin` or `url_open_command` option in your default
@@ -246,7 +246,8 @@ in Telescope.
 
 ## Configuration
 
-### `selected_browser` (string, default: "brave")
+### `selected_browser`
+> **string, default: "brave"**
 
 The selected browser to collect the bookmarks from. An error is raised if the
 provided browser name is unsupported. The list of supported browser along with
@@ -267,7 +268,8 @@ the config value is as follows:
 | Vivaldi            | `vivaldi`    |
 | Waterfox           | `waterfox`   |
 
-### `profile_name` (string, default: nil)
+### `profile_name`
+> **string, default: nil**
 
 This option is only applicable for the browsers which allow switching between
 profiles and the plugin supports it. The default profile will be used if the
@@ -290,7 +292,8 @@ Following browsers are supported for the config option:
 
 The config option is ignored for all the non-supported browsers.
 
-### `config_dir` (string, default: nil)
+### `config_dir`
+> **string, default: nil**
 
 This is the absolute path to the config directory where the selected browser's
 data is stored on the respective operating system. If `nil`, the default path
@@ -325,7 +328,8 @@ the data is stored in a directory specific to that package manager.
 get the bookmarks filepath. This logic is same as that in the official
 implementation.
 
-### `full_path` (boolean, default: true)
+### `full_path`
+> **boolean, default: true**
 
 By default, the entire path to the bookmark is shown starting from the root
 folder upto the bookmark name. If this is `false`, then only the bookmark name
@@ -333,7 +337,8 @@ will be shown in the finder. For example, if the bookmark path is
 `foo/bar/name`, setting the config value to `false` would show only the `name`
 part.
 
-### `url_open_command` (string, default: "open")
+### `url_open_command`
+> **string, default: "open"**
 
 The command name used to open the selected bookmarks in the default browser.
 The default value is based on macOS and should be overriden based on the user's
@@ -351,7 +356,8 @@ A warning is raised if the provided command failed to open the URL(s). This is
 determined by its exit code where a non-zero exit code is assumed to be a
 failure.
 
-### `url_open_plugin` (string, default: nil)
+### `url_open_plugin`
+> **string, default: nil**
 
 The plugin can use any existing plugin to open the selected bookmarks. This
 is useful when the same config is used across machines with different operating
@@ -362,7 +368,8 @@ Following plugins are supported along with the config value:
 * [open-browser.vim](https://github.com/tyru/open-browser.vim) - `open_browser`
 * [vim-external](https://github.com/itchyny/vim-external) - `external_browser`
 
-### `buku_include_tags` (boolean, default: false)
+### `buku_include_tags`
+> **boolean, default: false**
 
 This config option is specific to the buku bookmark manager. If it's `true`,
 the tags for every bookmark is added.
@@ -371,7 +378,8 @@ For telescope integration, an additional column is added which includes the tags
 for every bookmark. This column is highlighted using the `Special` highlight
 group.
 
-### `debug` (boolean, default: false)
+### `debug`
+> **boolean, default: false**
 
 If `true`, provide debug messages which includes, but not limited to, the config
 options, state values, telescope options, etc.
