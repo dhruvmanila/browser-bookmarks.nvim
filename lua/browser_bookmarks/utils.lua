@@ -277,13 +277,16 @@ function utils.get_os_command_output(cmd)
   local stdout, stderr
 
   -- Channel callback for stdout and stderr.
-  ---@param data string[]
+  ---@param lines string[]
   ---@param event 'stdout'|'stderr'
-  local function on_data(_, data, event)
-    -- Remove the trailing newline which in the table is an empty string
-    -- as the last element.
-    data = table.concat(vim.list_slice(data, 1, #data - 1), "\n")
-    utils.debug(event .. ":", data)
+  local function on_data(_, lines, event)
+    utils.debug(event .. ":", lines)
+    -- Remove the trailing newline if present, which in the table is an
+    -- empty string as the last element.
+    if lines[#lines] == "" then
+      lines = vim.list_slice(lines, 1, #lines - 1)
+    end
+    local data = table.concat(lines, "\n")
     if event == "stdout" then
       stdout = data
     elseif event == "stderr" then
