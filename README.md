@@ -50,10 +50,12 @@ application.
 - [buku](https://github.com/jarun/buku) - bookmark manager
 - [Raindrop.io](https://raindrop.io) [^2] - All-in-one bookmark manager
 
-[^2]: The Raindrop API requires the access token to fetch the bookmarks. To get
-    the access token, go to [App Management
+_Refer to the [Raindrop](#raindrop) section for more info._
+
+[^2]: The Raindrop API requires an access token to fetch the bookmarks. To get
+    the token, go to [App Management
     Console](https://app.raindrop.io/settings/integrations) and open your
-    application settings. Copy **Test token** and add it when asked for.
+    application settings. Copy the **Test token** and add it when asked for.
 
 ## Requirements
 
@@ -143,6 +145,43 @@ API function like so:
 vim.keymap.set('n', '<leader>fb', require('browser-bookmarks').select, {
   desc = 'Fuzzy search browser bookmarks',
 })
+```
+
+### Raindrop
+
+For users of [Raindrop.io](https://raindrop.io), as the bookmarks are stored in
+the cloud and an [API](https://developer.raindrop.io/v1/raindrops/multiple) is
+used to fetch the bookmarks, two workflows were designed to accomodate the
+process.
+
+#### Token initialization
+
+The API requires a token for authentication. Now, a token cannot be stored in
+the user config as that would risk in making it public through an individual's
+dotfiles. So, the plugin will ask for the token when invoked for the first time
+and store it locally in a file at the following path:
+
+```lua
+vim.fn.stdpath('data') .. '/.raindrop-token'
+```
+
+The token value can be updated using the following API:
+
+```lua
+require('browser-bookmarks.browsers.raindrop').update_token("new-token")
+```
+
+Once the token is initialized, the same will be used for every command
+invocation.
+
+#### Background job
+
+Invoking the command post token initialization will trigger a background job
+to collect the bookmarks and cache it. Further invocation of the command will
+use the cached bookmarks. The cache can be cleared using the following API:
+
+```lua
+require('browser-bookmarks.browsers.raindrop').clear_cache()
 ```
 
 ### API
