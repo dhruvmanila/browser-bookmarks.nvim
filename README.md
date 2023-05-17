@@ -104,7 +104,7 @@ Plug 'dhruvmanila/browser-bookmarks.nvim', { 'tag': '*' }
 > `BrowserBookmarks` command.
 
 ```lua
-require('browser-bookmarks').setup({
+require('browser_bookmarks').setup({
   -- override default configuration values
   selected_browser = 'firefox',
 })
@@ -142,7 +142,7 @@ The keymap can be defined to invoke the fuzzy finder through the command or
 API function like so:
 
 ```lua
-vim.keymap.set('n', '<leader>fb', require('browser-bookmarks').select, {
+vim.keymap.set('n', '<leader>fb', require('browser_bookmarks').select, {
   desc = 'Fuzzy search browser bookmarks',
 })
 ```
@@ -168,7 +168,7 @@ vim.fn.stdpath('data') .. '/.raindrop-token'
 The token value can be updated using the following API:
 
 ```lua
-require('browser-bookmarks.browsers.raindrop').update_token("new-token")
+require('browser_bookmarks.browsers.raindrop').update_token("new-token")
 ```
 
 Once the token is initialized, the same will be used for every command
@@ -181,7 +181,7 @@ to collect the bookmarks and cache it. Further invocation of the command will
 use the cached bookmarks. The cache can be cleared using the following API:
 
 ```lua
-require('browser-bookmarks.browsers.raindrop').clear_cache()
+require('browser_bookmarks.browsers.raindrop').clear_cache()
 ```
 
 ### API
