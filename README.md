@@ -75,6 +75,27 @@ The plugin managers mentioned below supports wildcard (`*`) in the tag key which
 points to the latest git tag. You can specify a specific version if you'd prefer
 to inspect the changes before updating.
 
+### Using [lazy.nvim](https://github.com/folke/lazy.nvim)
+
+```lua
+{
+  'dhruvmanila/browser-bookmarks.nvim',
+  version = '*',
+  -- Only required to override the default options
+  opts = {
+    -- Override default configuration values
+    -- selected_browser = 'chrome'
+  },
+  -- dependencies = {
+  --   -- Only if your selected browser is Firefox, Waterfox or buku
+  --   'kkharji/sqlite.lua',
+  --
+  --   -- Only if you're using the Telescope extension
+  --   'nvim-telescope/telescope.nvim',
+  -- }
+}
+```
+
 ### Using [packer.nvim](https://github.com/wbthomason/packer.nvim)
 
 ```lua
@@ -82,7 +103,10 @@ use {
   'dhruvmanila/browser-bookmarks.nvim',
   tag = '*',
   -- requires = {
+  --   -- Only if your selected browser is Firefox, Waterfox or buku
   --   'kkharji/sqlite.lua',
+  --
+  --   -- Only if you're using the Telescope extension
   --   'nvim-telescope/telescope.nvim',
   -- }
 }
@@ -92,7 +116,10 @@ use {
 
 ```vim
 Plug 'dhruvmanila/browser-bookmarks.nvim', { 'tag': '*' }
+" Only if your selected browser is Firefox, Waterfox or buku
 " Plug 'kkharji/sqlite.lua'
+
+" Only if you're using the Telescope extension
 " Plug 'nvim-telescope/telescope.nvim'
 ```
 
