@@ -6,6 +6,12 @@ local state = require "browser_bookmarks.state"
 
 local default_config_dir = {
   Darwin = {
+    [Browser.ARC] = {
+      "Library",
+      "Application Support",
+      "Arc",
+      "User Data",
+    },
     [Browser.BRAVE] = {
       "Library",
       "Application Support",
@@ -363,6 +369,7 @@ end
 -- A mapping from browser to the title to be displayed on the search bar.
 ---@type table<Browser, string>
 local title = {
+  [Browser.ARC] = "Arc",
   [Browser.BRAVE] = "Brave",
   [Browser.BRAVE_BETA] = "Brave",
   [Browser.BUKU] = "Buku",

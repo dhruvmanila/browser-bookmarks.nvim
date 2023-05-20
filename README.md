@@ -27,6 +27,7 @@ A _Neovim plugin_ to open your browser bookmarks right from the editor!
 
 | Browser            | MacOS   | Linux   | Windows   |
 | ------------------ | :-----: | :-----: | :-------: |
+| Arc                | ☑️       | -       | -         |
 | Brave              | ☑️       | ☑️       | ☑️         |
 | Brave Beta         | ☑️       | ☑️       | ☑️         |
 | Chromium           | ☑️       | ☑️       | ☑️         |
@@ -327,6 +328,7 @@ the config value is as follows:
 
 | Browser / Tool     | Config value |
 | ------------------ | :----------: |
+| Arc                | `arc`        |
 | buku               | `buku`       |
 | Brave              | `brave`      |
 | Brave Beta         | `brave_beta` |
@@ -353,6 +355,7 @@ If the given profile does not exist or the plugin is unable to get the profile
 related information, an appropriate warning message will be provided.
 
 Following browsers are supported for the config option:
+* Arc
 * Brave
 * Brave Beta
 * Google Chrome
@@ -375,6 +378,7 @@ determining the custom path.
 
 | Browser            | MacOS                                                            | Linux                                        | Windows                                                      |
 | ------------------ | ---------------------------------------------------------------- | -------------------------------------------- | ------------------------------------------------------------ |
+| Arc                | `~/Library/Application Support/Arc/User Data`                    | -                                            | -                                                            |
 | Brave              | `~/Library/Application Support/BraveSoftware/Brave-Browser`      | `~/.config/BraveSoftware/Brave-Browser`      | `~/AppData/Local/BraveSoftware/Brave-Browser/User Data`      |
 | Brave Beta         | `~/Library/Application Support/BraveSoftware/Brave-Browser-Beta` | `~/.config/BraveSoftware/Brave-Browser-Beta` | `~/AppData/Local/BraveSoftware/Brave-Browser-Beta/User Data` |
 | Google Chrome      | `~/Library/Application Support/Google/Chrome`                    | `~/.config/google-chrome`                    | `~/AppData/Local/Google/Chrome/User Data`                    |

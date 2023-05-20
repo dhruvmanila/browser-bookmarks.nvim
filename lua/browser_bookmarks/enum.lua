@@ -2,6 +2,7 @@ local M = {}
 
 ---@enum Browser
 M.Browser = {
+  ARC = "arc",
   BRAVE = "brave",
   BRAVE_BETA = "brave_beta",
   BUKU = "buku",

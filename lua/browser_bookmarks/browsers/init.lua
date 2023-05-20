@@ -13,6 +13,7 @@ local supported_browsers = vim.tbl_values(Browser)
 -- An array of all the chromium based browsers.
 ---@type Browser[]
 local chromium_based_browsers = {
+  Browser.ARC,
   Browser.BRAVE,
   Browser.BRAVE_BETA,
   Browser.CHROME,
