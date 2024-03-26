@@ -285,19 +285,7 @@ To get started, simply load the extension:
 require('telescope').load_extension('bookmarks')
 ```
 
-To override the default values, provide the options in the extension table
-in the `require("telescope").setup` call like so:
-
-```lua
-require('telescope').setup {
-  extensions = {
-    bookmarks = {
-      -- Provide the options here to override the default values.
-      -- ...
-    },
-  },
-}
-```
+To override the default values, use the [setup](#setup) guide.
 
 You can open the picker either from the command-line or calling the lua
 function:
@@ -307,7 +295,7 @@ function:
 Telescope bookmarks
 
 " Using lua function
-lua require('telescope').extensions.bookmarks.bookmarks(opts)
+lua require('telescope').extensions.bookmarks.bookmarks(telescope_opts)
 ```
 
 Telescope can lazily load the extension when needed, but that can only be
