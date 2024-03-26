@@ -104,7 +104,15 @@ end
 
 return telescope.register_extension {
   setup = function(ext_config)
-    browser_bookmarks.setup(ext_config)
+    if ext_config and not vim.tbl_isempty(ext_config) then
+      utils.warn(
+        "Configuring the plugin using the telescope extension is deprecated."
+          .. "Please use the `setup` function from the main module:\n\n"
+          .. ("require('browser_bookmarks').setup(%s)"):format(
+            vim.inspect(ext_config)
+          )
+      )
+    end
   end,
   exports = {
     bookmarks = bookmarks,
